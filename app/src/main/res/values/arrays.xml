@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="array_gender">
+        <item>Select gender</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+    <string-array name="array_company">
+        <item>GBC</item>
+        <item>NNK</item>
+        <item>GN</item>
+        <item>CV</item>
+    </string-array>
+</resources>

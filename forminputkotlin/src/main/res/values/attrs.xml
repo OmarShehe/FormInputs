@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="FormInputLayout">
+        <attr name="customer_hint" format="string" />
+        <attr name="customer_label" format="string" />
+        <attr name="customer_value" format="string" />
+        <attr name="customer_maxLines" format="integer" />
+        <attr name="customer_height" format="integer" />
+        <attr name="customer_isMandatory" format="boolean" />
+        <attr name="customer_maxLength" format="integer"/>
+        <attr name="customer_isMultiLine" format="boolean"/>
+        <attr name="customer_background" format="reference"/>
+        <attr name="customer_showPassStrength" format="boolean"/>
+        <attr name="customer_array" format="reference"/>
+        <attr name="customer_component" format="integer">
+            <enum name="inputBox" value="1" />
+            <enum name="autoComplete" value="2" />
+            <enum name="spinner" value="3" />
+            <enum name="password" value="4" />
+            <enum name="button" value="5" />
+        </attr>
+        <attr name="customer_inputType" format="integer">
+            <enum name="text" value="1" />
+            <enum name="phoneNumber" value="2" />
+            <enum name="number" value="3" />
+            <enum name="email" value="4" />
+        </attr>
+
+    </declare-styleable>
+
+</resources>
