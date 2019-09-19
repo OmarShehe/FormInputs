@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:focusableInTouchMode="true">
 
          <com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/gender"
@@ -101,7 +102,7 @@
             app:customer_label="About you"
             app:customer_maxLength="500"
             app:customer_maxLines="20"
-             app:customer_background="@drawable/bg_auth_field" />
+             app:customer_background="@drawable/shadow" />
 
          <com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/password"

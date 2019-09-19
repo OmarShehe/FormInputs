@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -33,6 +34,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.omarshehe.forminputjava.Utils.PasswordStrength;
 import com.omarshehe.forminputjava.adapter.AutoCompleteAdapter;
 
@@ -40,7 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FormInputLayout extends RelativeLayout implements FormInputLayoutContract.View,TextWatcher{
+public class FormInputLayout extends ConstraintLayout implements FormInputLayoutContract.View,TextWatcher{
 
     private static final String TAG = FormInputLayout.class.getName();
     private OnTouchListener mOnTouchListener;
@@ -61,18 +64,20 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
     public static final int INPUTTYPE_EMAIL = 4;
 
 
-    private TextView tvLabel, tvMandatory, txtLengthDesc,tvPassStrength, tvError,tvErrorPass;
+    private TextView tvLabel, tvMandatory, txtLengthDesc,tvPassStrength, tvError;
     private EditText txtInputBox,txtPassword;
     private View layInputBox,layNestedInputBox, layAutoComplete,laySpinner,layButton,layPassStrength,layPassword, layLabel;
     private Spinner spSpinner;
     private ImageView iconCancel, iconDropDown;
-    private ProgressBar PassProgressStrength;
+    private ProgressBar PassProgressStrength,btnProgressBar;
 
-    private int mComponentType, mInputType, maxLength,height,inputError;
+    private int mComponentType, mInputType, maxLength,height;
     private boolean isMandatory, isTagPrimary, isMultiline, isShowStrength;
-    private String mLabel = "", mValue;
+    private String mLabel,mErrorMessage = "", mValue,mHint;
     private int BgBackground,arrayList;
+    private Button btnNoImage;
 
+    private int  inputError;
 
     private AutoCompleteView autoCompleteTxt;
 
@@ -93,7 +98,6 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
         tvMandatory = view.findViewById(R.id.tvMandatory);
         txtLengthDesc =  view.findViewById(R.id.txtLengthDesc);
         tvError= view.findViewById(R.id.tvError);
-        tvErrorPass= view.findViewById(R.id.tvErrorPass);
 
         PassProgressStrength=  findViewById(R.id.progressBar);
         tvPassStrength = findViewById(R.id.tvPassStrength);
@@ -103,7 +107,6 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
 
         txtInputBox= view.findViewById(R.id.txtInputBox);
         txtPassword= view.findViewById(R.id.txtPassword);
-
 
         layInputBox = view.findViewById(R.id.layInputBox);
         layNestedInputBox= view.findViewById(R.id.layNestedInputBox);
@@ -117,6 +120,10 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
         spSpinner= view.findViewById(R.id.spSpinner);
 
 
+        btnNoImage=view.findViewById(R.id.btnNoImage);
+        btnProgressBar=view.findViewById(R.id.btnProgressBar);
+
+
         autoCompleteTxt =  view.findViewById(R.id.autoCompleteView);
 
 
@@ -127,8 +134,8 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
         @SuppressLint({"CustomViewStyleable", "Recycle"})
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FormInputLayout);
         mLabel = a.getString(R.styleable.FormInputLayout_customer_label);
-        String hint = a.getString(R.styleable.FormInputLayout_customer_hint);
-        String value = a.getString(R.styleable.FormInputLayout_customer_value);
+        mHint = a.getString(R.styleable.FormInputLayout_customer_hint);
+        mValue = a.getString(R.styleable.FormInputLayout_customer_value);
         final int maxLines = a.getInt(R.styleable.FormInputLayout_customer_maxLines, 5);
         maxLength = a.getInt(R.styleable.FormInputLayout_customer_maxLength, 300);
         height=a.getInt(R.styleable.FormInputLayout_customer_height, 200);
@@ -144,10 +151,9 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
         /**
          * Set up the values
          */
-        inputError=0;
         setLabel(mLabel);
         setMandatory(isMandatory);
-        setHint(hint);
+        setHint(mHint);
         setInputType(mInputType);
         setBgBackground(BgBackground);
         setComponentType(mComponentType);
@@ -180,26 +186,26 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
         layPassStrength.setVisibility(isShowStrength ? VISIBLE : GONE);
     }
 
-    private void showPasswordError(String error, int visible){
-        tvErrorPass.setText(error);
-        tvErrorPass.setVisibility(visible);
-    }
-
     private void showInputError(String error, int visible){
+        mErrorMessage=error;
         tvError.setText(error);
         tvError.setVisibility(visible);
+        if(visible==VISIBLE){
+            inputError=1;
+        }else {
+            inputError=0;
+        }
     }
 
     private void updatePasswordStrengthView(String password) {
         if (password.length() == 0) {
-            showPasswordError(String.format(getResources().getString(R.string.cantBeEmpty),tvLabel.getText()),VISIBLE);
+            showInputError(String.format(getResources().getString(R.string.cantBeEmpty),tvLabel.getText()),VISIBLE);
             PassProgressStrength.setProgress(0);
             return;
         }else if(password.length() <8){
-            showPasswordError(String.format(getResources().getString(R.string.hintPassword),mLabel),VISIBLE);
-
+            showInputError(String.format(getResources().getString(R.string.hintPassword),mLabel),VISIBLE);
         }else {
-            showPasswordError("",GONE);
+            showInputError("",GONE);
         }
 
         PasswordStrength str = PasswordStrength.calculateStrength(password);
@@ -268,7 +274,6 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
     public void setComponentType(int componentType) {
         mComponentType = componentType;
         switch (componentType) {
-
             case TYPE_INPUTBOX:
                 layLabel.setVisibility(VISIBLE);
                 layInputBox.setVisibility(VISIBLE);
@@ -358,6 +363,13 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
     public void setMandatory(boolean isMandatory) {
         this.isMandatory = isMandatory;
         tvMandatory.setVisibility(isMandatory ? VISIBLE : GONE);
+        //inputError=isMandatory ? 1 : 0;
+
+        if(isMandatory){
+            inputError=1;
+        }else {
+            inputError=0;
+        }
     }
 
     public EditText getInputBox() {
@@ -389,19 +401,25 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
     public String getValue() {
         if (mComponentType == TYPE_INPUTBOX) {
             return txtInputBox.getText().toString();
-
         } else if (mComponentType == TYPE_AUTO_COMPLETE) {
             return autoCompleteTxt.getText().toString();
         } else  if (mComponentType == TYPE_PASSWORD){
             return txtPassword.getText().toString();
         } else if (mComponentType==TYPE_SPINNER){
-            spSpinner.getSelectedItem().toString();
+            return spSpinner.getSelectedItem().toString();
         }
 
         return "";
     }
 
     public int getError(){
+        showMessage(inputError+" ");
+        if(inputError==1){
+            showInputError(mErrorMessage,VISIBLE);
+        }else {
+            showInputError("",GONE);
+        }
+
         return inputError;
     }
 
@@ -412,9 +430,15 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
         } else if (mComponentType == TYPE_AUTO_COMPLETE) {
             mValue = value;
             autoCompleteTxt.setText(value);
+        } else if (mComponentType==TYPE_SPINNER){
+            mValue = value;
+            setSpinnerValue(value);
         }
         return this;
     }
+
+
+
 
 
     public void setAutoCompleteShowAlways(boolean show) {
@@ -510,8 +534,9 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
 
 
 
+
     /**
-     * Drop down list
+     * Auto Complete
      *
      */
     public FormInputLayout setAutoCompleteList(ArrayList<String> items, final AutoCompleteSelectionListener listener) {
@@ -559,7 +584,12 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
         return this;
     }
 
-
+    /**
+     * Spinner
+     * @param items
+     * @param listener
+     * @return
+     */
     public FormInputLayout setSpinner(ArrayList<String> items, final SpinnerSelectionListener listener) {
         laySpinner.setVisibility(VISIBLE);
 
@@ -593,6 +623,35 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, items);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spSpinner.setAdapter(spinnerArrayAdapter);
+
+
+        spSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(isMandatory){
+                    validateSpinner(mHint);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+    private void validateSpinner(String hint){
+        if ( getValue().equals(hint) ){
+            showInputError(String.format(getResources().getString(R.string.isRequired),tvLabel.getText()),VISIBLE);
+        }else {
+            showInputError("",GONE);
+        }
+    }
+
+    private void setSpinnerValue(String mValue){
+        String[] mArrayList=getResources().getStringArray(arrayList);
+        for (int index = 0;index< mArrayList.length;index++){
+            if(mValue.equals(mArrayList[index])){
+                spSpinner.setSelection(index);
+            }
+        }
     }
 
     public FormInputLayout VarifySelectedSpinner(final String DefaultString) {
@@ -645,7 +704,17 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
     }
 
 
+    /**
+     * Button
+     */
 
+    public Button getButton(){
+        return btnNoImage;
+    }
+
+    public void showLoading(int Visibility){
+        btnProgressBar.setVisibility(Visibility);
+    }
 
 
 

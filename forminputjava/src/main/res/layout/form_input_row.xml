@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tool="http://schemas.android.com/tools">
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:saveEnabled="true">
 
-    <RelativeLayout
+
+    <!--Label-->
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lyView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
-        android:saveEnabled="true">
-
-        <!--Label-->
-
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <RelativeLayout
             android:id="@+id/layLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:visibility="visible">
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tvLabel"
@@ -49,21 +58,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/layLabel"
-            android:visibility="visible">
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layLabel">
 
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layNestedInputBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_txt_square"
-                android:padding="2dp">
+                android:background="@drawable/bg_txt_square">
+
+                <Spinner
+                    android:id="@+id/spInputBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:entries="@array/array"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/txtInputBox"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/txtInputBox" />
 
                 <EditText
                     android:id="@+id/txtInputBox"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:layout_toStartOf="@+id/layTag"
-                    android:layout_toLeftOf="@+id/layTag"
                     android:background="@color/colorTransparent"
                     android:fontFamily="@font/roboto_regular"
                     android:hint="@string/app_name"
@@ -71,28 +91,25 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:textSize="14sp"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/iconCancel"
+                    app:layout_constraintStart_toEndOf="@+id/spInputBox"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
 
-                <LinearLayout
-                    android:id="@+id/layTag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/iconCancel"
-                        android:layout_width="20dp"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginRight="10dp"
-                        android:contentDescription="@string/app_name"
-                        android:padding="2dp"
-                        android:src="@drawable/ic_close_grey"
-                        android:visibility="gone"
-                        />
-                </LinearLayout>
+                <ImageView
+                    android:id="@+id/iconCancel"
+                    android:layout_width="30dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginRight="4dp"
+                    android:contentDescription="@string/app_name"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_close_grey"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/txtLengthDesc"
@@ -101,36 +118,19 @@
                     android:layout_below="@id/txtInputBox"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginEnd="2dp"
-                    android:layout_marginRight="2dp"
-                    android:layout_marginBottom="2dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
                     android:fontFamily="@font/roboto_light"
                     android:singleLine="true"
                     android:text="@string/charactersOnly"
                     android:textSize="12sp"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtInputBox" />
 
-
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/tvError"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/layNestedInputBox"
-                android:fontFamily="@font/roboto_light"
-                android:gravity="end"
-                android:paddingLeft="10dp"
-                android:paddingTop="3dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="3dp"
-                android:text="@string/app_name"
-                android:textColor="@color/red"
-                android:textSize="12sp"
-                android:visibility="gone" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </RelativeLayout>
 
@@ -142,7 +142,10 @@
             android:layout_below="@+id/layLabel"
             android:background="@drawable/bg_txt_square"
             android:padding="2dp"
-            android:visibility="gone">
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layLabel">
 
             <ImageView
                 android:id="@+id/iconDropDown"
@@ -180,7 +183,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/layLabel"
             android:background="@drawable/bg_txt_square"
-            android:visibility="gone">
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layLabel">
 
             <Spinner
                 android:id="@+id/spSpinner"
@@ -196,7 +202,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/layLabel"
-            android:visibility="gone">
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layLabel">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:hintEnabled="false"
+                app:passwordToggleEnabled="true">
+
+                <EditText
+                    android:id="@+id/txtPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_white"
+                    android:hint="@string/app_name"
+                    android:inputType="textPassword"
+                    app:passwordToggleEnabled="true" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
                 android:id="@+id/layPassStrength"
@@ -227,39 +254,6 @@
                     android:text="@string/weak" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvErrorPass"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/layPassStrength"
-                android:gravity="end"
-                android:paddingLeft="10dp"
-                android:paddingTop="3dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="3dp"
-                android:text="@string/app_name"
-                android:textColor="@color/red"
-                android:textSize="12sp"
-                android:visibility="gone" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/passView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:hintEnabled="false"
-                app:passwordToggleEnabled="true">
-
-                <EditText
-                    android:id="@+id/txtPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_white"
-                    android:hint="@string/app_name"
-                    android:inputType="textPassword"
-                    app:passwordToggleEnabled="true" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
 
         </RelativeLayout>
 
@@ -267,7 +261,10 @@
             android:id="@+id/layButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/layLabel">
 
             <FrameLayout
                 android:id="@+id/btn"
@@ -275,7 +272,7 @@
                 android:layout_height="wrap_content">
 
                 <Button
-                    android:id="@+id/button"
+                    android:id="@+id/btnNoImage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_btn_click"
@@ -295,10 +292,29 @@
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
                 android:indeterminate="true"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
         </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_light"
+        android:gravity="end"
+        android:paddingLeft="10dp"
+        android:paddingTop="3dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="3dp"
+        android:text="@string/app_name"
+        android:textColor="@color/red"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lyView" />
 
 
-    </RelativeLayout>
-</layout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

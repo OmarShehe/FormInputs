@@ -47,7 +47,6 @@ public class AutoCompleteView extends AppCompatAutoCompleteTextView {
 
     private void showDropDownIfFocused() {
         if (enoughToFilter() && isFocused() && getWindowVisibility() == View.VISIBLE) {
-
             showDropDown();
         }
     }
