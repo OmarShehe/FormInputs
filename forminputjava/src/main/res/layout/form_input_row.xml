@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
-    android:saveEnabled="true">
+    android:saveEnabled="true"
+    android:id="@+id/Main">
 
 
     <!--Label-->
@@ -70,11 +71,12 @@
                 android:background="@drawable/bg_txt_square">
 
                 <Spinner
-                    android:id="@+id/spInputBox"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/spSpinner"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:entries="@array/array"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/txtInputBox"
                     app:layout_constraintStart_toStartOf="parent"
@@ -94,7 +96,7 @@
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/iconCancel"
-                    app:layout_constraintStart_toEndOf="@+id/spInputBox"
+                    app:layout_constraintStart_toEndOf="@+id/spSpinner"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
 
@@ -189,7 +191,7 @@
             app:layout_constraintTop_toBottomOf="@+id/layLabel">
 
             <Spinner
-                android:id="@+id/spSpinner"
+                android:id="@+id/spSpinner1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/array"
@@ -278,7 +280,7 @@
                     android:background="@drawable/bg_btn_click"
                     android:contentDescription="@string/app_name"
                     android:foreground="?android:attr/selectableItemBackground"
-                    android:text="@string/pleaseWait"
+                    android:text="@string/Submit"
                     android:textAllCaps="false"
                     android:textColor="@color/colorWhite" />
             </FrameLayout>

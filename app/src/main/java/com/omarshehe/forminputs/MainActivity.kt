@@ -16,10 +16,10 @@ class MainActivity : AppCompatActivity() {
 
         btnSubmit.button.setOnClickListener {
             run {
-                Toast.makeText(this, "Hi", Toast.LENGTH_LONG).show()
-                Log.d("MainActivityA", "Omar")
-                if(gender.error==0 && fullName.error==0 && phoneNumber.error==0 && ID.error==0 && email.error==0 && about.error ==0 && password.error==0){
+                if(!gender.isError(mainView)  && !company.isError(mainView) && !price.isError(mainView) && !fullName.isError(mainView) &&  !phoneNumber.isError(mainView) && !ID.isError(mainView) && !email.isError(mainView) && !about.isError(mainView)  && !password.isError(mainView)){
                     btnSubmit.showLoading(View.VISIBLE)
+                    Log.d("MA",price.valueSpinner_Input[0] +" "+price.valueSpinner_Input[1])
+
                 }
             }
         }

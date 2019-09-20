@@ -14,6 +14,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.ActionMode;
 import android.view.Gravity;
@@ -56,6 +57,7 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
     public static final int TYPE_SPINNER = 3;
     public static final int TYPE_PASSWORD = 4;
     public static final int TYPE_BUTTON = 5;
+    public static final int TYPE_SPINNER_INPUTBOX = 6;
 
 
     public static final int INPUTTYPE_TEXT = 1;
@@ -80,6 +82,9 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
     private int  inputError;
 
     private AutoCompleteView autoCompleteTxt;
+
+    private boolean isSpinnerOnly;
+
 
 
     public FormInputLayout(Context context) {
@@ -147,7 +152,6 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
         isShowStrength=a.getBoolean(R.styleable.FormInputLayout_customer_showPassStrength,false);
         arrayList=a.getResourceId(R.styleable.FormInputLayout_customer_array,R.array.array);
 
-
         /**
          * Set up the values
          */
@@ -178,51 +182,11 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
             }
         });
 
-        disableDropDownTextSelection();
+        disableAutoCompleteTextSelection();
     }
 
 
-    private void PasswordStrength(boolean isShowStrength){
-        layPassStrength.setVisibility(isShowStrength ? VISIBLE : GONE);
-    }
 
-    private void showInputError(String error, int visible){
-        mErrorMessage=error;
-        tvError.setText(error);
-        tvError.setVisibility(visible);
-        if(visible==VISIBLE){
-            inputError=1;
-        }else {
-            inputError=0;
-        }
-    }
-
-    private void updatePasswordStrengthView(String password) {
-        if (password.length() == 0) {
-            showInputError(String.format(getResources().getString(R.string.cantBeEmpty),tvLabel.getText()),VISIBLE);
-            PassProgressStrength.setProgress(0);
-            return;
-        }else if(password.length() <8){
-            showInputError(String.format(getResources().getString(R.string.hintPassword),mLabel),VISIBLE);
-        }else {
-            showInputError("",GONE);
-        }
-
-        PasswordStrength str = PasswordStrength.calculateStrength(password);
-        tvPassStrength.setText(str.toString());
-        tvPassStrength.setTextColor(str.getColor());
-
-       PassProgressStrength.getProgressDrawable().setColorFilter(str.getColor(), PorterDuff.Mode.SRC_ATOP);
-
-        if (str.toString().equals("Weak")) {
-            PassProgressStrength.setProgress(25);
-        } else if (str.toString().equals("Medium")) {
-            PassProgressStrength.setProgress(75);
-        } else {
-            PassProgressStrength.setProgress(100);
-
-        }
-    }
 
     public void setLabel(String label) {
         if (mLabel != null) {
@@ -248,12 +212,14 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
             autoCompleteTxt.setHint(hint);
         if (mComponentType== TYPE_PASSWORD)
             txtPassword.setHint(hint);
+        if (mComponentType == TYPE_SPINNER_INPUTBOX)
+            txtInputBox.setHint(hint);
 
     }
 
     public void setInputType(int inputType) {
         mInputType = inputType;
-        if (mComponentType == TYPE_INPUTBOX) {
+        if (mComponentType == TYPE_INPUTBOX || mComponentType == TYPE_SPINNER_INPUTBOX) {
             if (mInputType == INPUTTYPE_TEXT) {
                 txtInputBox.setInputType(InputType.TYPE_CLASS_TEXT);
                 txtInputBox.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
@@ -278,12 +244,14 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
                 layLabel.setVisibility(VISIBLE);
                 layInputBox.setVisibility(VISIBLE);
                 txtInputBox.addTextChangedListener(this);
+                mErrorMessage=String.format(getResources().getString(R.string.cantBeEmpty),tvLabel.getText());
                 break;
             case TYPE_PASSWORD:
                 layLabel.setVisibility(VISIBLE);
                 layPassword.setVisibility(VISIBLE);
                 txtPassword.addTextChangedListener(this);
                 PasswordStrength(isShowStrength);
+                mErrorMessage=String.format(getResources().getString(R.string.cantBeEmpty),tvLabel.getText());
                 break;
             case TYPE_AUTO_COMPLETE:
                 layLabel.setVisibility(VISIBLE);
@@ -291,21 +259,38 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
                 String[] autoCompleteArray=getResources().getStringArray(arrayList);
                 ArrayList<String> autoCompleteListArray = new ArrayList<>(Arrays.asList(autoCompleteArray));
                 setAutoCompleteList(autoCompleteListArray);
+                mErrorMessage=String.format(getResources().getString(R.string.isRequired),tvLabel.getText());
                 break;
             case TYPE_SPINNER:
                 layLabel.setVisibility(VISIBLE);
-                laySpinner.setVisibility(VISIBLE);
+                layInputBox.setVisibility(VISIBLE);
                 String[] getArray=getResources().getStringArray(arrayList);
                 List<String> listArray = Arrays.asList(getArray);
+                isSpinnerOnly=true;
                 setSpinner(listArray);
+                spSpinner.setVisibility(VISIBLE);
+                mErrorMessage=String.format(getResources().getString(R.string.isRequired),tvLabel.getText());
                 break;
             case TYPE_BUTTON:
                 layLabel.setVisibility(GONE);
                 layButton.setVisibility(VISIBLE);
+                setUpButton();
+                break;
+            case TYPE_SPINNER_INPUTBOX:
+                layLabel.setVisibility(VISIBLE);
+                layInputBox.setVisibility(VISIBLE);
+                txtInputBox.addTextChangedListener(this);
+                String[] getIntArray=getResources().getStringArray(arrayList);
+                List<String> IntListArray = Arrays.asList(getIntArray);
+                isSpinnerOnly=false;
+                setSpinner(IntListArray);
+                spSpinner.setVisibility(VISIBLE);
+                mErrorMessage=String.format(getResources().getString(R.string.cantBeEmpty),tvLabel.getText());
                 break;
 
             default:
                 layInputBox.setVisibility(VISIBLE);
+                mErrorMessage=String.format(getResources().getString(R.string.cantBeEmpty),tvLabel.getText());
                 break;
         }
     }
@@ -363,8 +348,6 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
     public void setMandatory(boolean isMandatory) {
         this.isMandatory = isMandatory;
         tvMandatory.setVisibility(isMandatory ? VISIBLE : GONE);
-        //inputError=isMandatory ? 1 : 0;
-
         if(isMandatory){
             inputError=1;
         }else {
@@ -382,22 +365,11 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
         }
     }
 
-    public Spinner getSpinner(){
-        if (mComponentType == TYPE_SPINNER) {
-            return spSpinner;
-        }else{
-            return null;
-        }
-    }
 
-    public AutoCompleteView getAutoCompleteView(){
-        if (mComponentType == TYPE_AUTO_COMPLETE) {
-            return autoCompleteTxt;
-        }else{
-            return null;
-        }
-    }
-
+    /**
+     * Values
+     * @return
+     */
     public String getValue() {
         if (mComponentType == TYPE_INPUTBOX) {
             return txtInputBox.getText().toString();
@@ -412,15 +384,12 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
         return "";
     }
 
-    public int getError(){
-        showMessage(inputError+" ");
-        if(inputError==1){
-            showInputError(mErrorMessage,VISIBLE);
-        }else {
-            showInputError("",GONE);
+    public String[] getValueSpinner_Input() {
+        if (mComponentType == TYPE_SPINNER_INPUTBOX) {
+            return new String[]{spSpinner.getSelectedItem().toString(),txtInputBox.getText().toString()};
         }
 
-        return inputError;
+        return new String[]{"",""};
     }
 
     public FormInputLayout setValue(String value) {
@@ -438,100 +407,44 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
     }
 
 
-
-
-
-    public void setAutoCompleteShowAlways(boolean show) {
-        autoCompleteTxt.setShowAlways(show);
+    /**
+     * Errors
+     * @param error
+     * @param visible
+     */
+    private void showInputError(String error, int visible){
+        mErrorMessage=error;
+        tvError.setText(error);
+        tvError.setVisibility(visible);
+        if(visible==VISIBLE){
+            inputError=1;
+        }else {
+            inputError=0;
+        }
     }
 
+    public boolean isError(View parentView){
+        Log.d(TAG,mLabel+" "+mErrorMessage);
+        if(mComponentType==TYPE_SPINNER_INPUTBOX && txtInputBox.getText().toString().equals("")){
+            inputError=1;
+            mErrorMessage=String.format(getResources().getString(R.string.cantBeEmpty),tvLabel.getText());
+        }
+        if(inputError==1){
+            showInputError(mErrorMessage,VISIBLE);
+            if (parentView !=null){
+                parentView.scrollTo(0,tvError.getTop());
+                txtInputBox.requestFocus();
+            }
+            return true;
+        }else {
+            showInputError("",GONE);
+            return false;
+        }
+    }
 
     private void showMessage(String msg) {
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
-
-    private void disableDropDownTextSelection() {
-        autoCompleteTxt.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
-
-            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            public boolean onActionItemClicked(ActionMode actionMode, MenuItem item) {
-                return false;
-            }
-
-            public void onDestroyActionMode(ActionMode actionMode) {
-            }
-        });
-
-        autoCompleteTxt.setLongClickable(false);
-        autoCompleteTxt.setTextIsSelectable(false);
-    }
-
-    public FormInputLayout showDropDown() {
-        if (mComponentType == TYPE_AUTO_COMPLETE) {
-            autoCompleteTxt.showDropDown();
-        }
-        return this;
-    }
-
-    public FormInputLayout disableAutoCompleteSearch() {
-
-        if (mAdapterAutocomplete != null)
-            mAdapterAutocomplete.disableFilter(true);
-
-        autoCompleteTxt.setLongClickable(false);
-        autoCompleteTxt.setTextIsSelectable(false);
-        autoCompleteTxt.setFocusable(false);
-
-        autoCompleteTxt.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
-
-            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            public boolean onActionItemClicked(ActionMode actionMode, MenuItem item) {
-                return false;
-            }
-
-            public void onDestroyActionMode(ActionMode actionMode) {
-            }
-        });
-        return this;
-    }
-
-    public void setOnTouchListener(OnTouchListener listener) {
-        mOnTouchListener = listener;
-    }
-
-
-
-    public interface SpinnerSelectionListener {
-        void onSpinnerItemSelected(String item);
-    }
-
-    public interface AutoCompleteSelectionListener {
-        void onAutoCompleteItemSelected(String item);
-    }
-
-    public interface OnTouchListener {
-        void onTouch();
-    }
-
-    public interface OnTagChangeListener {
-        void onTagChange(boolean isPrimary);
-    }
-
-
 
 
 
@@ -544,15 +457,16 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
 
         layInputBox.setVisibility(GONE);
         autoCompleteTxt.setShowAlways(true);
-//        autoCompleteTxt.setTypeface(BaseApplication.getLatoItalicTypeFace());
         mAdapterAutocomplete = new AutoCompleteAdapter(getContext(), R.layout.form_input_row, R.id.txtAutocomplete, items, new AutoCompleteAdapter.ItemSelectedListener() {
             @Override
             public void onItemSelected(String item) {
                 listener.onAutoCompleteItemSelected(item);
                 mValue = item;
-                if (mOnTouchListener != null)
+                if (mOnTouchListener != null){
                     mOnTouchListener.onTouch();
+                }
 
+                showInputError("",GONE);
                 autoCompleteTxt.setText(item);
                 autoCompleteTxt.setSelection(item.length());
                 autoCompleteTxt.dismissDropDown();
@@ -567,14 +481,15 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
 
         layInputBox.setVisibility(GONE);
         autoCompleteTxt.setShowAlways(true);
-//        autoCompleteTxt.setTypeface(BaseApplication.getLatoItalicTypeFace());
         mAdapterAutocomplete = new AutoCompleteAdapter(getContext(), R.layout.form_input_row, R.id.txtAutocomplete, items, new AutoCompleteAdapter.ItemSelectedListener() {
             @Override
             public void onItemSelected(String item) {
                 mValue = item;
-                if (mOnTouchListener != null)
+                if (mOnTouchListener != null){
                     mOnTouchListener.onTouch();
+                }
 
+                showInputError("",GONE);
                 autoCompleteTxt.setText(item);
                 autoCompleteTxt.setSelection(item.length());
                 autoCompleteTxt.dismissDropDown();
@@ -583,6 +498,67 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
         autoCompleteTxt.setAdapter(mAdapterAutocomplete);
         return this;
     }
+
+    public void setAutoCompleteShowAlways(boolean show) {
+        autoCompleteTxt.setShowAlways(show);
+    }
+
+    public FormInputLayout disableAutoCompleteSearch() {
+        if (mAdapterAutocomplete != null){
+            mAdapterAutocomplete.disableFilter(true);
+        }
+        autoCompleteTxt.setLongClickable(false);
+        autoCompleteTxt.setTextIsSelectable(false);
+        autoCompleteTxt.setFocusable(false);
+        autoCompleteTxt.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem item) {
+                return false;
+            }
+            public void onDestroyActionMode(ActionMode actionMode) {
+            }
+        });
+        return this;
+    }
+
+    private void disableAutoCompleteTextSelection() {
+        autoCompleteTxt.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem item) {
+                return false;
+            }
+            public void onDestroyActionMode(ActionMode actionMode) {
+            }
+        });
+        autoCompleteTxt.setLongClickable(false);
+        autoCompleteTxt.setTextIsSelectable(false);
+    }
+
+    public FormInputLayout AutoCompleteShowDropDown() {
+        if (mComponentType == TYPE_AUTO_COMPLETE) {
+            autoCompleteTxt.showDropDown();
+        }
+        return this;
+    }
+
+    public AutoCompleteView getAutoCompleteView(){
+        if (mComponentType == TYPE_AUTO_COMPLETE) {
+            return autoCompleteTxt;
+        }else{
+            return null;
+        }
+    }
+
 
     /**
      * Spinner
@@ -615,9 +591,13 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
     }
 
     public void setSpinner(List<String> items) {
-        laySpinner.setVisibility(VISIBLE);
+        //laySpinner.setVisibility(VISIBLE);
+        if (isSpinnerOnly){
+            LayoutParams layoutParams=new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,spSpinner.getHeight());
+            spSpinner.setLayoutParams(layoutParams);
+        }
 
-        layInputBox.setVisibility(GONE);
+        layInputBox.setVisibility(VISIBLE);
         layAutoComplete.setVisibility(GONE);
 
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, items);
@@ -637,6 +617,7 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
             }
         });
     }
+
     private void validateSpinner(String hint){
         if ( getValue().equals(hint) ){
             showInputError(String.format(getResources().getString(R.string.isRequired),tvLabel.getText()),VISIBLE);
@@ -696,11 +677,18 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
         return this;
     }
 
+    public Spinner getSpinner(){
+        if (mComponentType == TYPE_SPINNER) {
+            return spSpinner;
+        }else{
+            return null;
+        }
+    }
+
     public float convertDpToPixel(float dp) {
         Resources resources = getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return px;
+        return dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 
 
@@ -712,8 +700,55 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
         return btnNoImage;
     }
 
+    public void setUpButton(){
+        btnNoImage.setText(mValue);
+    }
+
     public void showLoading(int Visibility){
         btnProgressBar.setVisibility(Visibility);
+        if(Visibility==VISIBLE){
+            btnNoImage.setText(getResources().getString(R.string.pleaseWait));
+            btnNoImage.setEnabled(false);
+        }else {
+            btnNoImage.setText(mValue);
+            btnNoImage.setEnabled(true);
+        }
+    }
+
+
+    /**
+     * Password
+     * @param isShowStrength
+     */
+    private void PasswordStrength(boolean isShowStrength){
+        layPassStrength.setVisibility(isShowStrength ? VISIBLE : GONE);
+    }
+
+    private void updatePasswordStrengthView(String password) {
+        if (password.length() == 0) {
+            showInputError(String.format(getResources().getString(R.string.cantBeEmpty),tvLabel.getText()),VISIBLE);
+            PassProgressStrength.setProgress(0);
+            return;
+        }else if(password.length() <8){
+            showInputError(String.format(getResources().getString(R.string.hintPassword),mLabel),VISIBLE);
+        }else {
+            showInputError("",GONE);
+        }
+
+        PasswordStrength str = PasswordStrength.calculateStrength(password);
+        tvPassStrength.setText(str.toString());
+        tvPassStrength.setTextColor(str.getColor());
+
+        PassProgressStrength.getProgressDrawable().setColorFilter(str.getColor(), PorterDuff.Mode.SRC_ATOP);
+
+        if (str.toString().equals("Weak")) {
+            PassProgressStrength.setProgress(25);
+        } else if (str.toString().equals("Medium")) {
+            PassProgressStrength.setProgress(75);
+        } else {
+            PassProgressStrength.setProgress(100);
+
+        }
     }
 
 
@@ -729,7 +764,7 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
         if(mComponentType==TYPE_PASSWORD){
             updatePasswordStrengthView( s.toString());
         }
-        if (mComponentType==TYPE_INPUTBOX) {
+        if (mComponentType==TYPE_INPUTBOX || mComponentType ==TYPE_SPINNER_INPUTBOX) {
             inputBoxOnTextChange(s.toString());
         }
     }
@@ -755,20 +790,14 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
         }else {
             // Hide empty error message
             showInputError("",GONE);
-            inputError=0;
-
-
-
 
             if (mInputType == INPUTTYPE_EMAIL) {
                 if (mPresenter.isValidEmail(mValue)) {
                     txtInputBox.setTextColor(getResources().getColor(R.color.black));
                     showInputError("",GONE);
-                    inputError=0;
                 } else{
                     txtInputBox.setTextColor(getResources().getColor(R.color.red));
                     showInputError(getResources().getString(R.string.inValidEmail),VISIBLE);
-                    inputError=1;
                 }
             }
 
@@ -791,7 +820,33 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
     }
 
 
-    
+    /**
+     * Interface and Listener
+     */
+
+    public void setOnTouchListener(OnTouchListener listener) {
+        mOnTouchListener = listener;
+    }
+
+    public interface SpinnerSelectionListener {
+        void onSpinnerItemSelected(String item);
+    }
+
+    public interface AutoCompleteSelectionListener {
+        void onAutoCompleteItemSelected(String item);
+    }
+
+    public interface OnTouchListener {
+        void onTouch();
+    }
+
+    public interface OnTagChangeListener {
+        void onTagChange(boolean isPrimary);
+    }
+
+
+
+
     /**
      * Save Instance State of the view
      * */

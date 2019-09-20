@@ -11,4 +11,9 @@
         <item>GN</item>
         <item>CV</item>
     </string-array>
+
+    <string-array name="array_currency">
+        <item>TSH</item>
+        <item>USD</item>
+    </string-array>
 </resources>

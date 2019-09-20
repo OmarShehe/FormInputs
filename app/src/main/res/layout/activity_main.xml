@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:id="@+id/mainView">
 
 
     <LinearLayout
@@ -16,14 +17,14 @@
         android:focusableInTouchMode="true">
 
          <com.omarshehe.forminputjava.FormInputLayout
-            android:id="@+id/gender"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:customer_component="spinner"
-            app:customer_hint="Select gender"
-            app:customer_array="@array/array_gender"
-            app:customer_isMandatory="true"
-            app:customer_label="Gender" />
+        android:id="@+id/gender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:customer_component="spinner"
+        app:customer_hint="Select gender"
+        app:customer_array="@array/array_gender"
+        app:customer_isMandatory="true"
+        app:customer_label="Gender" />
 
          <com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/company"
@@ -37,6 +38,18 @@
             app:customer_hint="Enter your company"
             app:customer_isMandatory="true"
             app:customer_label="Company" />
+
+        <com.omarshehe.forminputjava.FormInputLayout
+            android:id="@+id/price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:customer_component="spinnerAndInputBox"
+            app:customer_hint="Enter Price"
+            app:customer_array="@array/array_currency"
+            app:customer_inputType="number"
+            app:customer_isMandatory="true"
+            app:customer_label="Price" />
 
          <com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/fullName"
@@ -123,7 +136,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
-            app:customer_component="button" />
+            app:customer_component="button"
+             app:customer_value="@string/Submit"/>
 
     </LinearLayout>
 

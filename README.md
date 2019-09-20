@@ -12,7 +12,7 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-	        implementation 'com.github.OmarShehe:FormInput:master-SNAPSHOT'
+	        implementation 'com.github.OmarShehe:FormInputs:1.0'
 	}
 ```
 
@@ -20,7 +20,7 @@ dependencies {
 
 Spinner
 ```
-<com.technovations.forminputs.FormInputLayout
+<com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@ Spinner
 
 Auto Complete
 ```
-<com.technovations.forminputs.FormInputLayout
+<com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/company"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,7 +51,7 @@ Auto Complete
 
 Text
 ```
- <com.technovations.forminputs.FormInputLayout
+ <com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/fullName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@ Text
 
 Phone Numer
 ```
- <com.technovations.forminputs.FormInputLayout
+ <com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/phoneNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -83,7 +83,7 @@ Phone Numer
 
 Number
 ```
- <com.technovations.forminputs.FormInputLayout
+ <com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/ID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -98,7 +98,7 @@ Number
 
 Email
 ```
-        <com.technovations.forminputs.FormInputLayout
+        <com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -114,7 +114,7 @@ Email
 
 Mault line
 ```
-        <com.technovations.forminputs.FormInputLayout
+        <com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -133,7 +133,7 @@ Mault line
 
 Password
 ```
-        <com.technovations.forminputs.FormInputLayout
+        <com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -150,7 +150,7 @@ Password
 
 Button
 ```
-        <com.technovations.forminputs.FormInputLayout
+        <com.omarshehe.forminputjava.FormInputLayout
             android:id="@+id/btnSubmit"
             android:layout_width="200dp"
             android:layout_height="wrap_content"

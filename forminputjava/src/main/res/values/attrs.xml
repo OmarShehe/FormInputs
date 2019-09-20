@@ -19,6 +19,7 @@
             <enum name="spinner" value="3" />
             <enum name="password" value="4" />
             <enum name="button" value="5" />
+            <enum name="spinnerAndInputBox" value="6" />
         </attr>
         <attr name="customer_inputType" format="integer">
             <enum name="text" value="1" />

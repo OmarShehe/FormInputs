@@ -19,4 +19,5 @@
     <string name="hintPassword">%s must be at least 8 characters</string>
     <string name="weak">Weak</string>
     <string name="pleaseWait">Please, wait..</string>
+    <string name="Submit">Submit</string>
 </resources>
