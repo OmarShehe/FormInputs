@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FormInputLayout extends ConstraintLayout implements FormInputLayoutContract.View,TextWatcher{
+public class FormInputLayout extends RelativeLayout implements FormInputLayoutContract.View,TextWatcher{
 
     private static final String TAG = FormInputLayout.class.getName();
     private OnTouchListener mOnTouchListener;
@@ -68,7 +68,7 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
 
     private TextView tvLabel, tvMandatory, txtLengthDesc,tvPassStrength, tvError;
     private EditText txtInputBox,txtPassword;
-    private View layInputBox,layNestedInputBox, layAutoComplete,laySpinner,layButton,layPassStrength,layPassword, layLabel;
+    private View layInputBox, layAutoComplete,layButton,layPassStrength,layPassword, layLabel;
     private Spinner spSpinner;
     private ImageView iconCancel, iconDropDown;
     private ProgressBar PassProgressStrength,btnProgressBar;
@@ -114,11 +114,9 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
         txtPassword= view.findViewById(R.id.txtPassword);
 
         layInputBox = view.findViewById(R.id.layInputBox);
-        layNestedInputBox= view.findViewById(R.id.layNestedInputBox);
         layPassStrength=view.findViewById(R.id.layPassStrength);
         layPassword=view.findViewById(R.id.layPassword);
         layAutoComplete =  view.findViewById(R.id.layAutoComplete);
-        laySpinner=  view.findViewById(R.id.laySpinner);
         layButton=view.findViewById(R.id.layButton);
         layLabel =  view.findViewById(R.id.layLabel);
 
@@ -234,7 +232,7 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
     }
 
     public void setBgBackground(int background){
-        layNestedInputBox.setBackgroundResource(background);
+        layInputBox.setBackgroundResource(background);
     }
 
     public void setComponentType(int componentType) {
@@ -269,6 +267,7 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
                 isSpinnerOnly=true;
                 setSpinner(listArray);
                 spSpinner.setVisibility(VISIBLE);
+                txtInputBox.setVisibility(GONE);
                 mErrorMessage=String.format(getResources().getString(R.string.isRequired),tvLabel.getText());
                 break;
             case TYPE_BUTTON:
@@ -567,7 +566,6 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
      * @return
      */
     public FormInputLayout setSpinner(ArrayList<String> items, final SpinnerSelectionListener listener) {
-        laySpinner.setVisibility(VISIBLE);
 
         layInputBox.setVisibility(GONE);
         layAutoComplete.setVisibility(GONE);
@@ -591,9 +589,8 @@ public class FormInputLayout extends ConstraintLayout implements FormInputLayout
     }
 
     public void setSpinner(List<String> items) {
-        //laySpinner.setVisibility(VISIBLE);
         if (isSpinnerOnly){
-            LayoutParams layoutParams=new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,spSpinner.getHeight());
+            LayoutParams layoutParams=new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             spSpinner.setLayoutParams(layoutParams);
         }
 

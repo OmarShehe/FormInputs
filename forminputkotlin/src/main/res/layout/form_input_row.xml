@@ -89,7 +89,7 @@
                         android:contentDescription="@string/app_name"
                         android:padding="2dp"
                         android:src="@drawable/ic_close_grey"
-                        android:visibility="gone" />
+                        android:visibility="visible" />
                 </LinearLayout>
 
                 <TextView
