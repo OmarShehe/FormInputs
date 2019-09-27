@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+        <RelativeLayout
+            android:id="@+id/layButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+            <FrameLayout
+                android:id="@+id/lytButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/btnNoImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_btn_click"
+                    android:contentDescription="@string/app_name"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:text="@string/Submit"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorWhite" />
+
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_close_grey" />
+
+            <ProgressBar
+                android:id="@+id/btnProgressBar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/lytButton"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:indeterminate="true"
+                android:visibility="visible" />
+
+        </RelativeLayout>
+
+
+
+
+</layout>

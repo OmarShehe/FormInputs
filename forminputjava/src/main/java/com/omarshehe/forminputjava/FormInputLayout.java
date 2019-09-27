@@ -732,6 +732,7 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
             showInputError("",GONE);
         }
 
+
         PasswordStrength str = PasswordStrength.calculateStrength(password);
         tvPassStrength.setText(str.toString());
         tvPassStrength.setTextColor(str.getColor());

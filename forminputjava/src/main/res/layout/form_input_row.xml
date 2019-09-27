@@ -17,6 +17,7 @@
                 android:id="@+id/layLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="2dp"
                 android:visibility="visible">
 
                 <TextView
@@ -25,9 +26,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="2dp"
                     android:layout_marginLeft="2dp"
-                    android:fontFamily="@font/nunito_sans_reguler"
+                    android:fontFamily="@font/roboto_regular"
                     android:text="@string/label"
-                    android:textColor="#4a4a4a"
+                    android:textColor="@color/colorGrey"
                     android:textSize="14sp" />
 
                 <TextView
@@ -40,7 +41,7 @@
                     android:layout_toRightOf="@+id/tvLabel"
                     android:text="@string/star"
                     android:textColor="@color/red"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -252,7 +253,6 @@
             android:paddingLeft="10dp"
             android:paddingTop="3dp"
             android:paddingRight="10dp"
-            android:paddingBottom="3dp"
             android:text="@string/app_name"
             android:textColor="@color/red"
             android:textSize="12sp"

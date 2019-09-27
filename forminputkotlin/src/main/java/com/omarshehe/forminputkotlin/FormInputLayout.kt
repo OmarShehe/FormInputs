@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.children
 import com.omarshehe.forminputkotlin.adapter.AutoCompleteAdapter
+import com.omarshehe.forminputkotlin.utils.FormInputContract
 import kotlinx.android.synthetic.main.form_input_row.view.*
 import java.util.*
 
@@ -25,7 +26,7 @@ class FormInputLayout : RelativeLayout,TextWatcher{
     var TAG : String ="FormInputLayout"
     var mOnTouchListener : OnTouchListener? = null
     private var mAdapterAutocomplete: AutoCompleteAdapter? = null
-    private val mPresenter: FormInputLayoutContract.Presenter? = null
+    private val mPresenter: FormInputContract.Presenter? = null
 
     val TYPE_INPUTBOX = 1
     val TYPE_AUTO_COMPLETE = 2
@@ -184,7 +185,7 @@ class FormInputLayout : RelativeLayout,TextWatcher{
                 layLabel.visibility = View.VISIBLE
                 layPassword.visibility = View.VISIBLE
                 txtPassword.addTextChangedListener(this)
-                ///PasswordStrength(isShowStrength)
+                ///PasswordStrength2(isShowStrength)
             }
             TYPE_AUTO_COMPLETE -> {
                 layLabel.visibility = View.VISIBLE
@@ -195,14 +196,14 @@ class FormInputLayout : RelativeLayout,TextWatcher{
             }
             TYPE_SPINNER -> {
                 layLabel.visibility = View.VISIBLE
-                laySpinner.visibility = View.VISIBLE
+                //laySpinner.visibility = View.VISIBLE
                 val getArray = resources.getStringArray(mArrayList)
                 val listArray = Arrays.asList(*getArray)
                 //setSpinner(listArray)
             }
             TYPE_BUTTON -> {
                 layLabel.visibility = View.GONE
-                layButton.visibility = View.VISIBLE
+                //layButton.visibility = View.VISIBLE
             }
 
             else -> layInputBox.visibility = View.VISIBLE

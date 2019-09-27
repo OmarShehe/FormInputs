@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Form Inputs</string>
     <string name="cantBeEmpty">%s can\'t be empty</string>
+    <string name="isRequired">%s is required</string>
     <string name="value">value</string>
     <string name="inValidEmail">Invalid email address</string>
     <string name="select">Select</string>
@@ -18,4 +19,6 @@
     <string name="hintPassword">%s must be at least 8 characters</string>
     <string name="weak">Weak</string>
     <string name="pleaseWait">Please, wait..</string>
+    <string name="Submit">Submit</string>
+    <string name="passHit">Password must be at least 6 characters long.Password must not be longer than 20 characters.Password must not contain space or unicode characters.</string>
 </resources>
