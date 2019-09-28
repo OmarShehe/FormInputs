@@ -179,7 +179,7 @@ class FormInputMultiline  : RelativeLayout, FormInputContract.View, TextWatcher 
         return txtMultiline.text.toString()
     }
 
-    fun getTextInput() : EditText{
+    fun getInputBox() : EditText{
         return txtMultiline
     }
 

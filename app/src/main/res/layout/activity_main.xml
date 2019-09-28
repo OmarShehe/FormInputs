@@ -97,7 +97,6 @@
             app:customer_isMandatory="true"
             app:customer_label="Price"
             app:customer_value=""
-
             />
 
         <com.omarshehe.forminputkotlin.FormInputText

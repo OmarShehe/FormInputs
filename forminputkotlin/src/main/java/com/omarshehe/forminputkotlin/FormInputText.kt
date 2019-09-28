@@ -12,6 +12,7 @@ import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.RelativeLayout
 import androidx.core.view.children
 import com.omarshehe.forminputkotlin.utils.FormInputContract
@@ -103,6 +104,11 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
         txtInputBox.setText(value)
     }
 
+    fun setBackground(background: Int) {
+        layInputBox.setBackgroundResource(background)
+    }
+
+
     private fun showInputError(error: String, visible: Int) {
         mErrorMessage = error
         tvError.text = error
@@ -131,9 +137,7 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
         }
     }
 
-    fun getValue(): String {
-        return txtInputBox.text.toString()
-    }
+
 
     private fun setInputType(inputType: Int) {
         mInputType = inputType
@@ -151,8 +155,12 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
     }
 
 
-    fun setBackground(background: Int) {
-        layInputBox.setBackgroundResource(background)
+    fun getValue(): String {
+        return txtInputBox.text.toString()
+    }
+
+    fun getInputBox() : EditText{
+        return txtInputBox
     }
 
 
