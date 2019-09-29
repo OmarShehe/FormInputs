@@ -4,7 +4,7 @@
 
 
 Demo:
-![alt text](https://github.com/OmarShehe/FormInputs/blob/master/app/release/app-release.apk)
+![Demo APK](https://github.com/OmarShehe/FormInputs/blob/master/app/release/app-release.apk)
 
 Add it in your root build.gradle at the end of repositories:
 ```
