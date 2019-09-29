@@ -1,5 +1,8 @@
 # Form Input
 
+![alt text](https://github.com/OmarShehe/FormInputs/forminputs.gif)
+```
+
 Add it in your root build.gradle at the end of repositories:
 ```
 allprojects {
@@ -12,7 +15,7 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-	        implementation 'com.github.OmarShehe:FormInputs:1.0'
+	        implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:1.0.1'
 	}
 ```
 
@@ -20,15 +23,15 @@ dependencies {
 
 Spinner
 ```
-<com.omarshehe.forminputjava.FormInputLayout
+ <com.omarshehe.forminputkotlin.FormInputSpinner
             android:id="@+id/gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:customer_component="spinner"
             app:customer_hint="Select gender"
             app:customer_array="@array/array_gender"
             app:customer_isMandatory="true"
-            app:customer_label="Gender" />
+            app:customer_label="Gender"
+            app:customer_value="" />
 ```
 
 Auto Complete
@@ -51,110 +54,108 @@ Auto Complete
 
 Text
 ```
- <com.omarshehe.forminputjava.FormInputLayout
+<com.omarshehe.forminputkotlin.FormInputText
             android:id="@+id/fullName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:inputType="textAutoCorrect"
-            app:customer_component="inputBox"
             app:customer_hint="Your full name"
             app:customer_inputType="text"
             app:customer_isMandatory="true"
-            app:customer_label="Full Name" />
+            app:customer_label="Full Name"
+            app:customer_value="" />
 
 ```
 
 Phone Numer
 ```
- <com.omarshehe.forminputjava.FormInputLayout
-            android:id="@+id/phoneNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:inputType="textAutoCorrect"
-            app:customer_component="inputBox"
-            app:customer_hint="Your phone number"
-            app:customer_inputType="phoneNumber"
-            app:customer_isMandatory="true"
-            app:customer_label="Phone Number" />
+ <com.omarshehe.forminputkotlin.FormInputText
+             android:id="@+id/phoneNumber"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="16dp"
+             app:customer_hint="Your phone number"
+             app:customer_inputType="phoneNumber"
+             app:customer_isMandatory="true"
+             app:customer_label="Phone Number"
+             app:customer_value=""/>
 ```
 
 
 Number
 ```
- <com.omarshehe.forminputjava.FormInputLayout
-            android:id="@+id/ID"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:inputType="textAutoCorrect"
-            app:customer_component="inputBox"
-            app:customer_hint="Your ID number"
-            app:customer_inputType="number"
-            app:customer_isMandatory="false"
-            app:customer_label="ID Number" />
+  <com.omarshehe.forminputkotlin.FormInputText
+             android:id="@+id/ID"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="16dp"
+             app:customer_hint="Your ID number"
+             app:customer_inputType="number"
+             app:customer_isMandatory="false"
+             app:customer_label="ID Number"
+             app:customer_value=""/>
 ```
 
 Email
 ```
-        <com.omarshehe.forminputjava.FormInputLayout
-            android:id="@+id/email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:inputType="textAutoCorrect"
-            app:customer_component="inputBox"
-            app:customer_hint="Your email address"
-            app:customer_inputType="email"
-            app:customer_isMandatory="true"
-            app:customer_label="Email" />
+         <com.omarshehe.forminputkotlin.FormInputText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:inputType="textAutoCorrect"
+                    app:customer_hint="Your email address"
+                    app:customer_inputType="email"
+                    app:customer_isMandatory="true"
+                    app:customer_label="Email"
+                    app:customer_value=""/>
 ```
 
 
 Mault line
 ```
-        <com.omarshehe.forminputjava.FormInputLayout
-            android:id="@+id/about"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:inputType="text"
-            app:customer_component="inputBox"
-            app:customer_height="250"
-            app:customer_hint="About you"
-            app:customer_isMandatory="true"
-            app:customer_isMultiLine="true"
-            app:customer_label="About you"
-            app:customer_maxLength="500"
-            app:customer_maxLines="20" />
+        <com.omarshehe.forminputkotlin.FormInputMultiline
+                    android:id="@+id/about"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:customer_height="250"
+                    app:customer_hint="About you"
+                    app:customer_isMandatory="true"
+                    app:customer_label="About you"
+                    app:customer_value=""
+                    app:customer_maxLength="500"/>
 ```
 
 
 Password
 ```
-        <com.omarshehe.forminputjava.FormInputLayout
-            android:id="@+id/password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:inputType="textPassword"
-            app:customer_component="password"
-            app:customer_hint="Your password"
-            app:customer_inputType="text"
-            app:customer_isMandatory="true"
-            app:customer_label="Password"
-            app:customer_showPassStrength="true" />
+        <com.omarshehe.forminputkotlin.FormInputPassword
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:inputType="textPassword"
+                app:customer_hint="Your password"
+                app:customer_isMandatory="true"
+                app:customer_label="Password"
+                app:customer_showPassStrength="true"
+                app:customer_value="" />
 ```
 
 
 Button
 ```
-        <com.omarshehe.forminputjava.FormInputLayout
-            android:id="@+id/btnSubmit"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            app:customer_component="button" />
-```
+        <com.omarshehe.forminputkotlin.FormInputButton
+                   android:id="@+id/btnSubmit"
+                   android:layout_width="200dp"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:layout_marginTop="16dp"
+                    app:customer_background="@drawable/btn_click"
+                    app:customer_progressColor="@color/colorPink"
+                    app:customer_showProgress="false"
+                    app:customer_textColor="@color/white"
+                    app:customer_value="@string/Submit"
+                    app:customer_valueOnLoad="Please, wait.." />
