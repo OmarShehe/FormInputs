@@ -1,7 +1,7 @@
 # Form Input
 
-![alt text](https://github.com/OmarShehe/FormInputs/forminputs.gif)
-```
+![alt text](https://raw.githubusercontent.com/OmarShehe/FormInputs/master/forminputs.gif)
+
 
 Add it in your root build.gradle at the end of repositories:
 ```
