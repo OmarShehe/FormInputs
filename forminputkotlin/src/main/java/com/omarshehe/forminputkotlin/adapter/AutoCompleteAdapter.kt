@@ -1,61 +1,49 @@
 package com.omarshehe.forminputkotlin.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Filter
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.omarshehe.forminputkotlin.R
 import java.util.ArrayList
 
-
-class AutoCompleteAdapter :  ArrayAdapter<String> {
-    private var mContext : Context
-    private var mListener : ItemSelectedListener
-    private var mItems: ArrayList<String> = ArrayList()
-    private var mTempItems: ArrayList<String> = ArrayList()
-    private var mSuggestions: ArrayList<String> = ArrayList()
-    private var mDisableFilter: Boolean = true
-
-
-    constructor(context: Context, resource: Int, textViewResourceId: Int, items: ArrayList<String>,listener : ItemSelectedListener) : super(context, resource, textViewResourceId, items){
-        mContext=context
-        mListener=listener
-        mItems=items
-        mTempItems= ArrayList(items)
-        mSuggestions=ArrayList()
-
-
-    }
+class AutoCompleteAdapter(context: Context, resource: Int, private val items: ArrayList<String>, private val mListener: ItemSelectedListener)
+    : ArrayAdapter<String>(context, resource, items) {
+    private val tempItems: ArrayList<String> = ArrayList(items)
+    private val suggestions: ArrayList<String> = ArrayList()
+    private var disableFilter: Boolean = false
 
     private val nameFilter = object : Filter() {
         override fun convertResultToString(resultValue: Any): CharSequence {
             return resultValue as String
         }
 
-        override fun performFiltering(constraint: CharSequence?): Filter.FilterResults {
-            if (constraint != null) {
-                mSuggestions.clear()
-                for (item in mTempItems) {
+        @SuppressLint("DefaultLocale")
+        override fun performFiltering(constraint: CharSequence?): FilterResults {
+            return if (constraint != null) {
+                suggestions.clear()
+                for (item in tempItems) {
                     if (item.toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        mSuggestions.add(item)
+                        suggestions.add(item)
                     }
                 }
-                val filterResults = Filter.FilterResults()
-                filterResults.values = mSuggestions
-                filterResults.count = mSuggestions.size
-                return filterResults
+                val filterResults = FilterResults()
+                filterResults.values = suggestions
+                filterResults.count = suggestions.size
+                filterResults
             } else {
-                return Filter.FilterResults()
+                FilterResults()
             }
         }
 
-        override fun publishResults(constraint: CharSequence, results: Filter.FilterResults) {
-            if (mDisableFilter) {
+        override fun publishResults(constraint: CharSequence, results: FilterResults) {
+            if (disableFilter) {
                 clear()
-                for (item in mTempItems) {
+                for (item in tempItems) {
                     add(item)
                     notifyDataSetChanged()
                 }
@@ -72,34 +60,32 @@ class AutoCompleteAdapter :  ArrayAdapter<String> {
         }
     }
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+    override fun getFilter(): Filter {
+        return nameFilter
+    }
 
-        val item = mItems[position]
-        val lblName = convertView?.findViewById(R.id.txtAutocomplete) as TextView
+    fun disableFilter(disableFilter: Boolean) {
+        this.disableFilter = disableFilter
+    }
 
-        lblName.text = item
-
-        (convertView.findViewById(R.id.layParent) as LinearLayout).setOnClickListener {
-            mListener.onItemSelected(
-                item
-            )
+    override fun getView(position: Int, view: View?, parent: ViewGroup): View? {
+        var convertView = view
+        if (convertView == null) {
+            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            convertView = inflater.inflate(R.layout.listitem_autocomplete, parent, false)
         }
+        val item = items[position]
+        val lblName = convertView!!.findViewById<TextView>(R.id.tvView)
+        if (lblName != null){
+            lblName.text = item
+        }
+        convertView.findViewById<View>(R.id.layParent).setOnClickListener { mListener.onItemSelected(item) }
         return convertView
     }
 
-
-    fun DisableFilter(disableFilter : Boolean){
-        mDisableFilter=disableFilter
-    }
-
-
-    override fun getFilter(): Filter {
-        return super.getFilter()
-    }
-
     interface ItemSelectedListener {
-        public fun onItemSelected(item: String) {
-
-        }
+        fun onItemSelected(item: String?)
     }
+
+
 }

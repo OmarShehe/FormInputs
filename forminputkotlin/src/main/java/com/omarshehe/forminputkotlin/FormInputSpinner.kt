@@ -1,6 +1,6 @@
 package com.omarshehe.forminputkotlin
 
-import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -14,82 +14,90 @@ import android.widget.RelativeLayout
 import android.widget.Spinner
 import androidx.core.view.children
 import com.omarshehe.forminputkotlin.utils.SavedState
+import com.omarshehe.forminputkotlin.utils.Utils
+import com.omarshehe.forminputkotlin.utils.Utils.showInputError
 import kotlinx.android.synthetic.main.form_input_spinner.view.*
 import java.util.*
 
 class FormInputSpinner : RelativeLayout {
-
-
-    var TAG : String ="FormInputSpinnerA"
-
+    private var TAG : String ="FormInputSpinnerA"
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mValue : String = ""
+    private var mHeight : Int = 100
     private var mErrorMessage :String = ""
     private var mBackground: Int =R.drawable.bg_txt_square
     private var inputError:Int = 1
     private var isMandatory: Boolean = false
     private var mInputType:Int = 1
     private var mArrayList :List<String> = emptyArray<String>().toList()
-
+    private var isShowValidIcon= true
     private var firstOpen: Int = 0
+    private var attrs: AttributeSet? =null
+    private var styleAttr: Int = 0
 
-    constructor(context: Context?) : super(context)
+    constructor(activity: Activity) : super(activity){
+        initView()
+    }
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        this.attrs=attrs
+        initView()
+    }
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs,defStyleAttr) {
+        this.attrs = attrs
+        styleAttr=defStyleAttr
+        initView()
+    }
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+    private fun initView() {
         LayoutInflater.from(context).inflate(R.layout.form_input_spinner, this, true)
-
-
         /**
          * Get Attributes
          */
-        @SuppressLint("CustomViewStyleable", "Recycle")
-        if(context!=null){
-            val a = context.obtainStyledAttributes(attrs, R.styleable.FormInputLayout)
-            mLabel = a.getString(R.styleable.FormInputLayout_customer_label) as String
-            mValue = a.getString(R.styleable.FormInputLayout_customer_value) as String
-            mHint = a.getString(R.styleable.FormInputLayout_customer_hint) as String
+        if (context != null) {
+            val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout, 0, 0)
+            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_label))
+            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_hint))
+            mValue = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_value))
+            mHeight = a.getDimension(R.styleable.FormInputLayout_customer_height, resources.getDimension(R.dimen.input_box_height)).toInt()
             isMandatory = a.getBoolean(R.styleable.FormInputLayout_customer_isMandatory, false)
             mBackground = a.getResourceId(R.styleable.FormInputLayout_customer_background, R.drawable.bg_txt_square)
             mInputType = a.getInt(R.styleable.FormInputLayout_customer_inputType, 1)
+            isShowValidIcon = a.getBoolean(R.styleable.FormInputLayout_customer_showValidIcon, true)
 
             val list = a.getResourceId(R.styleable.FormInputLayout_customer_array, R.array.array)
-
-            setLabel(mLabel)
-            setMandatory(isMandatory)
+            setIcons()
+            mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
             setHint(mHint)
+            height = mHeight
+            setMandatory(isMandatory)
             setBackground(mBackground)
-            imgNoError.visibility= GONE
-
-            mErrorMessage= String.format(resources.getString(R.string.isRequired), tvLabel.text)
-
+            imgNoError.visibility = GONE
+            mErrorMessage = String.format(resources.getString(R.string.isRequired), mLabel)
             val getIntArray = resources.getStringArray(list)
-            setSpinner(listOf(*getIntArray))
+            setAdapter(listOf(*getIntArray))
+            a.recycle()
         }
     }
 
     /**
      * Set components
      */
-    private fun setLabel(label: String) {
-        if (mLabel != "") {
-            setLabelVisibility(true)
-            tvLabel.text = label
-        } else {
-            setLabelVisibility(false)
-        }
+    private fun setIcons(){
+        imgNoError.setImageResource(R.drawable.check_green)
     }
-    private fun setLabelVisibility(shouldShow: Boolean) {
-        tvLabel.visibility = if (shouldShow) VISIBLE else GONE
+    fun setLabel(text:String): FormInputSpinner{
+        mLabel=Utils.setLabel(tvLabel,text,isMandatory)
+        return this
     }
-
-    private fun setMandatory(mandatory: Boolean) {
-        isMandatory = mandatory
-        tvMandatory.visibility = if (isMandatory) VISIBLE else GONE
+    fun setMandatory(mandatory: Boolean) : FormInputSpinner {
+        isMandatory =mandatory
+        mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+        return this
     }
-
-    private fun setHint(hint: String) {
+    fun setHint(hint: String) :FormInputSpinner{
         mHint=hint
+        return this
     }
 
 
@@ -102,17 +110,36 @@ class FormInputSpinner : RelativeLayout {
         }
     }
 
+    fun setHeight(height: Int) : FormInputSpinner {
+        val lparams = LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            height
+        )
+        spSpinner.layoutParams=lparams
+        return this
+    }
 
-    fun setBackground(background: Int) {
+    fun setBackground(background: Int): FormInputSpinner {
         layInputBox.setBackgroundResource(background)
+        return this
+    }
+    fun showValidIcon(showIcon: Boolean) : FormInputSpinner {
+        isShowValidIcon=showIcon
+        return this
+    }
+
+    /**
+     * For save Instance State of the view in programmatically access
+     */
+    fun setID(id:Int):FormInputSpinner{
+        this.id=id
+        return this
     }
 
 
     /**
      * Get components
      */
-
-
     fun getValue(): String {
         return spSpinner.selectedItem.toString()
     }
@@ -126,14 +153,12 @@ class FormInputSpinner : RelativeLayout {
     /**
      *  set up Spinner
      */
-    fun setSpinner(items: List<String>) {
+    fun setAdapter(items: List<String>):FormInputSpinner {
         mArrayList=items
         val spinnerArrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spSpinner.adapter = spinnerArrayAdapter
-
-
-            spSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 if (isMandatory && firstOpen!=0) {
                     validateSpinner(mHint)
@@ -142,10 +167,10 @@ class FormInputSpinner : RelativeLayout {
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
-
+        return this
     }
 
-    fun setSpinner(items: ArrayList<String>, listener: SpinnerSelectionListener) {
+    fun setAdapter(items: ArrayList<String>, listener: SpinnerSelectionListener) :FormInputSpinner {
         mArrayList=items
         val spinnerArrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -156,67 +181,49 @@ class FormInputSpinner : RelativeLayout {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
         spSpinner.adapter = spinnerArrayAdapter
+
+        return this
     }
 
 
     private fun validateSpinner(hint: String) {
         if (getValue()== hint) {
-            showInputError(String.format(resources.getString(R.string.isRequired), tvLabel.text), View.VISIBLE)
+            verifyInputError(String.format(resources.getString(R.string.isRequired), mLabel), View.VISIBLE)
         } else {
-            showInputError("", View.GONE)
-
-
+            verifyInputError("", View.GONE)
         }
     }
-
-
 
     /**
      * Errors
      */
-    private fun showInputError(error: String, visible: Int) {
-        mErrorMessage = error
-        tvError.text = error
-        tvError.visibility = visible
-
-        inputError = if (visible == VISIBLE) {
-            showNoErrorIcon(GONE)
-            1
-        } else {
-            showNoErrorIcon(VISIBLE)
-            0
-        }
+    private fun verifyInputError(error: String, visible: Int){
+        val errorResult=showInputError(tvError,imgNoError,isShowValidIcon, error, visible)
+        mErrorMessage=errorResult[0].toString()
+        inputError=errorResult[1].toString().toInt()
     }
 
     fun isError(parentView: View?): Boolean {
         return if (inputError == 1) {
-            showInputError(mErrorMessage, View.VISIBLE)
+            verifyInputError(mErrorMessage, View.VISIBLE)
             if (parentView != null) {
                 parentView.scrollTo(0, tvError.top)
                 spSpinner.requestFocus()
             }
             true
         } else {
-            showInputError("", View.GONE)
+            verifyInputError("", View.GONE)
             false
         }
     }
-
-    private fun showNoErrorIcon(visibility: Int){
-        imgNoError.visibility= visibility
-    }
-
-
 
 
     /**
      * Interface and Listener
      */
-
     interface SpinnerSelectionListener {
         fun onSpinnerItemSelected(item: String)
     }
-
 
     /**
      * Save Instance State of the view

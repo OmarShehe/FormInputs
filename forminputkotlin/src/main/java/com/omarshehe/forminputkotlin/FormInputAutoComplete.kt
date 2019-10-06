@@ -1,38 +1,46 @@
 package com.omarshehe.forminputkotlin
 
+/**
+ * Created by omars on 10/2/2019.
+ * Author omars
+ */
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Resources
 import android.os.Parcelable
 import android.text.Editable
-import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.SparseArray
 import android.view.*
 import android.widget.EditText
 import android.widget.RelativeLayout
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.children
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
+import com.omarshehe.forminputkotlin.adapter.AutoCompleteAdapter
 import com.omarshehe.forminputkotlin.utils.FormInputContract
 import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
-import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
-import kotlinx.android.synthetic.main.form_input_multiline.view.*
+import kotlinx.android.synthetic.main.form_input_autocomplete.view.*
+import java.util.*
+import kotlin.properties.Delegates
 
-class FormInputMultiline  : RelativeLayout, FormInputContract.View, TextWatcher {
+class FormInputAutoComplete : RelativeLayout, FormInputContract.View, TextWatcher {
+    private lateinit var mAdapterAutocomplete: AutoCompleteAdapter
     private lateinit var mPresenter: FormInputContract.Presenter
+
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mValue : String = ""
+    private var mHeight : Int = 100
     private var mErrorMessage :String = ""
     private var mBackground: Int =R.drawable.bg_txt_square
     private var inputError:Int = 1
     private var isMandatory: Boolean = false
-    private var mMaxLength:Int = 0
-    private var mHeight: Int = 200
-    private var mMaxLines: Int = 5
+    private var mInputType:Int = 1
     private var isShowValidIcon= true
+    private var mArrayList :List<String> = emptyArray<String>().toList()
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
 
@@ -49,8 +57,10 @@ class FormInputMultiline  : RelativeLayout, FormInputContract.View, TextWatcher 
         initView()
     }
 
+
+    @SuppressLint("NewApi")
     private fun initView(){
-        LayoutInflater.from(context).inflate(R.layout.form_input_multiline, this, true)
+        LayoutInflater.from(context).inflate(R.layout.form_input_autocomplete, this, true)
         mPresenter = FormInputPresenterImpl(this)
         /**
          * Get Attributes
@@ -59,28 +69,39 @@ class FormInputMultiline  : RelativeLayout, FormInputContract.View, TextWatcher 
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
             mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_label))
             mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_hint))
-            mValue= Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_value))
+            mValue=Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_value))
             mHeight = a.getDimension(R.styleable.FormInputLayout_customer_height,resources.getDimension( R.dimen.input_box_height)).toInt()
-            isMandatory = a.getBoolean(R.styleable.FormInputLayout_customer_isMandatory, false)
             mBackground = a.getResourceId(R.styleable.FormInputLayout_customer_background, R.drawable.bg_txt_square)
-            mMaxLines = a.getInt(R.styleable.FormInputLayout_customer_maxLines, 5)
-            mMaxLength = a.getInt(R.styleable.FormInputLayout_customer_maxLength, 300)
+            isMandatory = a.getBoolean(R.styleable.FormInputLayout_customer_isMandatory, false)
             isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_customer_showValidIcon, true)
+            mInputType = a.getInt(R.styleable.FormInputLayout_customer_inputType, 1)
+            val list = a.getResourceId(R.styleable.FormInputLayout_customer_array, R.array.array)
+
 
             setIcons()
             mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
-
             setHint(mHint)
             setValue(mValue)
-            height()
+            height = mHeight
             setBackground(mBackground)
-            setScroll()
-            setMaxLength(mMaxLength)
-            setMaxLines(mMaxLines)
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
-            txtMultiline.addTextChangedListener(this)
+            txtInputBox.addTextChangedListener(this)
+
+            txtInputBox.setOnClickListener { txtInputBox.showDropDown() }
+            disableAutoCompleteTextSelection()
+
+            val autoCompleteArray = resources.getStringArray(list)
+            val autoCompleteListArray = ArrayList(listOf(*autoCompleteArray))
+            setAdapter(autoCompleteListArray)
+
+            iconDropDown.setOnClickListener{ showDropDown();arrowIconState=true }
+            txtInputBox.setOnDismissListener{ arrowIconState=false }
+
             a.recycle()
         }
+    }
+    private var arrowIconState: Boolean by Delegates.observable(false) { _, old, new ->
+        if (new != old) changeIconState(iconDropDown!!, new)
     }
 
     /**
@@ -90,100 +111,73 @@ class FormInputMultiline  : RelativeLayout, FormInputContract.View, TextWatcher 
         imgNoError.setImageResource(R.drawable.check_green)
     }
 
-    fun setLabel(text:String): FormInputMultiline{
+    fun setLabel(text:String): FormInputAutoComplete{
         mLabel=Utils.setLabel(tvLabel,text,isMandatory)
         return this
     }
 
-    fun setMandatory(mandatory: Boolean) : FormInputMultiline {
+    fun setMandatory(mandatory: Boolean) : FormInputAutoComplete {
         isMandatory =mandatory
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
         return this
     }
 
-
-    fun setHint(hint: String) : FormInputMultiline {
-        txtMultiline.hint = hint
+    fun setHint(hint: String) :FormInputAutoComplete {
+        txtInputBox.hint = hint
         return this
     }
 
-    fun setValue(value: String) : FormInputMultiline{
+    fun setValue(value: String) :FormInputAutoComplete {
         mValue = value
-        txtMultiline.setText(value)
+        txtInputBox.setText(value)
         return this
     }
 
-    private fun height(){
-        txtMultiline.layoutParams=LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mHeight)
-    }
-
-    fun setHeight(height: Int) : FormInputMultiline {
-        mHeight = (height * Resources.getSystem().displayMetrics.density).toInt()
-        val lp = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mHeight)
-        txtMultiline.layoutParams = lp
+    fun setHeight(height: Int) : FormInputAutoComplete {
+        val lp = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+        txtInputBox.layoutParams=lp
         return this
     }
 
-    fun setMaxLength(getMaxLength: Int) : FormInputMultiline{
-        mMaxLength = getMaxLength
-        val filterArray = arrayOfNulls<InputFilter>(1)
-        filterArray[0] = InputFilter.LengthFilter(mMaxLength)
-        txtMultiline.filters = filterArray
-        countRemainInput()
-        return this
-    }
-
-    @SuppressLint("ClickableViewAccessibility", "RtlHardcoded")
-    private fun setScroll() {
-        txtMultiline.setSingleLine(false)
-        txtMultiline.gravity = Gravity.LEFT or Gravity.TOP
-        txtMultiline.setPadding(15, 15, 15, 15)
-        txtMultiline.scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
-        txtMultiline.isVerticalScrollBarEnabled = true
-        txtMultiline.overScrollMode = 0
-        txtMultiline.setOnTouchListener { v, event ->
-            v.parent.requestDisallowInterceptTouchEvent(true)
-            if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_UP) {
-                v.parent.requestDisallowInterceptTouchEvent(false)
-            }
-            false
-        }
-    }
-
-    fun setMaxLines(maxLines: Int) : FormInputMultiline{
-        txtMultiline.maxLines = maxLines
-        return this
-    }
-
-    fun setBackground(background: Int) : FormInputMultiline{
+    fun setBackground(background: Int) : FormInputAutoComplete  {
         layInputBox.setBackgroundResource(background)
         return this
     }
 
-    fun showValidIcon(showIcon: Boolean) : FormInputMultiline {
+    fun showValidIcon(showIcon: Boolean) : FormInputAutoComplete {
         isShowValidIcon=showIcon
         return this
+    }
+    private fun changeIconState(view: AppCompatImageView, state: Boolean) {
+        val animFromDoneToClose: AnimatedVectorDrawableCompat? =
+            AnimatedVectorDrawableCompat.create(context, R.drawable.arrow_down_to_up)
+        val animFromCloseToDone: AnimatedVectorDrawableCompat? =
+            AnimatedVectorDrawableCompat.create(context, R.drawable.arrow_downtoup)
+        val animation = if (state) animFromCloseToDone else animFromDoneToClose
+        if (animation == view.drawable) return
+        view.setImageDrawable(animation)
+        animation?.start()
     }
 
     /**
      * For save Instance State of the view in programmatically access
      */
-    fun setID(id:Int):FormInputMultiline{
+    fun setID(id:Int):FormInputAutoComplete{
         this.id=id
         return this
     }
-
 
     /**
      * Get components
      */
     fun getValue(): String {
-        return txtMultiline.text.toString()
+        return txtInputBox.text.toString()
     }
 
     fun getInputBox() : EditText{
-        return txtMultiline
+        return txtInputBox
     }
+
 
     /**
      * Errors
@@ -199,9 +193,8 @@ class FormInputMultiline  : RelativeLayout, FormInputContract.View, TextWatcher 
         return if (inputError == 1) {
             verifyInputError(mErrorMessage, VISIBLE)
             if (parentView != null) {
-                hideKeyboard(context)
                 parentView.scrollTo(0, tvError.top)
-                txtMultiline.requestFocus()
+                txtInputBox.requestFocus()
             }
             true
         } else {
@@ -212,39 +205,104 @@ class FormInputMultiline  : RelativeLayout, FormInputContract.View, TextWatcher 
 
 
     /**
+     * Auto Complete
+     *
+     */
+    fun setAdapter(items: ArrayList<String>): FormInputAutoComplete {
+        mArrayList=items
+        txtInputBox.setShowAlways(true)
+        mAdapterAutocomplete = AutoCompleteAdapter(context, R.id.tvView, items, object : AutoCompleteAdapter.ItemSelectedListener {
+            override fun onItemSelected(item: String?) {
+                mValue = item.toString()
+                txtInputBox.setText(item)
+                txtInputBox.setSelection(mValue.length)
+                txtInputBox.dismissDropDown()
+                verifyInputError("", View.GONE)
+                arrowIconState=false
+            }
+        })
+        txtInputBox.setAdapter(mAdapterAutocomplete)
+        return this
+    }
+
+
+    fun disableSearch(): FormInputAutoComplete {
+        mAdapterAutocomplete.disableFilter(true)
+        txtInputBox.isLongClickable = false
+        txtInputBox.setTextIsSelectable(false)
+        txtInputBox.isFocusable = false
+        txtInputBox.customSelectionActionModeCallback = object : ActionMode.Callback {
+            override fun onCreateActionMode(actionMode: ActionMode, menu: Menu): Boolean {
+                return false
+            }
+
+            override fun onPrepareActionMode(actionMode: ActionMode, menu: Menu): Boolean {
+                return false
+            }
+
+            override fun onActionItemClicked(actionMode: ActionMode, item: MenuItem): Boolean {
+                return false
+            }
+
+            override fun onDestroyActionMode(actionMode: ActionMode) {}
+        }
+        return this
+    }
+
+    private fun disableAutoCompleteTextSelection() {
+        txtInputBox.customSelectionActionModeCallback = object : ActionMode.Callback {
+            override fun onCreateActionMode(actionMode: ActionMode, menu: Menu): Boolean {
+                return false
+            }
+            override fun onPrepareActionMode(actionMode: ActionMode, menu: Menu): Boolean {
+                return false
+            }
+
+            override fun onActionItemClicked(actionMode: ActionMode, item: MenuItem): Boolean {
+                return false
+            }
+
+            override fun onDestroyActionMode(actionMode: ActionMode) {}
+        }
+        txtInputBox.isLongClickable = false
+        txtInputBox.setTextIsSelectable(false)
+    }
+
+    fun showDropDown(): FormInputAutoComplete {
+        txtInputBox.showDropDown()
+        return this
+    }
+
+
+    /**
      * Listener on text change
      * */
     override fun afterTextChanged(s: Editable?) {
     }
-
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
     }
-
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         inputBoxOnTextChange(s.toString())
-
     }
-
     private fun inputBoxOnTextChange(value: String) {
         mValue=value
+        arrowIconState = txtInputBox.isPopupShowing
         if (mValue.isEmpty()) {
             if (isMandatory) {
                 verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
             } else {
                 verifyInputError("", View.GONE)
             }
-
         } else {
-            verifyInputError("", View.GONE)
+            if (isMandatory) {
+                verifyInputError(String.format(resources.getString(R.string.isRequired), mLabel), View.VISIBLE)
+            }else{
+                verifyInputError("", View.GONE)
+            }
         }
-        countRemainInput()
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun countRemainInput(){
-        val rem = mMaxLength - mValue.length
-        txtLengthDesc.text = "$rem / $mMaxLength Characters Only"
-    }
+
 
     /**
      * Save Instance State of the view

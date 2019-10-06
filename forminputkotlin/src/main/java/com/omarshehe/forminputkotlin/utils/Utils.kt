@@ -1,0 +1,62 @@
+package com.omarshehe.forminputkotlin.utils
+
+import android.app.Activity
+import android.content.Context
+import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
+import androidx.core.text.HtmlCompat
+import com.omarshehe.forminputkotlin.R
+
+/**
+ * Created by omars on 10/1/2019.
+ * Author omars
+ */
+object Utils {
+    fun checkTextNotNull(txt :String?) :String{
+        return txt ?: ""
+    }
+
+    fun setLabel(txtView : TextView, label: String,isMandatory: Boolean) :String {
+        if (label != "") {
+            val mandatory= if(isMandatory) "*" else ""
+            txtView.text = HtmlCompat.fromHtml(String.format(txtView.context.getString(R.string.label),label,mandatory), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        } else {
+            val mandatory= if(isMandatory) "*" else ""
+            txtView.text = HtmlCompat.fromHtml(String.format(txtView.context.getString(R.string.label),"",mandatory), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        }
+        return label
+    }
+
+    fun setViewVisibility(view: View, shouldShow: Boolean) :Boolean{
+        view.visibility = if (shouldShow) VISIBLE else GONE
+        return shouldShow
+    }
+
+
+    fun showInputError(txtView : TextView,viewNoError: View,showNoErrorIcon: Boolean, stringError: String, visible: Int): Array<Any>  {
+        txtView.text = stringError
+        txtView.visibility = visible
+        val intError = if (visible == VISIBLE) {
+            setViewVisibility(viewNoError,false)
+            1
+        } else {
+            if(showNoErrorIcon){
+                setViewVisibility(viewNoError,true)
+            }
+            0
+        }
+
+        return arrayOf(stringError, intError)
+    }
+
+    fun hideKeyboard(context: Context) {
+        val activity: Activity = context as Activity
+        val view: View? = activity.currentFocus
+        (activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(view?.windowToken, 0)
+
+    }
+
+}

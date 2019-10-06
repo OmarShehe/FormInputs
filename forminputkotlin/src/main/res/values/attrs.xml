@@ -6,22 +6,24 @@
         <attr name="customer_label" format="string" />
         <attr name="customer_value" format="string" />
         <attr name="customer_background" format="reference"/>
+        <attr name="customer_showValidIcon" format="boolean"/>
 
         <attr name="customer_valueOnLoad" format="string" />
         <attr name="customer_textColor" format="reference" />
         <attr name="customer_progressColor" format="reference" />
         <attr name="customer_showProgress" format="boolean" />
-
-
-
+        <attr name="customer_cornerRadius" format="integer" />
 
         <attr name="customer_maxLines" format="integer" />
-        <attr name="customer_height" format="integer" />
+        <attr name="customer_height" format="dimension" />
         <attr name="customer_isMandatory" format="boolean" />
         <attr name="customer_maxLength" format="integer"/>
         <attr name="customer_isMultiLine" format="boolean"/>
         <attr name="customer_showPassStrength" format="boolean"/>
         <attr name="customer_array" format="reference"/>
+
+        <attr name="customer_showTips" format="boolean"/>
+        <attr name="customer_enforceRules" format="boolean"/>
 
         <attr name="customer_component" format="integer">
             <enum name="inputBox" value="1" />

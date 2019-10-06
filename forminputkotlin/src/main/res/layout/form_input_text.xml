@@ -1,117 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
+
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:id="@+id/tvLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="3dp"
+        android:layout_marginLeft="2dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/label"
+        android:textColor="@color/colorGrey"
+        android:textSize="14sp" />
 
     <RelativeLayout
+        android:id="@+id/layInputBox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvLabel"
+        android:background="@drawable/bg_txt_square"
+        android:visibility="visible">
 
-        <RelativeLayout
-            android:id="@+id/lyView"
+        <EditText
+            android:id="@+id/txtInputBox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RelativeLayout
-                android:id="@+id/layLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="2dp"
-                android:visibility="visible">
-
-                <TextView
-                    android:id="@+id/tvLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginLeft="2dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="@string/label"
-                    android:textColor="@color/colorGrey"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/tvMandatory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_toEndOf="@+id/tvLabel"
-                    android:layout_toRightOf="@+id/tvLabel"
-                    android:text="@string/star"
-                    android:textColor="@color/red"
-                    android:textSize="14sp" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/layInputBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/layLabel"
-                android:background="@drawable/bg_txt_square"
-                android:visibility="visible">
-
-                <EditText
-                    android:id="@+id/txtInputBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_toStartOf="@+id/iconCancel"
-                    android:layout_toLeftOf="@+id/iconCancel"
-                    android:background="@color/colorTransparent"
-                    android:fontFamily="@font/roboto_regular"
-                    android:hint="@string/app_name"
-                    android:maxLines="1"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:textSize="14sp"
-                    android:visibility="visible" />
-
-                <ImageView
-                    android:id="@+id/iconCancel"
-                    android:layout_width="30dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:contentDescription="@string/app_name"
-                    android:padding="8dp"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/ic_close_grey" />
-
-            </RelativeLayout>
-
-            <!--Input box-->
-
-            <!-- Drop down -->
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/tvError"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lyView"
-            android:fontFamily="@font/roboto_light"
-            android:gravity="end"
+            android:layout_height="@dimen/input_box_height"
+            android:layout_toStartOf="@+id/iconCancel"
+            android:layout_toLeftOf="@+id/iconCancel"
+            android:background="@color/colorTransparent"
+            android:fontFamily="@font/roboto_regular"
+            android:hint="@string/app_name"
+            android:maxLines="1"
             android:paddingLeft="10dp"
-            android:paddingTop="3dp"
             android:paddingRight="10dp"
-            android:text="@string/app_name"
-            android:textColor="@color/red"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:visibility="visible" />
 
         <ImageView
-            android:id="@+id/imgNoError"
-            android:layout_width="17dp"
-            android:layout_height="17dp"
+            android:id="@+id/iconCancel"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:contentDescription="@string/app_name"
+            android:padding="8dp"
             android:visibility="gone"
-            app:srcCompat="@drawable/check_green" />
+            app:srcCompat="@drawable/ic_close_grey" />
 
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/tvError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layInputBox"
+        android:fontFamily="@font/roboto_light"
+        android:gravity="end"
+        android:paddingLeft="10dp"
+        android:paddingTop="3dp"
+        android:paddingRight="10dp"
+        android:text="@string/app_name"
+        android:textColor="@color/colorRed"
+        android:textSize="12sp"
+        android:visibility="gone" />
 
-</layout>
+    <ImageView
+        android:id="@+id/imgNoError"
+        android:layout_width="17dp"
+        android:layout_height="17dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/app_name"
+        android:visibility="gone"
+        app:srcCompat="@drawable/check_green" />
+
+
+</RelativeLayout>

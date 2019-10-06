@@ -1,11 +1,11 @@
 package com.omarshehe.forminputkotlin.utils
 
-import android.graphics.Color
+import com.omarshehe.forminputkotlin.R
 
 class  PasswordStrength {
 
 enum class PassLevel(resId: Int, color: Int) {
-    Weak(0, Color.RED), Medium(1, Color.argb(255, 220, 185, 0)), Strong(2, Color.parseColor("#28A645"));
+    Weak(0, R.color.colorRed), Medium(1, R.color.colorOrange), Strong(2, R.color.colorGreen);
     private var mResId: Int = resId
     private var mColor: Int = color
 
@@ -27,10 +27,6 @@ enum class PassLevel(resId: Int, color: Int) {
 
 
 
-
-
-
-
     fun calculateStrength(password: String): PassLevel {
         var currentScore = 0
         var sawUpper = false
@@ -39,7 +35,6 @@ enum class PassLevel(resId: Int, color: Int) {
         var sawSpecial = false
 
         for (element in password) {
-
             if (!sawSpecial && !Character.isLetterOrDigit(element)) {
                 currentScore += 1
                 sawSpecial = true

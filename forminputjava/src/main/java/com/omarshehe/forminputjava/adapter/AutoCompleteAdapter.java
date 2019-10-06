@@ -93,13 +93,6 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> {
             if (lblName != null)
                 lblName.setText(item);
 
-//            lblName.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    mListener.onItemSelected(item);
-//                }
-//            });
-
             ((LinearLayout) view.findViewById(R.id.layParent)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".FormInputAutoComplete">
     <TextView
         android:id="@+id/tvLabel"
         android:layout_width="wrap_content"
@@ -16,42 +16,43 @@
         android:text="@string/label"
         android:textColor="@color/colorGrey"
         android:textSize="14sp" />
+
     <RelativeLayout
         android:id="@+id/layInputBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvLabel"
         android:background="@drawable/bg_txt_square"
+        android:padding="2dp"
         android:visibility="visible">
 
-        <EditText
-            android:id="@+id/txtMultiline"
+        <com.omarshehe.forminputkotlin.widget.AutoCompleteView
+            android:id="@+id/txtInputBox"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/colorTransparent"
+            android:layout_height="@dimen/input_box_height"
+            android:layout_toStartOf="@+id/iconDropDown"
+            android:layout_toLeftOf="@+id/iconDropDown"
+            android:background="#FFFFFF"
             android:fontFamily="@font/roboto_regular"
-            android:hint="@string/app_name"
-            android:inputType="textMultiLine|textCapSentences"
+            android:gravity="center_vertical"
+            android:hint="@string/select"
+            android:inputType="textAutoComplete"
+            android:paddingStart="10dp"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textSize="14sp"
-            android:visibility="visible" />
+            android:paddingEnd="0dp"
+            android:paddingRight="0dp"
+            android:singleLine="true"
+            android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/txtLengthDesc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txtMultiline"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iconDropDown"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/roboto_light"
-            android:singleLine="true"
-            android:text="@string/charactersOnly"
-            android:textSize="12sp"
-            android:visibility="visible" />
+            android:layout_centerVertical="true"
+            android:padding="8dp"
+            app:srcCompat="@drawable/arrow_downtoup" />
 
     </RelativeLayout>
 
@@ -59,7 +60,7 @@
         android:id="@+id/tvError"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layInputBox"
+        android:layout_below="@id/layInputBox"
         android:fontFamily="@font/roboto_light"
         android:gravity="end"
         android:paddingLeft="10dp"
@@ -80,4 +81,6 @@
         android:visibility="gone"
         app:srcCompat="@drawable/check_green" />
 
+
 </RelativeLayout>
+

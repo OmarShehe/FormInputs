@@ -9,8 +9,7 @@
     <string name="inValidPhoneNumber">Invalid phone number</string>
     <string name="star">*</string>
     <string name="charactersOnly">300/300 Characters Only</string>
-    <string name="label">Label</string>
-
+    <string name="label">%s &lt;b&gt; &lt;font color="#FA0602"> %s &lt;font>  &lt;/b&gt;</string>
 
     <string name="password_strength_weak">Weak</string>
     <string name="password_strength_medium">Medium</string>

@@ -16,53 +16,7 @@
         android:padding="10dp"
         android:focusableInTouchMode="true">
 
-       <!--  <com.omarshehe.forminputjava.FormInputLayout
-        android:id="@+id/gender"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:customer_component="spinner"
-        app:customer_hint="Select gender"
-        app:customer_array="@array/array_gender"
-        app:customer_isMandatory="true"
-        app:customer_label="Gender" />
 
-         <com.omarshehe.forminputjava.FormInputLayout
-            android:id="@+id/company"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:inputType="textAutoCorrect"
-            app:customer_array="@array/array_company"
-            app:customer_component="autoComplete"
-            app:customer_inputType="text"
-            app:customer_hint="Enter your company"
-            app:customer_isMandatory="true"
-            app:customer_label="Company" />
-             <com.omarshehe.forminputkotlin.FormInputText
-            android:id="@+id/price"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:customer_component="spinnerInputBox"
-            app:customer_hint="Enter Price"
-            app:customer_array="@array/array_currency"
-            app:customer_inputType="number"
-            app:customer_isMandatory="true"
-            app:customer_label="Price" />
-
-             <com.omarshehe.forminputkotlin.FormInputText
-            android:id="@+id/about"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:customer_height="250"
-            app:customer_hint="About you"
-            app:customer_isMandatory="true"
-            app:customer_isMultiLine="true"
-            app:customer_label="About you"
-             app:customer_background="@drawable/shadow" />
-
--->
         <com.omarshehe.forminputkotlin.FormInputSpinner
             android:id="@+id/gender"
             android:layout_width="match_parent"
@@ -71,19 +25,30 @@
             app:customer_array="@array/array_gender"
             app:customer_isMandatory="true"
             app:customer_label="Gender"
-            app:customer_value="" />
+            app:customer_showValidIcon="false"/>
+
+        <com.omarshehe.forminputkotlin.FormInputAutoComplete
+            android:id="@+id/country"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:customer_array="@array/array_country"
+            app:customer_height="40dp"
+            app:customer_hint="Your country"
+            app:customer_inputType="text"
+            app:customer_isMandatory="true"
+            app:customer_label="Country" />
 
         <com.omarshehe.forminputkotlin.FormInputText
             android:id="@+id/fullName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:inputType="textAutoCorrect"
+            app:customer_height="40dp"
             app:customer_hint="Your full name"
             app:customer_inputType="text"
             app:customer_isMandatory="true"
-            app:customer_label="Full Name"
-            app:customer_value="" />
+            app:customer_label="Full Name" />
 
 
         <com.omarshehe.forminputkotlin.FormInputSpinnerInputBox
@@ -95,9 +60,7 @@
             app:customer_hint="Enter Price"
             app:customer_inputType="number"
             app:customer_isMandatory="true"
-            app:customer_label="Price"
-            app:customer_value=""
-            />
+            app:customer_label="Price" />
 
         <com.omarshehe.forminputkotlin.FormInputText
             android:id="@+id/phoneNumber"
@@ -107,8 +70,7 @@
             app:customer_hint="Your phone number"
             app:customer_inputType="phoneNumber"
             app:customer_isMandatory="true"
-            app:customer_label="Phone Number"
-            app:customer_value=""/>
+            app:customer_label="Phone Number"/>
 
         <com.omarshehe.forminputkotlin.FormInputText
             android:id="@+id/ID"
@@ -118,8 +80,7 @@
             app:customer_hint="Your ID number"
             app:customer_inputType="number"
             app:customer_isMandatory="false"
-            app:customer_label="ID Number"
-            app:customer_value=""/>
+            app:customer_label="ID Number"/>
 
 
         <com.omarshehe.forminputkotlin.FormInputMultiline
@@ -127,11 +88,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:customer_height="250"
+            app:customer_height="100dp"
             app:customer_hint="About you"
             app:customer_isMandatory="true"
             app:customer_label="About you"
-            app:customer_value=""
             app:customer_maxLength="500"/>
 
 
@@ -144,41 +104,33 @@
             app:customer_hint="Your email address"
             app:customer_inputType="email"
             app:customer_isMandatory="true"
-            app:customer_label="Email"
-            app:customer_value=""/>
-
-
-
-
+            app:customer_label="Email"/>
 
 
         <com.omarshehe.forminputkotlin.FormInputPassword
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:inputType="textPassword"
-        app:customer_hint="Your password"
-        app:customer_isMandatory="true"
-        app:customer_label="Password"
-        app:customer_showPassStrength="true"
-        app:customer_value="" />
-
-
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:customer_hint="Your password"
+            app:customer_isMandatory="true"
+            app:customer_label="Password"
+            app:customer_showPassStrength="true" />
 
         <com.omarshehe.forminputkotlin.FormInputButton
-           android:id="@+id/btnSubmit"
-           android:layout_width="200dp"
-           android:layout_height="wrap_content"
-           android:layout_gravity="center"
-           android:layout_marginTop="16dp"
-            app:customer_background="@drawable/btn_click"
+            android:id="@+id/btnSubmit"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            app:customer_background="@color/colorPrimary"
+            app:customer_cornerRadius="100"
+            app:customer_height="55dp"
             app:customer_progressColor="@color/colorPink"
-            app:customer_showProgress="false"
+            app:customer_showProgress="true"
             app:customer_textColor="@color/white"
             app:customer_value="@string/Submit"
             app:customer_valueOnLoad="Please, wait.." />
-
     </LinearLayout>
 
 

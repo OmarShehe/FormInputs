@@ -14,4 +14,20 @@
     <color name="colorRed">#F50000</color>
     <color name="colorLiterGrey">#D5F7F7F7</color>
     <color name="colorTransparent">#00FFFFFF</color>
+
+    <color name="sub_btn_background">#424a52</color>
+
+    <color name="sub_btn_line">#00c68c</color>
+
+    <color name="sub_btn_ripple">#eff0f2</color>
+
+    <color name="sub_btn_tick">#eff0f2</color>
+
+    <color name="white">#ffffff</color>
+
+    <color name="gray">#627676</color>
+
+    <color name="yellow">#eef26c</color>
+
+    <color name="black">#000000</color>
 </resources>

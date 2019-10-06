@@ -35,8 +35,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.omarshehe.forminputjava.Utils.PasswordStrength;
 import com.omarshehe.forminputjava.adapter.AutoCompleteAdapter;
 
@@ -302,24 +300,26 @@ public class FormInputLayout extends RelativeLayout implements FormInputLayoutCo
             txtInputBox.setFilters(filterArray);
         }
         if (mComponentType == TYPE_AUTO_COMPLETE) {
-            InputFilter[] filterArray = new InputFilter[1];
+            /*InputFilter[] filterArray = new InputFilter[1];
             filterArray[0] = new InputFilter.LengthFilter(maxLength);
-            autoCompleteTxt.setFilters(filterArray);
+            autoCompleteTxt.setFilters(filterArray);*/
         }
     }
 
-    @SuppressLint({"ClickableViewAccessibility", "RtlHardcoded"})
+    @SuppressLint({"ClickableViewAccessibility", "RtlHardcoded", "ResourceType"})
     public void setMultiline(boolean isMultiline, int maxLength) {
         setMaxLength(maxLength);
         this.isMultiline = isMultiline;
         txtLengthDesc.setVisibility(VISIBLE);
         iconCancel.setVisibility(GONE);
 
-        final LayoutParams lparams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height); // Width , height
+        final LayoutParams lparams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
+        lparams.setMargins(2,2,2,2);
         getInputBox().setLayoutParams(lparams);
         getInputBox().setSingleLine(false);
         getInputBox().setGravity(Gravity.LEFT | Gravity.TOP);
         getInputBox().setPadding(15, 15, 15, 15);
+
 
         txtInputBox.setScrollBarStyle(SCROLLBARS_INSIDE_INSET);
         txtInputBox.setVerticalScrollBarEnabled(true);

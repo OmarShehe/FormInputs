@@ -1,30 +1,28 @@
 package com.omarshehe.forminputkotlin
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Parcelable
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.Log
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RelativeLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import com.omarshehe.forminputkotlin.utils.FormInputContract
 import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
 import com.omarshehe.forminputkotlin.utils.SavedState
+import com.omarshehe.forminputkotlin.utils.Utils
+import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
 import kotlinx.android.synthetic.main.form_input_text.view.*
 
 
 class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
-
-
-    var TAG : String ="FormInputLayout"
     private lateinit var mPresenter: FormInputContract.Presenter
 
     val INPUTTYPE_TEXT = 1
@@ -35,111 +33,109 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mValue : String = ""
+    private var mHeight : Int = 100
     private var mErrorMessage :String = ""
     private var mBackground: Int =R.drawable.bg_txt_square
     private var inputError:Int = 1
     private var isMandatory: Boolean = false
     private var mInputType:Int = 1
+    private var isShowValidIcon= true
 
+    private var attrs: AttributeSet? =null
+    private var styleAttr: Int = 0
 
-    constructor(context: Context?) : super(context)
+    constructor(context: Context) : super(context){
+        initView()
+    }
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        this.attrs=attrs
+        initView()
+    }
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs,defStyleAttr) {
+        this.attrs = attrs
+        styleAttr=defStyleAttr
+        initView()
+    }
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+    private fun initView(){
         LayoutInflater.from(context).inflate(R.layout.form_input_text, this, true)
-
         mPresenter = FormInputPresenterImpl(this)
         /**
          * Get Attributes
          */
-        @SuppressLint("CustomViewStyleable", "Recycle")
         if(context!=null){
-            val a = context.obtainStyledAttributes(attrs, R.styleable.FormInputLayout)
-            mLabel = a.getString(R.styleable.FormInputLayout_customer_label) as String
-            mValue = a.getString(R.styleable.FormInputLayout_customer_value) as String
-            mHint = a.getString(R.styleable.FormInputLayout_customer_hint) as String
-            isMandatory = a.getBoolean(R.styleable.FormInputLayout_customer_isMandatory, false)
+            val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
+            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_label))
+            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_hint))
+            mValue=Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_value))
+            mHeight = a.getDimension(R.styleable.FormInputLayout_customer_height,resources.getDimension( R.dimen.input_box_height)).toInt()
             mBackground = a.getResourceId(R.styleable.FormInputLayout_customer_background, R.drawable.bg_txt_square)
+            isMandatory = a.getBoolean(R.styleable.FormInputLayout_customer_isMandatory, false)
+            isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_customer_showValidIcon, true)
             mInputType = a.getInt(R.styleable.FormInputLayout_customer_inputType, 1)
 
-            setLabel(mLabel)
-            setMandatory(isMandatory)
-            setInputType(mInputType)
+            setIcons()
+            mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+
             setHint(mHint)
-            setBackground(mBackground)
-            imgNoError.visibility= GONE
             setValue(mValue)
-            mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), tvLabel.text)
+            height = mHeight
+            setInputType(mInputType)
+            setBackground(mBackground)
+            mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtInputBox.addTextChangedListener(this)
-
-            iconCancel.visibility=GONE
             iconCancel.setOnClickListener { txtInputBox.setText("") }
-
+            a.recycle()
         }
     }
 
-
-    private fun setLabel(label: String) {
-        if (mLabel != "") {
-            setLabelVisibility(true)
-            tvLabel.text = label
-        } else {
-            setLabelVisibility(false)
-        }
-    }
-    private fun setLabelVisibility(shouldShow: Boolean) {
-        tvLabel.visibility = if (shouldShow) VISIBLE else GONE
+    /**
+     * Set components
+     */
+    private fun setIcons(){
+        iconCancel.setImageResource(R.drawable.ic_close_grey)
+        imgNoError.setImageResource(R.drawable.check_green)
     }
 
-    private fun setMandatory(mandatory: Boolean) {
-        isMandatory = mandatory
-        tvMandatory.visibility = if (isMandatory) VISIBLE else GONE
+    fun setLabel(text:String): FormInputText{
+        mLabel=Utils.setLabel(tvLabel,text,isMandatory)
+        return this
     }
 
-    private fun setHint(hint: String) {
+    fun setMandatory(mandatory: Boolean) : FormInputText {
+        isMandatory =mandatory
+        mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+        return this
+    }
+
+    fun setHint(hint: String) :FormInputText {
         txtInputBox.hint = hint
+        return this
     }
 
-    fun setValue(value: String) {
+    fun setValue(value: String) :FormInputText {
         mValue = value
         txtInputBox.setText(value)
+        return this
     }
 
-    fun setBackground(background: Int) {
+    fun setHeight(height: Int) : FormInputText {
+        val lp = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+        txtInputBox.layoutParams=lp
+        return this
+    }
+
+    fun setBackground(background: Int) : FormInputText  {
         layInputBox.setBackgroundResource(background)
+        return this
     }
 
-
-    private fun showInputError(error: String, visible: Int) {
-        mErrorMessage = error
-        tvError.text = error
-        tvError.visibility = visible
-
-        inputError = if (visible == VISIBLE) {
-            showNoErrorIcon(GONE)
-            1
-        } else {
-            showNoErrorIcon(VISIBLE)
-            0
-        }
+    fun showValidIcon(showIcon: Boolean) : FormInputText {
+        isShowValidIcon=showIcon
+        return this
     }
 
-    fun isError(parentView: View?): Boolean {
-        return if (inputError == 1) {
-            showInputError(mErrorMessage, View.VISIBLE)
-            if (parentView != null) {
-                parentView.scrollTo(0, tvError.top)
-                txtInputBox.requestFocus()
-            }
-            true
-        } else {
-            showInputError("", View.GONE)
-            false
-        }
-    }
-
-
-
-    private fun setInputType(inputType: Int) {
+    fun setInputType(inputType: Int) : FormInputText  {
         mInputType = inputType
 
         when (mInputType) {
@@ -152,9 +148,21 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
             INPUTTYPE_EMAIL -> txtInputBox.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
         }
 
+        return this
+    }
+
+    /**
+     * For save Instance State of the view in programmatically access
+     */
+    fun setID(id:Int):FormInputText{
+        this.id=id
+        return this
     }
 
 
+    /**
+     * Get components
+     */
     fun getValue(): String {
         return txtInputBox.text.toString()
     }
@@ -164,59 +172,79 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
     }
 
 
-    private fun showNoErrorIcon(visibility: Int){
-        imgNoError.visibility= visibility
+    /**
+     * Errors
+     */
+    private fun verifyInputError(error: String, visible: Int){
+        val errorResult=Utils.showInputError(tvError,imgNoError,isShowValidIcon, error, visible)
+        mErrorMessage=errorResult[0].toString()
+        inputError=errorResult[1].toString().toInt()
     }
+
+
+    fun isError(parentView: View?): Boolean {
+        return if (inputError == 1) {
+            verifyInputError(mErrorMessage, VISIBLE)
+            if (parentView != null) {
+                hideKeyboard(context)
+                parentView.scrollTo(0, tvError.top)
+                txtInputBox.requestFocus()
+
+            }
+            true
+        } else {
+            verifyInputError("", View.GONE)
+            false
+        }
+    }
+
+
 
     /**
      * Listener on text change
      * */
     override fun afterTextChanged(s: Editable?) {
     }
-
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
     }
-
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         inputBoxOnTextChange(s.toString())
-
     }
-
     private fun inputBoxOnTextChange(value: String) {
         mValue=value
         iconCancel.visibility = if (mValue.isNotEmpty()) VISIBLE else GONE
 
         if (mValue.isEmpty()) {
             if (isMandatory) {
-                showInputError(String.format(resources.getString(R.string.cantBeEmpty), tvLabel.text), View.VISIBLE)
+                verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
             } else {
-                showInputError("", View.GONE)
+                verifyInputError("", View.GONE)
             }
         } else {
-            showInputError("", View.GONE)
+            verifyInputError("", View.GONE)
 
             if (mInputType == INPUTTYPE_EMAIL) {
-                Log.d("EMAIL",mPresenter.isValidEmail(mValue).toString())
                 if (mPresenter.isValidEmail(mValue)) {
-                    txtInputBox.setTextColor(resources.getColor(R.color.black))
-                    showInputError("", View.GONE)
+                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.black))
+                    verifyInputError("", View.GONE)
                 } else {
-                    txtInputBox.setTextColor(resources.getColor(R.color.red))
-                    showInputError(resources.getString(R.string.inValidEmail), View.VISIBLE)
+                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorRed))
+                    verifyInputError(resources.getString(R.string.inValidEmail), View.VISIBLE)
                 }
             }
 
             if (mInputType == INPUTTYPE_PHONE) {
                 if (mPresenter.isValidPhoneNumber(mValue)) {
-                    txtInputBox.setTextColor(resources.getColor(R.color.black))
-                    showInputError("", View.GONE)
+                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.black))
+                    verifyInputError("", View.GONE)
                 } else {
-                    txtInputBox.setTextColor(resources.getColor(R.color.red))
-                    showInputError(resources.getString(R.string.inValidPhoneNumber), View.VISIBLE)
+                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorRed))
+                    verifyInputError(resources.getString(R.string.inValidPhoneNumber), View.VISIBLE)
                 }
             }
         }
     }
+
 
 
     /**

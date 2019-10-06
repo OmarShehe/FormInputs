@@ -3,8 +3,13 @@
 ![alt text](https://raw.githubusercontent.com/OmarShehe/FormInputs/master/forminputs.gif)
 
 
+
+[![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-FormInputs-green.svg?style=flat )]( https://android-arsenal.com/details/1/7888 )
+
+
 Demo:
 ![Demo APK](https://github.com/OmarShehe/FormInputs/blob/master/app/release/app-release.apk)
+
 
 Add it in your root build.gradle at the end of repositories:
 ```
@@ -162,3 +167,5 @@ Button
                     app:customer_textColor="@color/white"
                     app:customer_value="@string/Submit"
                     app:customer_valueOnLoad="Please, wait.." />
+
+```
