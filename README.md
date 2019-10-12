@@ -32,7 +32,7 @@ If you want to use the features that have not been packaged in an official relea
 
 ```
 dependencies {
-     implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:master-SNAPSHOT'
+     implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:-SNAPSHOT'
 }
 ```
 
