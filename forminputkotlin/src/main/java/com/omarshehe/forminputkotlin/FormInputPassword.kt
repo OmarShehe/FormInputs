@@ -2,7 +2,6 @@ package com.omarshehe.forminputkotlin
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.PorterDuff
 import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,11 +14,15 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.omarshehe.forminputkotlin.utils.PasswordStrength
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import kotlinx.android.synthetic.main.form_input_password.view.*
+import kotlin.properties.Delegates
 
 class FormInputPassword : RelativeLayout, TextWatcher {
     var TAG : String ="FormInputPasswordA"
@@ -33,6 +36,11 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     private var isMandatory: Boolean = false
     private var isShowPassStrength: Boolean =false
     private var isShowValidIcon= true
+
+    private var mPassLength=8
+
+
+
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
@@ -59,14 +67,14 @@ class FormInputPassword : RelativeLayout, TextWatcher {
          */
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,0,0)
-            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_label))
-            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_hint))
-            mValue= Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_value))
-            mHeight = a.getDimension(R.styleable.FormInputLayout_customer_height,resources.getDimension( R.dimen.input_box_height)).toInt()
-            isMandatory = a.getBoolean(R.styleable.FormInputLayout_customer_isMandatory, false)
-            mBackground = a.getResourceId(R.styleable.FormInputLayout_customer_background, R.drawable.bg_txt_square)
-            isShowPassStrength = a.getBoolean(R.styleable.FormInputLayout_customer_showPassStrength, true)
-            isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_customer_showValidIcon, true)
+            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
+            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
+            mValue= Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
+            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.input_box_height)).toInt()
+            isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
+            mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
+            isShowPassStrength = a.getBoolean(R.styleable.FormInputLayout_form_showPassStrength, true)
+            isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
 
             setIcons()
             mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
@@ -76,16 +84,24 @@ class FormInputPassword : RelativeLayout, TextWatcher {
             showPassStrength(isShowPassStrength)
             setBackground(mBackground)
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
-            if(isShowPassStrength){ txtPassword.addTextChangedListener(this) }
+            txtPassword.addTextChangedListener(this)
+
+            setPassLength(mPassLength)
             a.recycle()
 
 
         }
     }
 
+    fun setPassLength(passLength:Int) {
+        mPassLength=passLength
+        tvHintLong.text=resources.getString(R.string.passHintLong,mPassLength)
+
+    }
+
     private fun setIcons(){
         Utils.setViewVisibility(imgNoError,false)
-        imgNoError.setImageResource(R.drawable.check_green)
+        imgNoError.setImageResource(R.drawable.check_anim)
     }
 
     fun setLabel(text:String): FormInputPassword{
@@ -156,33 +172,88 @@ class FormInputPassword : RelativeLayout, TextWatcher {
             password.isEmpty() -> {
                 verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
                 passView.updateProgress(0)
+                upperCaseIcon=false
+                numberIcon=false
+                specialIcon=false
+                lengthIcon=false
                 return
             }
-            password.length < 8 -> verifyInputError(String.format(resources.getString(R.string.hintPassword), mLabel), View.VISIBLE)
             else -> verifyInputError("", View.GONE)
         }
 
-        val str = PasswordStrength().calculateStrength(password)
+        if(isShowPassStrength){
+            val str  =PasswordStrength().calculateStrength(mPassLength,password)
 
-        tvPassStrength.text = str.toString()
-        tvPassStrength.setTextColor(str.getColor())
+            val passLevel= str[0] as PasswordStrength.PassLevel
+            val result: Int=str[1] as Int
+            tvPassStrength.text = passLevel.name
+            tvPassStrength.setTextColor(ContextCompat.getColor(context,passLevel.getColor()))
+            passView.updateProgress( result,passLevel.getColor())
 
-       // pgPassStrength.progressDrawable.setColorFilter(str.getColor(), PorterDuff.Mode.SRC_ATOP)
+            upperCaseIcon=str[2] as Boolean
+            specialIcon=str[3] as Boolean
+            numberIcon=str[4] as Boolean
+            lengthIcon=str[5] as Boolean
 
-        when {
-            str.toString() == "Weak" -> {
-
-                passView.updateProgress(1,str.getColor())
-            }
-            str.toString() == "Medium" ->{
-
-                passView.updateProgress(3,str.getColor())
-            }
-            else ->{
-                passView.updateProgress(4,str.getColor())
+            if(result==4){
+                verifyInputError("", View.GONE)
+            }else{
+                verifyInputError("Password need to meet the requirements", View.VISIBLE)
             }
         }
+
+
     }
+
+
+
+
+    private var upperCaseIcon: Boolean by Delegates.observable(false) { _, old, new ->
+        if (new != old)
+            changeIcon(iconHintUpperCase!!, new)
+
+    }
+
+    private var numberIcon: Boolean by Delegates.observable(false) { _, old, new ->
+        if (new != old)
+            changeIcon(iconHintNumber!!, new)
+
+    }
+
+    private var specialIcon: Boolean by Delegates.observable(false) { _, old, new ->
+        if (new != old)
+            changeIcon(iconHintSpecial!!, new)
+
+    }
+    private var lengthIcon: Boolean by Delegates.observable(false) { _, old, new ->
+        if (new != old)
+            changeIcon(iconHintLong!!, new)
+
+    }
+
+
+
+    private fun changeIcon(view: AppCompatImageView, state: Boolean) {
+        val animFromDoneToClose: AnimatedVectorDrawableCompat? =
+            AnimatedVectorDrawableCompat.create(context, R.drawable.ic_done_to_close)
+        val animFromCloseToDone: AnimatedVectorDrawableCompat? =
+            AnimatedVectorDrawableCompat.create(context, R.drawable.ic_close_to_done)
+        val animation = if (state) animFromCloseToDone else animFromDoneToClose
+        if (animation == view.drawable) return
+        view.setImageDrawable(animation)
+        animation?.start()
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
     /**
@@ -222,9 +293,15 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         if(isShowPassStrength){
             updatePasswordStrengthView(s.toString())
+        }else{
+            if(s.toString().isEmpty()){
+                verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
+            }else{
+                verifyInputError("", View.GONE)
+            }
+
         }
     }
-
 
 
     /**

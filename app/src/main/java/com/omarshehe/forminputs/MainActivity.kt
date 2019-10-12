@@ -24,8 +24,6 @@ class MainActivity : AppCompatActivity() {
                         btnSubmit.showLoading(false)
                         startActivity(Intent(this, Programmatically::class.java))
                     }, 1000)
-
-
                 }
             }
         }

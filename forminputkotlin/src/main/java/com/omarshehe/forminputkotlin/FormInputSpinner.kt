@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.form_input_spinner.view.*
 import java.util.*
 
 class FormInputSpinner : RelativeLayout {
-    private var TAG : String ="FormInputSpinnerA"
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mValue : String = ""
@@ -56,16 +55,16 @@ class FormInputSpinner : RelativeLayout {
          */
         if (context != null) {
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout, 0, 0)
-            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_label))
-            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_hint))
-            mValue = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_value))
-            mHeight = a.getDimension(R.styleable.FormInputLayout_customer_height, resources.getDimension(R.dimen.input_box_height)).toInt()
-            isMandatory = a.getBoolean(R.styleable.FormInputLayout_customer_isMandatory, false)
-            mBackground = a.getResourceId(R.styleable.FormInputLayout_customer_background, R.drawable.bg_txt_square)
-            mInputType = a.getInt(R.styleable.FormInputLayout_customer_inputType, 1)
-            isShowValidIcon = a.getBoolean(R.styleable.FormInputLayout_customer_showValidIcon, true)
+            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
+            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
+            mValue = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
+            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height, resources.getDimension(R.dimen.input_box_height)).toInt()
+            isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
+            mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
+            mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
+            isShowValidIcon = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
 
-            val list = a.getResourceId(R.styleable.FormInputLayout_customer_array, R.array.array)
+            val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
             setIcons()
             mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
             setHint(mHint)

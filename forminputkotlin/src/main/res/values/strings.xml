@@ -20,4 +20,5 @@
     <string name="pleaseWait">Please, wait..</string>
     <string name="Submit">Submit</string>
     <string name="passHit">Password must be at least 6 characters long.Password must not be longer than 20 characters.Password must not contain space or unicode characters.</string>
+    <string name="passHintLong">Be at least %d characters long</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.omarshehe.forminputkotlin
 
-import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
@@ -9,7 +8,6 @@ import android.os.Parcelable
 import android.text.SpannableString
 import android.text.Spanned
 import android.util.AttributeSet
-import android.util.Log
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -22,15 +20,9 @@ import com.omarshehe.forminputkotlin.utils.DrawableSpan
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import kotlinx.android.synthetic.main.form_input_button.view.*
-import android.util.TypedValue
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import kotlin.math.roundToInt
 
 
 class FormInputButton:RelativeLayout{
-
-    private val TAG :String ="FormInputButtonA"
     private var mValue : String = ""
     private var mValueOnLoad : String = ""
     private var mHeight : Int = 500
@@ -65,14 +57,14 @@ class FormInputButton:RelativeLayout{
         LayoutInflater.from(context).inflate(R.layout.form_input_button, this, true)
         if (context != null) {
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout, 0, 0)
-            mValue = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_value))
-            mValueOnLoad = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_valueOnLoad))
-            mHeight = a.getDimension(R.styleable.FormInputLayout_customer_height, resources.getDimension( R.dimen.input_box_height)).toInt()
-            isShowProgress = a.getBoolean(R.styleable.FormInputLayout_customer_showProgress, true)
-            mBackground = a.getResourceId(R.styleable.FormInputLayout_customer_background, R.color.colorGrey)
-            mTextColor = a.getResourceId(R.styleable.FormInputLayout_customer_textColor, R.color.white)
-            mProgressColor = a.getResourceId(R.styleable.FormInputLayout_customer_progressColor, R.color.white)
-            mCornerRadius = a.getInteger(R.styleable.FormInputLayout_customer_cornerRadius, 5)
+            mValue = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
+            mValueOnLoad = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_valueOnLoad))
+            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height, resources.getDimension( R.dimen.input_box_height)).toInt()
+            isShowProgress = a.getBoolean(R.styleable.FormInputLayout_form_showProgress, true)
+            mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.color.colorGrey)
+            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor, R.color.white)
+            mProgressColor = a.getResourceId(R.styleable.FormInputLayout_form_progressColor, R.color.white)
+            mCornerRadius = a.getInteger(R.styleable.FormInputLayout_form_cornerRadius, 5)
 
 
             progressDrawable = CircularProgressDrawable(context).apply {
@@ -106,8 +98,6 @@ class FormInputButton:RelativeLayout{
             height()
             setBackground(mBackground)
             setTextColor(mTextColor)
-            setProgressColor(mProgressColor)
-
             a.recycle()
         }
     }

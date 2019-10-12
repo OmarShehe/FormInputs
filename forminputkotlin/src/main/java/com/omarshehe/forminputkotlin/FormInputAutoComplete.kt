@@ -67,15 +67,15 @@ class FormInputAutoComplete : RelativeLayout, FormInputContract.View, TextWatche
          */
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
-            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_label))
-            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_hint))
-            mValue=Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_customer_value))
-            mHeight = a.getDimension(R.styleable.FormInputLayout_customer_height,resources.getDimension( R.dimen.input_box_height)).toInt()
-            mBackground = a.getResourceId(R.styleable.FormInputLayout_customer_background, R.drawable.bg_txt_square)
-            isMandatory = a.getBoolean(R.styleable.FormInputLayout_customer_isMandatory, false)
-            isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_customer_showValidIcon, true)
-            mInputType = a.getInt(R.styleable.FormInputLayout_customer_inputType, 1)
-            val list = a.getResourceId(R.styleable.FormInputLayout_customer_array, R.array.array)
+            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
+            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
+            mValue=Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
+            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.input_box_height)).toInt()
+            mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
+            isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
+            isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
+            mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
+            val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
 
 
             setIcons()

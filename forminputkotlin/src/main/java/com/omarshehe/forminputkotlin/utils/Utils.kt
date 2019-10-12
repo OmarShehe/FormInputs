@@ -7,8 +7,12 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.omarshehe.forminputkotlin.R
+import kotlin.properties.Delegates
 
 /**
  * Created by omars on 10/1/2019.
@@ -36,15 +40,15 @@ object Utils {
     }
 
 
-    fun showInputError(txtView : TextView,viewNoError: View,showNoErrorIcon: Boolean, stringError: String, visible: Int): Array<Any>  {
+    fun showInputError(txtView : TextView,viewNoError: AppCompatImageView,showNoErrorIcon: Boolean, stringError: String, visible: Int): Array<Any>  {
         txtView.text = stringError
         txtView.visibility = visible
         val intError = if (visible == VISIBLE) {
-            setViewVisibility(viewNoError,false)
+            showDoneIcon(viewNoError.context,viewNoError,false)
             1
         } else {
             if(showNoErrorIcon){
-                setViewVisibility(viewNoError,true)
+                showDoneIcon(viewNoError.context,viewNoError,true)
             }
             0
         }
@@ -56,6 +60,23 @@ object Utils {
         val activity: Activity = context as Activity
         val view: View? = activity.currentFocus
         (activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(view?.windowToken, 0)
+
+    }
+
+
+    private fun showDoneIcon(context: Context,view: AppCompatImageView,shouldShow: Boolean) {
+
+
+        if(view.isVisible!=shouldShow){
+            setViewVisibility(view, shouldShow)
+            val animCheckIcon: AnimatedVectorDrawableCompat? = AnimatedVectorDrawableCompat.create(context, R.drawable.check_anim)
+
+            if (animCheckIcon == view.drawable) return
+            view.setImageDrawable(animCheckIcon)
+            animCheckIcon?.start()
+        }
+        setViewVisibility(view, shouldShow)
+
 
     }
 
