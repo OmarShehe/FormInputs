@@ -142,11 +142,15 @@ class FormInputMultiline  : RelativeLayout, FormInputContract.View, TextWatcher 
         txtMultiline.isVerticalScrollBarEnabled = true
         txtMultiline.overScrollMode = 0
         txtMultiline.setOnTouchListener { v, event ->
-            v.parent.requestDisallowInterceptTouchEvent(true)
-            if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_UP) {
-                v.parent.requestDisallowInterceptTouchEvent(false)
+            if(txtMultiline.isFocused){
+                v.parent.requestDisallowInterceptTouchEvent(true)
+                if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_UP) {
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                }
+
             }
             false
+
         }
     }
 
