@@ -3,8 +3,8 @@
 ![alt text](https://raw.githubusercontent.com/OmarShehe/FormInputs/master/forminputs.gif)
 
 
+[![](https://jitpack.io/v/OmarShehe/FormInputs.svg)](https://jitpack.io/#OmarShehe/FormInputs)    [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-FormInputs-green.svg?style=flat )]( https://android-arsenal.com/details/1/7888 )
 
-[![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-FormInputs-green.svg?style=flat )]( https://android-arsenal.com/details/1/7888 )
 
 
 
@@ -20,7 +20,7 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-	        implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:1.0.1'
+	        implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:1.0.2'
 	}
 ```
 
@@ -32,7 +32,7 @@ If you want to use the features that have not been packaged in an official relea
 
 ```
 dependencies {
-     implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:-SNAPSHOT'
+     implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:master-SNAPSHOT'
 }
 ```
 
