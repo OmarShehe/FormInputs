@@ -34,6 +34,7 @@ class FormInputSpinner : RelativeLayout {
     private var firstOpen: Int = 0
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
+    private var mListener : SpinnerSelectionListener? =null
 
     constructor(activity: Activity) : super(activity){
         initView()
@@ -175,8 +176,8 @@ class FormInputSpinner : RelativeLayout {
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                listener.onSpinnerItemSelected(parent.selectedItem.toString())
                 if (isMandatory && firstOpen!=0) {
+                    listener.onSpinnerItemSelected(parent.selectedItem.toString())
                     validateSpinner(mHint)
                 }
                 firstOpen=1
@@ -220,6 +221,25 @@ class FormInputSpinner : RelativeLayout {
         }
     }
 
+
+    fun setOnSpinnerItemSelected(listener: SpinnerSelectionListener):FormInputSpinner{
+        mListener=listener
+        initClickListener()
+        return this
+    }
+
+    private fun initClickListener(){
+        spSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (isMandatory && firstOpen!=0) {
+                    mListener?.onSpinnerItemSelected(parent.selectedItem.toString())
+                    validateSpinner(mHint)
+                }
+                firstOpen=1
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+    }
 
     /**
      * Interface and Listener

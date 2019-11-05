@@ -24,6 +24,12 @@ class MainActivity : AppCompatActivity(),FormInputSpinner.SpinnerSelectionListen
 
 
 
+        gender.setOnSpinnerItemSelected(object :FormInputSpinner.SpinnerSelectionListener{
+            override fun onSpinnerItemSelected(item: String) {
+                Toast.makeText(applicationContext,"Spinner Item Selected",Toast.LENGTH_LONG).show()
+            }
+
+        })
 
         confirmPassword.setConfirmPassword(password)
         txtMaterialText.setTextInputLayout(vi as TextInputLayout)
