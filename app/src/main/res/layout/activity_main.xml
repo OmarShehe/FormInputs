@@ -25,7 +25,9 @@
             app:form_array="@array/array_gender"
             app:form_isMandatory="true"
             app:form_label="Gender"
-            app:form_showValidIcon="false"/>
+            app:form_showValidIcon="true"/>
+
+
 
         <com.omarshehe.forminputkotlin.FormInputAutoComplete
             android:id="@+id/country"
@@ -38,6 +40,29 @@
             app:form_inputType="text"
             app:form_isMandatory="true"
             app:form_label="Country" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/vi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hintPassword"
+            app:helperText="@string/app_name"
+            app:helperTextEnabled="true">
+
+            <com.omarshehe.forminputkotlin.FormInputMaterialText
+                android:id="@+id/txtMaterialText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/roboto_regular"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:singleLine="true"
+                android:textColor="@color/colorAccent"
+                android:textSize="14sp"
+                app:form_isMandatory="true"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.omarshehe.forminputkotlin.FormInputText
             android:id="@+id/fullName"
@@ -118,6 +143,18 @@
             app:form_showPassStrength="true"
             app:form_showValidIcon="true"/>
 
+        <com.omarshehe.forminputkotlin.FormInputPassword
+            android:id="@+id/confirmPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:form_hint="Confirm your password"
+            app:form_confirm="true"
+            app:form_isMandatory="true"
+            app:form_label="Confirm Password"
+            app:form_showPassStrength="false"
+            app:form_showValidIcon="true"/>
+
         <com.omarshehe.forminputkotlin.FormInputButton
             android:id="@+id/btnSubmit"
             android:layout_width="200dp"
@@ -132,6 +169,7 @@
             app:form_textColor="@color/white"
             app:form_value="@string/Submit"
             app:form_valueOnLoad="Please, wait.." />
+
     </LinearLayout>
 
 

@@ -14,4 +14,8 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="HelperTextAppearance" parent="TextAppearance.Design.Error">
+        <item name="android:textColor">@color/colorRed</item>
+    </style>
+
 </resources>

@@ -67,7 +67,6 @@ class FormInputSpinner : RelativeLayout {
             val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
             setIcons()
             mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
-            setHint(mHint)
             height = mHeight
             setMandatory(isMandatory)
             setBackground(mBackground)
@@ -105,6 +104,7 @@ class FormInputSpinner : RelativeLayout {
         for (index in mArrayList.indices) {
             if (mValue == mArrayList[index]) {
                 spSpinner.setSelection(index)
+               // verifyInputError("", View.GONE)
             }
         }
     }
@@ -176,6 +176,10 @@ class FormInputSpinner : RelativeLayout {
         spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 listener.onSpinnerItemSelected(parent.selectedItem.toString())
+                if (isMandatory && firstOpen!=0) {
+                    validateSpinner(mHint)
+                }
+                firstOpen=1
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }

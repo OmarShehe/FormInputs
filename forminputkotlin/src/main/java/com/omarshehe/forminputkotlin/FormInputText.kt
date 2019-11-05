@@ -4,14 +4,15 @@ import android.content.Context
 import android.os.Parcelable
 import android.text.Editable
 import android.text.InputType
+import android.text.Spannable
 import android.text.TextWatcher
+import android.text.method.MovementMethod
 import android.util.AttributeSet
 import android.util.SparseArray
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.EditText
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import com.omarshehe.forminputkotlin.utils.FormInputContract
@@ -43,6 +44,8 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
+
+    private var mListener : OnClickListener? =null
 
     constructor(context: Context) : super(context){
         initView()
@@ -86,9 +89,55 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
             txtInputBox.addTextChangedListener(this)
             iconCancel.setOnClickListener { txtInputBox.setText("") }
             a.recycle()
+
+
         }
     }
 
+
+    private fun initClickListener(){
+            txtInputBox.movementMethod=object :MovementMethod{
+                override fun onTouchEvent(widget: TextView?, text: Spannable?, event: MotionEvent?): Boolean {
+                    return false
+                }
+
+                override fun canSelectArbitrarily(): Boolean {
+                    return false
+                }
+
+                override fun onKeyDown(widget: TextView?, text: Spannable?, keyCode: Int, event: KeyEvent?): Boolean {
+                    return false
+                }
+
+                override fun onKeyUp(widget: TextView?, text: Spannable?, keyCode: Int, event: KeyEvent?): Boolean {
+                    return false
+                }
+
+                override fun onGenericMotionEvent(widget: TextView?, text: Spannable?, event: MotionEvent?): Boolean {
+                    return false
+                }
+
+                override fun onTakeFocus(widget: TextView?, text: Spannable?, direction: Int) {
+                        mListener?.onClick()
+                }
+
+                override fun initialize(widget: TextView?, text: Spannable?) {
+                }
+
+                override fun onKeyOther(view: TextView?, text: Spannable?, event: KeyEvent?): Boolean {
+                    return false
+                }
+
+                override fun onTrackballEvent(widget: TextView?, text: Spannable?, event: MotionEvent?): Boolean {
+                    return false
+                }
+
+            }
+
+            txtInputBox.setOnClickListener{
+                    mListener?.onClick()
+            }
+    }
     /**
      * Set components
      */
@@ -148,6 +197,12 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
             INPUTTYPE_EMAIL -> txtInputBox.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
         }
 
+        return this
+    }
+
+    fun setOnViewClickListener(listener: OnClickListener):FormInputText{
+        mListener=listener
+        initClickListener()
         return this
     }
 
@@ -245,6 +300,11 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
         }
     }
 
+
+
+    interface OnClickListener{
+        fun onClick()
+    }
 
 
     /**

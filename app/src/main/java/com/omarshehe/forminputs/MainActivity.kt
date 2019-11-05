@@ -6,15 +6,27 @@ import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
-import com.omarshehe.forminputkotlin.utils.Utils
+import com.omarshehe.forminputkotlin.FormInputMaterialText
+import com.omarshehe.forminputkotlin.FormInputSpinner
+import com.omarshehe.forminputkotlin.FormInputText
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),FormInputSpinner.SpinnerSelectionListener {
+    override fun onSpinnerItemSelected(item: String) {
+        Toast.makeText(baseContext,item,Toast.LENGTH_LONG).show()
+    }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+
+
+        confirmPassword.setConfirmPassword(password)
+        txtMaterialText.setTextInputLayout(vi as TextInputLayout)
 
         btnSubmit.getButton().setOnClickListener {
             run {
@@ -27,6 +39,20 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        fullName.setOnViewClickListener(object : FormInputText.OnClickListener{
+            override fun onClick() {
+                Toast.makeText(applicationContext,"FormInputText",Toast.LENGTH_LONG).show()
+            }
+
+        })
+
+        txtMaterialText.setOnViewClickListener(object : FormInputMaterialText.OnClickListener {
+            override fun onClick() {
+                Toast.makeText(applicationContext,"MaterialText",Toast.LENGTH_LONG).show()
+            }
+
+        })
 
     }
 

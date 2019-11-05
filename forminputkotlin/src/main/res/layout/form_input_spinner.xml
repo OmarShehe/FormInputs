@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:theme="@style/Theme.AppCompat.DayNight">
+    xmlns:tools="http://schemas.android.com/tools">
+    <RelativeLayout
 
-    <TextView
-        android:id="@+id/tvLabel"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="3dp"
-        android:layout_marginLeft="2dp"
-        android:text="@string/label"
-        style="@style/LabelStyle" />
+        android:theme="@style/Theme.AppCompat.DayNight">
+
+        <TextView
+            android:id="@+id/tvLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="2dp"
+            android:text="@string/label"
+            style="@style/LabelStyle" />
 
         <RelativeLayout
             android:id="@+id/layInputBox"
@@ -36,30 +37,31 @@
 
         </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tvError"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layInputBox"
-        android:fontFamily="@font/roboto_light"
-        android:gravity="end"
-        android:paddingLeft="10dp"
-        android:paddingTop="3dp"
-        android:paddingRight="10dp"
-        android:text="@string/app_name"
-        android:textColor="@color/colorRed"
-        android:textSize="12sp"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/tvError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layInputBox"
+            android:fontFamily="@font/roboto_light"
+            android:gravity="end"
+            android:paddingLeft="10dp"
+            android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:text="@string/app_name"
+            android:textColor="@color/colorRed"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imgNoError"
-        android:layout_width="17dp"
-        android:layout_height="17dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:contentDescription="@string/app_name"
-        android:visibility="visible"
-        app:srcCompat="@drawable/check_green"
-        tools:visibility="gone" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgNoError"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@string/app_name"
+            android:visibility="visible"
+            app:srcCompat="@drawable/check_green"
+            tools:visibility="gone" />
 
-</RelativeLayout>
+    </RelativeLayout>
+</merge>

@@ -68,7 +68,7 @@ class AutoCompleteAdapter(context: Context, resource: Int, private val items: Ar
         this.disableFilter = disableFilter
     }
 
-    override fun getView(position: Int, view: View?, parent: ViewGroup): View? {
+    override fun getView(position: Int, view: View?, parent: ViewGroup): View {
         var convertView = view
         if (convertView == null) {
             val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater

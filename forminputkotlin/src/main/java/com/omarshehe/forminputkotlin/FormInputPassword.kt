@@ -36,9 +36,9 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     private var isMandatory: Boolean = false
     private var isShowPassStrength: Boolean =false
     private var isShowValidIcon= true
-
     private var mPassLength=8
-
+    private var confirmPassword :FormInputPassword? = null
+    private var isConfirmPassword:Boolean=false
 
 
 
@@ -75,12 +75,14 @@ class FormInputPassword : RelativeLayout, TextWatcher {
             mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
             isShowPassStrength = a.getBoolean(R.styleable.FormInputLayout_form_showPassStrength, true)
             isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
+            isConfirmPassword= a.getBoolean(R.styleable.FormInputLayout_form_confirm, false)
 
             setIcons()
             mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
             setHint(mHint)
             setValue(mValue)
             height = mHeight
+            isConfirm(isConfirmPassword)
             showPassStrength(isShowPassStrength)
             setBackground(mBackground)
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
@@ -134,7 +136,20 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     }
 
     fun showPassStrength(isShowStrength: Boolean): FormInputPassword{
+        if(isConfirmPassword) {isShowPassStrength=false}
         isShowPassStrength= Utils.setViewVisibility(layPassStrength,isShowStrength)
+        return this
+    }
+
+    fun isConfirm(isConfirm: Boolean): FormInputPassword{
+        isConfirmPassword= isConfirm
+        if(isConfirmPassword) {isShowPassStrength=false}
+        return this
+    }
+    
+
+    fun setConfirmPassword(passwordView:FormInputPassword):FormInputPassword{
+        confirmPassword=passwordView
         return this
     }
     fun setBackground(background: Int) : FormInputPassword{
@@ -291,15 +306,30 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     }
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        if(isShowPassStrength){
+        val value=s.toString()
+        if(isShowPassStrength) {
             updatePasswordStrengthView(s.toString())
-        }else{
-            if(s.toString().isEmpty()){
-                verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
-            }else{
-                verifyInputError("", View.GONE)
+        }else if(isConfirmPassword){
+            if(!checkValueNotEmpty(s.toString())){
+                if(confirmPassword?.getValue()==value){
+                    verifyInputError("", View.GONE)
+                }else{
+                    verifyInputError(resources.getString(R.string.passwordsDoNotMatch), View.VISIBLE)
+                }
             }
+        }else{
+            checkValueNotEmpty(s.toString())
 
+        }
+    }
+
+    private fun checkValueNotEmpty(value:String):Boolean{
+        return if(value.isEmpty()){
+            verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
+            true
+        }else{
+            verifyInputError("", View.GONE)
+            false
         }
     }
 
