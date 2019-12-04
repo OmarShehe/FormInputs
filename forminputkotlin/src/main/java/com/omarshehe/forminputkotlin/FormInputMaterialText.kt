@@ -85,6 +85,7 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
             tempTextHelper=mTextInputLayout!!.helperText.toString()
             defaultTextHelperColor=mTextInputLayout!!.helperTextCurrentTextColor
         }
+        mErrorMessage=formatString()
 
 
     }
@@ -137,6 +138,7 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
         mTextInputLayout=textInputLayout
         tempTextHelper=mTextInputLayout?.helperText.toString()
         setMandatory(true)
+        mErrorMessage=formatString()
     }
 
 
