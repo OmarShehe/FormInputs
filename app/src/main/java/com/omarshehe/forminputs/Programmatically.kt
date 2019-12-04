@@ -1,10 +1,8 @@
 package com.omarshehe.forminputs
 
-import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
 import android.view.Gravity
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity

@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.TextView
 import com.omarshehe.forminputkotlin.R
-import java.util.ArrayList
+import java.util.*
 
 class AutoCompleteAdapter(context: Context, resource: Int, private val items: ArrayList<String>, private val mListener: ItemSelectedListener)
     : ArrayAdapter<String>(context, resource, items) {

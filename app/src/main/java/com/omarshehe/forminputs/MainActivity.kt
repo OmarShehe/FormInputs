@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.textfield.TextInputLayout
-import com.omarshehe.forminputkotlin.FormInputMaterialText
 import com.omarshehe.forminputkotlin.FormInputSpinner
 import com.omarshehe.forminputkotlin.FormInputText
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,7 +17,7 @@ class MainActivity : AppCompatActivity() {
 
         confirmPassword.setViewToConfirm(password)
         confirmEmail.setViewToConfirm(email)
-        startActivity(Intent(this, MaterialView::class.java))
+
         btnSubmit.setOnClickListener {
             if (!gender.isError(mainView) && !country.isError((mainView)) && !fullName.isError(mainView) && !price.isError(mainView)  && !phoneNumber.isError(mainView)  && !about.isError(mainView) && !email.isError(mainView) && !confirmEmail.isError(mainView) && !password.isError(mainView)) {
                 btnSubmit.showLoading(true)

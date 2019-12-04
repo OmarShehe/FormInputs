@@ -6,7 +6,6 @@ import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.Log
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View

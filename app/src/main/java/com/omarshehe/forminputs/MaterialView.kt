@@ -1,9 +1,8 @@
 package com.omarshehe.forminputs
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import com.google.android.material.textfield.TextInputLayout
+import androidx.appcompat.app.AppCompatActivity
 import com.omarshehe.forminputkotlin.FormInputMaterialText
 import kotlinx.android.synthetic.main.activity_material_view.*
 

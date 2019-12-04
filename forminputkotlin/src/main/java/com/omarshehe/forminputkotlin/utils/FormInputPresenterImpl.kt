@@ -1,7 +1,6 @@
 package com.omarshehe.forminputkotlin.utils
 
 import android.text.TextUtils
-import android.util.Log
 import android.util.Patterns
 import java.util.*
 

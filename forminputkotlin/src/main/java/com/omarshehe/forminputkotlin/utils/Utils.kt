@@ -12,7 +12,6 @@ import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.omarshehe.forminputkotlin.R
-import kotlin.properties.Delegates
 
 /**
  * Created by omars on 10/1/2019.
