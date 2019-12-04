@@ -23,7 +23,7 @@ import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
 import kotlinx.android.synthetic.main.form_input_text.view.*
 
 
-class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
+class FormInputText : RelativeLayout, TextWatcher  {
     private lateinit var mPresenter: FormInputContract.Presenter
 
     val INPUTTYPE_TEXT = 1
@@ -41,6 +41,8 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
     private var isMandatory: Boolean = false
     private var mInputType:Int = 1
     private var isShowValidIcon= true
+    private var viewToConfirm :FormInputText? = null
+    private var isConfirmText:Boolean=false
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
@@ -62,7 +64,7 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
 
     private fun initView(){
         LayoutInflater.from(context).inflate(R.layout.form_input_text, this, true)
-        mPresenter = FormInputPresenterImpl(this)
+        mPresenter = FormInputPresenterImpl()
         /**
          * Get Attributes
          */
@@ -76,6 +78,7 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
             isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
             isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
             mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
+            isConfirmText= a.getBoolean(R.styleable.FormInputLayout_form_confirm, false)
 
             setIcons()
             mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
@@ -89,8 +92,6 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
             txtInputBox.addTextChangedListener(this)
             iconCancel.setOnClickListener { txtInputBox.setText("") }
             a.recycle()
-
-
         }
     }
 
@@ -178,6 +179,18 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
         layInputBox.setBackgroundResource(background)
         return this
     }
+
+    fun setConfirmConfirmText(isConfirm: Boolean): FormInputText{
+        isConfirmText= isConfirm
+        return this
+    }
+
+
+    fun setViewToConfirm(view:FormInputText):FormInputText{
+        viewToConfirm=view
+        return this
+    }
+
 
     fun showValidIcon(showIcon: Boolean) : FormInputText {
         isShowValidIcon=showIcon
@@ -269,13 +282,22 @@ class FormInputText : RelativeLayout, FormInputContract.View, TextWatcher  {
         mValue=value
         iconCancel.visibility = if (mValue.isNotEmpty()) VISIBLE else GONE
 
-        if (mValue.isEmpty()) {
+        if(isConfirmText){
+            if(mValue.isNotEmpty() && viewToConfirm?.getValue()==mValue){
+                verifyInputError("", View.GONE)
+            }else{
+                verifyInputError(String.format(resources.getString(R.string.doNotMatch),mLabel), View.VISIBLE)
+            }
+        }else if (mValue.isEmpty()) {
             if (isMandatory) {
-                verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
+                verifyInputError(
+                    String.format(resources.getString(R.string.cantBeEmpty), mLabel),
+                    View.VISIBLE
+                )
             } else {
                 verifyInputError("", View.GONE)
             }
-        } else {
+        }else {
             verifyInputError("", View.GONE)
 
             if (mInputType == INPUTTYPE_EMAIL) {

@@ -19,8 +19,8 @@ import kotlin.properties.Delegates
  * Author omars
  */
 object Utils {
-    fun checkTextNotNull(txt :String?) :String{
-        return txt ?: ""
+    fun checkTextNotNull(txt :String?,default:String="") :String{
+        return txt ?: default
     }
 
     fun setLabel(txtView : TextView, label: String,isMandatory: Boolean) :String {

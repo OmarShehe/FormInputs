@@ -3,9 +3,13 @@ package com.omarshehe.forminputs
 import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
+import android.view.Gravity
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.omarshehe.forminputkotlin.*
+import com.omarshehe.forminputkotlin.utils.Density
 import kotlinx.android.synthetic.main.activity_programmatical.*
 
 class Programmatically : AppCompatActivity() {
@@ -99,15 +103,15 @@ class Programmatically : AppCompatActivity() {
             .showPassStrength(true)
         password.setPadding(0,50,0,0)
 
-     val btnSubmit= FormInputButton(this)
-            .setValue("Send")
-            .setCornerRadius(20)
-            .showProgressOnClick(true)
-            .setHeight(60)
-            .setBackground(R.color.colorRed)
-            .setTextColor(R.color.white)
+        val param=LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,Density.dp2px(resources,60f))
+        param.gravity=Gravity.CENTER
+        val btnSubmit= FormInputButton(this)
+        btnSubmit.setValue("Send")
+        btnSubmit.showProgressOnClick(true)
+        btnSubmit.cornerRadius=Density.dp2px(resources,60f)
+        btnSubmit.layoutParams=param
 
-        btnSubmit.setPadding(50,50,50,0)
+
 
 
 
@@ -123,7 +127,7 @@ class Programmatically : AppCompatActivity() {
         mainView.addView(btnSubmit)
 
 
-        btnSubmit.getButton().setOnClickListener{
+        btnSubmit.setOnClickListener{
             btnSubmit.showLoading(true)
             Handler().postDelayed({
                 Toast.makeText(applicationContext,"Submit",Toast.LENGTH_LONG).show()

@@ -105,7 +105,7 @@ class FormInputSpinner : RelativeLayout {
         for (index in mArrayList.indices) {
             if (mValue == mArrayList[index]) {
                 spSpinner.setSelection(index)
-               // verifyInputError("", View.GONE)
+                validateSpinner(mHint)
             }
         }
     }

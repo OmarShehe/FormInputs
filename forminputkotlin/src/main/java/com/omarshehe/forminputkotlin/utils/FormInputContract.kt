@@ -1,7 +1,6 @@
 package com.omarshehe.forminputkotlin.utils
 
 interface FormInputContract {
-    interface View
     interface Presenter {
         fun isValidEmail(email: CharSequence): Boolean
 

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F8F8"
+    tools:context=".MaterialView"
+    android:id="@+id/mainView">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/fullNameView"
+            style="@style/TextInputLayoutStyle"
+            android:hint="Your full name"
+            app:helperText="Full Name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.omarshehe.forminputkotlin.FormInputMaterialText
+                android:id="@+id/txtFullName"
+                style="@style/TextInputStyle"
+                android:singleLine="true"
+                app:form_inputType="text"
+                app:form_isMandatory="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailView"
+            style="@style/TextInputLayoutStyle"
+            android:hint="Your email address"
+            app:helperText="Email"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fullNameView">
+
+            <com.omarshehe.forminputkotlin.FormInputMaterialText
+                android:id="@+id/txtEmail"
+                style="@style/TextInputStyle"
+                android:singleLine="true"
+                app:form_inputType="email"
+                app:form_isMandatory="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/phoneNumberView"
+            style="@style/TextInputLayoutStyle"
+            android:hint="Your phone number"
+            app:helperText="Phone Number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/emailView">
+
+            <com.omarshehe.forminputkotlin.FormInputMaterialText
+                android:id="@+id/txtPhoneNumber"
+                style="@style/TextInputStyle"
+                android:singleLine="true"
+                app:form_inputType="phoneNumber"
+                app:form_isMandatory="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/IdView"
+            style="@style/TextInputLayoutStyle"
+            android:hint="Your ID number"
+            app:helperText="ID Number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phoneNumberView">
+
+            <com.omarshehe.forminputkotlin.FormInputMaterialText
+                android:id="@+id/txtId"
+                style="@style/TextInputStyle"
+                android:singleLine="true"
+                app:form_inputType="number"
+                app:form_isMandatory="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.omarshehe.forminputkotlin.FormInputButton
+            android:id="@+id/btnSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:text="@string/Submit"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/colorPrimary"
+            app:cornerRadius="35dp"
+            app:form_progressColor="@color/colorPink"
+            app:form_showProgress="true"
+            app:form_valueOnLoad="Please, wait.."
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/IdView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

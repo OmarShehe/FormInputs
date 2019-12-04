@@ -17,4 +17,45 @@
         <item name="cornerRadius">30dp</item>
     </style>
 
+    <!-- Base application theme. -->
+    <style name="MaterialComponentsStyle" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/colorWhite</item>
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+        <item name="colorError">@color/colorRed</item>
+    </style>
+
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="android:colorFocusedHighlight">@color/colorPrimary</item>
+        <item name="android:textColorHint">@color/colorGrey</item>
+        <item name="boxStrokeColor">@color/colorPrimary</item>
+        <item name="helperTextEnabled">true</item>
+        <item name="boxBackgroundColor">@null</item>
+
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxCollapsedPaddingTop">14dp</item>
+
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+    </style>
+
+    <style name="TextInputStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_edit_text</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

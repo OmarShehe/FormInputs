@@ -10,6 +10,7 @@ import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.util.Log
 import android.util.SparseArray
 import android.view.*
 import android.widget.EditText
@@ -23,10 +24,15 @@ import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import kotlinx.android.synthetic.main.form_input_autocomplete.view.*
+import kotlinx.android.synthetic.main.form_input_autocomplete.view.imgNoError
+import kotlinx.android.synthetic.main.form_input_autocomplete.view.layInputBox
+import kotlinx.android.synthetic.main.form_input_autocomplete.view.tvError
+import kotlinx.android.synthetic.main.form_input_autocomplete.view.tvLabel
+import kotlinx.android.synthetic.main.form_input_spinner.view.*
 import java.util.*
 import kotlin.properties.Delegates
 
-class FormInputAutoComplete : RelativeLayout, FormInputContract.View, TextWatcher {
+class FormInputAutoComplete : RelativeLayout, TextWatcher {
     private lateinit var mAdapterAutocomplete: AutoCompleteAdapter
     private lateinit var mPresenter: FormInputContract.Presenter
 
@@ -40,6 +46,7 @@ class FormInputAutoComplete : RelativeLayout, FormInputContract.View, TextWatche
     private var isMandatory: Boolean = false
     private var mInputType:Int = 1
     private var isShowValidIcon= true
+    private var isFirstOpen: Boolean = true
     private var mArrayList :List<String> = emptyArray<String>().toList()
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
@@ -61,7 +68,7 @@ class FormInputAutoComplete : RelativeLayout, FormInputContract.View, TextWatche
     @SuppressLint("NewApi")
     private fun initView(){
         LayoutInflater.from(context).inflate(R.layout.form_input_autocomplete, this, true)
-        mPresenter = FormInputPresenterImpl(this)
+        mPresenter = FormInputPresenterImpl()
         /**
          * Get Attributes
          */
@@ -129,7 +136,15 @@ class FormInputAutoComplete : RelativeLayout, FormInputContract.View, TextWatche
 
     fun setValue(value: String) :FormInputAutoComplete {
         mValue = value
-        txtInputBox.setText(value)
+        if(mArrayList.contains(mValue)){
+            txtInputBox.setText(value)
+            verifyInputError("", View.GONE)
+        }else{
+            if(isMandatory && !isFirstOpen){
+                verifyInputError(String.format(resources.getString(R.string.isRequired), mLabel), View.VISIBLE)
+            }
+            isFirstOpen=false
+        }
         return this
     }
 
@@ -282,7 +297,10 @@ class FormInputAutoComplete : RelativeLayout, FormInputContract.View, TextWatche
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
     }
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        inputBoxOnTextChange(s.toString())
+        if (!isFirstOpen) {
+            inputBoxOnTextChange(s.toString())
+        }
+        isFirstOpen=false
     }
     private fun inputBoxOnTextChange(value: String) {
         mValue=value
@@ -295,7 +313,11 @@ class FormInputAutoComplete : RelativeLayout, FormInputContract.View, TextWatche
             }
         } else {
             if (isMandatory) {
-                verifyInputError(String.format(resources.getString(R.string.isRequired), mLabel), View.VISIBLE)
+                if(mArrayList.contains(mValue)){
+                    verifyInputError("", View.GONE)
+                }else{
+                    verifyInputError(String.format(resources.getString(R.string.isRequired), mLabel), View.VISIBLE)
+                }
             }else{
                 verifyInputError("", View.GONE)
             }

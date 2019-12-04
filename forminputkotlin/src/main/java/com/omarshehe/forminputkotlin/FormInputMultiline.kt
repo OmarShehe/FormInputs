@@ -20,7 +20,7 @@ import com.omarshehe.forminputkotlin.utils.Utils
 import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
 import kotlinx.android.synthetic.main.form_input_multiline.view.*
 
-class FormInputMultiline  : RelativeLayout, FormInputContract.View, TextWatcher {
+class FormInputMultiline  : RelativeLayout, TextWatcher {
     private lateinit var mPresenter: FormInputContract.Presenter
     private var mLabel: String = ""
     private var mHint: String = ""
@@ -51,7 +51,7 @@ class FormInputMultiline  : RelativeLayout, FormInputContract.View, TextWatcher 
 
     private fun initView(){
         LayoutInflater.from(context).inflate(R.layout.form_input_multiline, this, true)
-        mPresenter = FormInputPresenterImpl(this)
+        mPresenter = FormInputPresenterImpl()
         /**
          * Get Attributes
          */

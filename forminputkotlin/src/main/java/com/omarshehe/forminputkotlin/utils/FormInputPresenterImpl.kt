@@ -5,10 +5,10 @@ import android.util.Log
 import android.util.Patterns
 import java.util.*
 
-class FormInputPresenterImpl(view: FormInputContract.View?) : FormInputContract.Presenter {
+class FormInputPresenterImpl : FormInputContract.Presenter {
 
 
-    var mView: FormInputContract.View? = view
+
 
     override fun isValidEmail(email: CharSequence): Boolean {
         return (!TextUtils.isEmpty(email)) && Patterns.EMAIL_ADDRESS.matcher(email).matches()

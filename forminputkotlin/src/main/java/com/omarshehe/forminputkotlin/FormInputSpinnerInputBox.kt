@@ -22,7 +22,7 @@ import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
 import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.*
 import java.util.*
 
-class FormInputSpinnerInputBox  : RelativeLayout, FormInputContract.View, TextWatcher {
+class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
 
 
     var TAG : String ="FormInputSpinnerInputBoxA"
@@ -64,7 +64,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, FormInputContract.View, TextWa
     }
     private fun initView(){
         LayoutInflater.from(context).inflate(R.layout.form_input_spinner_inputbox, this, true)
-        mPresenter = FormInputPresenterImpl(this)
+        mPresenter = FormInputPresenterImpl()
         /**
          * Get Attributes
          */

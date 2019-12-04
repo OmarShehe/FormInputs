@@ -148,7 +148,7 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     }
     
 
-    fun setConfirmPassword(passwordView:FormInputPassword):FormInputPassword{
+    fun setViewToConfirm(passwordView:FormInputPassword):FormInputPassword{
         confirmPassword=passwordView
         return this
     }
@@ -305,12 +305,12 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
     }
 
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        val value=s.toString()
+    override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
+        val value=text.toString()
         if(isShowPassStrength) {
-            updatePasswordStrengthView(s.toString())
+            updatePasswordStrengthView(value)
         }else if(isConfirmPassword){
-            if(!checkValueNotEmpty(s.toString())){
+            if(!checkValueNotEmpty(value)){
                 if(confirmPassword?.getValue()==value){
                     verifyInputError("", View.GONE)
                 }else{
@@ -318,7 +318,7 @@ class FormInputPassword : RelativeLayout, TextWatcher {
                 }
             }
         }else{
-            checkValueNotEmpty(s.toString())
+            checkValueNotEmpty(value)
 
         }
     }

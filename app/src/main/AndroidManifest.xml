@@ -9,8 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Programmatically"
-            android:label="Programmatically"></activity>
+        <activity android:name=".MaterialView"
+            android:theme="@style/MaterialComponentsStyle"/>
+        <activity
+            android:name=".Programmatically"
+            android:label="Programmatically" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

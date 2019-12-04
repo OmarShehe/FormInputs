@@ -11,33 +11,22 @@ import com.omarshehe.forminputkotlin.FormInputSpinner
 import com.omarshehe.forminputkotlin.FormInputText
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(),FormInputSpinner.SpinnerSelectionListener {
-    override fun onSpinnerItemSelected(item: String) {
-        Toast.makeText(baseContext,item,Toast.LENGTH_LONG).show()
-    }
-
-
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
-
-
-        confirmPassword.setConfirmPassword(password)
-        txtMaterialText.setTextInputLayout(vi as TextInputLayout)
-
-        btnSubmit.getButton().setOnClickListener {
-            run {
-                if (!gender.isError(mainView) && !country.isError((mainView)) && !fullName.isError(mainView) && !price.isError(mainView)  && !phoneNumber.isError(mainView)  && !about.isError(mainView) && !email.isError(mainView) && !password.isError(mainView)) {
-                    btnSubmit.showLoading(true)
-                    Handler().postDelayed({
-                        btnSubmit.showLoading(false)
-                        startActivity(Intent(this, Programmatically::class.java))
-                    }, 1000)
-                }
+        confirmPassword.setViewToConfirm(password)
+        confirmEmail.setViewToConfirm(email)
+        startActivity(Intent(this, MaterialView::class.java))
+        btnSubmit.setOnClickListener {
+            if (!gender.isError(mainView) && !country.isError((mainView)) && !fullName.isError(mainView) && !price.isError(mainView)  && !phoneNumber.isError(mainView)  && !about.isError(mainView) && !email.isError(mainView) && !confirmEmail.isError(mainView) && !password.isError(mainView)) {
+                btnSubmit.showLoading(true)
+                Handler().postDelayed({
+                    btnSubmit.showLoading(false)
+                    startActivity(Intent(this, Programmatically::class.java))
+                }, 1000)
             }
         }
 
@@ -46,16 +35,10 @@ class MainActivity : AppCompatActivity(),FormInputSpinner.SpinnerSelectionListen
             }
         })
 
-        txtMaterialText.setOnViewClickListener(object : FormInputMaterialText.OnClickListener {
-            override fun onClick() {
-            }
-        })
         gender.setOnSpinnerItemSelected(object :FormInputSpinner.SpinnerSelectionListener{
             override fun onSpinnerItemSelected(item: String) {
+                Toast.makeText(baseContext,item,Toast.LENGTH_LONG).show()
             }
-
         })
     }
-
-
 }
