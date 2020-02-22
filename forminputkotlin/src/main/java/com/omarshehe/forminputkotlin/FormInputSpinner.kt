@@ -158,15 +158,7 @@ class FormInputSpinner : RelativeLayout {
         val spinnerArrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spSpinner.adapter = spinnerArrayAdapter
-        spSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (isMandatory && firstOpen!=0) {
-                    validateSpinner(mHint)
-                }
-                firstOpen=1
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
+        initClickListener()
         return this
     }
 
@@ -174,16 +166,7 @@ class FormInputSpinner : RelativeLayout {
         mArrayList=items
         val spinnerArrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (isMandatory && firstOpen!=0) {
-                    listener.onSpinnerItemSelected(parent.selectedItem.toString())
-                    validateSpinner(mHint)
-                }
-                firstOpen=1
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
+        initClickListener()
         spSpinner.adapter = spinnerArrayAdapter
 
         return this

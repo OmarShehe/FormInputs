@@ -206,7 +206,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
                 txtInputBox.inputType = InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
             }
             INPUTTYPE_PHONE -> txtInputBox.inputType = InputType.TYPE_CLASS_PHONE
-            INPUTTYPE_NUMBER -> txtInputBox.inputType = InputType.TYPE_CLASS_NUMBER
+            INPUTTYPE_NUMBER ->  txtInputBox.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
             INPUTTYPE_EMAIL -> txtInputBox.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
         }
 
@@ -256,9 +256,8 @@ class FormInputText : RelativeLayout, TextWatcher  {
             if (parentView != null) {
                 hideKeyboard(context)
                 parentView.scrollTo(0, tvError.top)
-                txtInputBox.requestFocus()
-
             }
+            txtInputBox.requestFocus()
             true
         } else {
             verifyInputError("", View.GONE)
