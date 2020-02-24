@@ -31,6 +31,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
     val INPUTTYPE_NUMBER = 3
     val INPUTTYPE_EMAIL = 4
 
+    private var mTextColor=R.color.black
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mValue : String = ""
@@ -70,6 +71,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
          */
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
+            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
             mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
             mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
             mValue=Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
@@ -219,6 +221,12 @@ class FormInputText : RelativeLayout, TextWatcher  {
         return this
     }
 
+    fun setTextColor(color:Int):FormInputText{
+        mTextColor=color
+        txtInputBox.setTextColor(ContextCompat.getColor(context,mTextColor))
+        return this
+    }
+
     /**
      * For save Instance State of the view in programmatically access
      */
@@ -283,8 +291,10 @@ class FormInputText : RelativeLayout, TextWatcher  {
 
         if(isConfirmText){
             if(mValue.isNotEmpty() && viewToConfirm?.getValue()==mValue){
+                setTextColor(mTextColor)
                 verifyInputError("", View.GONE)
             }else{
+                txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorRed))
                 verifyInputError(String.format(resources.getString(R.string.doNotMatch),mLabel), View.VISIBLE)
             }
         }else if (mValue.isEmpty()) {
@@ -301,7 +311,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
 
             if (mInputType == INPUTTYPE_EMAIL) {
                 if (mPresenter.isValidEmail(mValue)) {
-                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.black))
+                    setTextColor(mTextColor)
                     verifyInputError("", View.GONE)
                 } else {
                     txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorRed))
@@ -311,7 +321,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
 
             if (mInputType == INPUTTYPE_PHONE) {
                 if (mPresenter.isValidPhoneNumber(mValue)) {
-                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.black))
+                    setTextColor(mTextColor)
                     verifyInputError("", View.GONE)
                 } else {
                     txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorRed))
@@ -320,6 +330,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
             }
         }
     }
+
 
 
 

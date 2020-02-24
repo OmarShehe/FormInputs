@@ -12,6 +12,7 @@ import android.util.SparseArray
 import android.view.*
 import android.widget.EditText
 import android.widget.RelativeLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import com.omarshehe.forminputkotlin.utils.FormInputContract
 import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
@@ -19,9 +20,15 @@ import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
 import kotlinx.android.synthetic.main.form_input_multiline.view.*
+import kotlinx.android.synthetic.main.form_input_multiline.view.imgNoError
+import kotlinx.android.synthetic.main.form_input_multiline.view.layInputBox
+import kotlinx.android.synthetic.main.form_input_multiline.view.tvError
+import kotlinx.android.synthetic.main.form_input_multiline.view.tvLabel
+import kotlinx.android.synthetic.main.form_input_text.view.*
 
 class FormInputMultiline  : RelativeLayout, TextWatcher {
     private lateinit var mPresenter: FormInputContract.Presenter
+    private var mTextColor=R.color.black
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mValue : String = ""
@@ -57,6 +64,7 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
          */
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
+            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
             mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
             mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
             mValue= Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
@@ -168,6 +176,13 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
         isShowValidIcon=showIcon
         return this
     }
+
+    fun setTextColor(color:Int):FormInputMultiline{
+        mTextColor=color
+        txtInputBox.setTextColor(ContextCompat.getColor(context,mTextColor))
+        return this
+    }
+
 
     /**
      * For save Instance State of the view in programmatically access

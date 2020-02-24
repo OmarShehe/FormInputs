@@ -35,6 +35,7 @@ class FormInputSpinner : RelativeLayout {
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
     private var mListener : SpinnerSelectionListener? =null
+    private var isShowLabel:Boolean =true
 
     constructor(activity: Activity) : super(activity){
         initView()
@@ -64,6 +65,7 @@ class FormInputSpinner : RelativeLayout {
             mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
             mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
             isShowValidIcon = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
+            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
             val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
             setIcons()
@@ -94,6 +96,12 @@ class FormInputSpinner : RelativeLayout {
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
         return this
     }
+
+    fun setLabelVisibility(show:Boolean): FormInputSpinner {
+        isShowLabel=Utils.setViewVisibility(tvLabel,show)
+        return this
+    }
+
     fun setHint(hint: String) :FormInputSpinner{
         mHint=hint
         return this
@@ -155,7 +163,7 @@ class FormInputSpinner : RelativeLayout {
      */
     fun setAdapter(items: List<String>):FormInputSpinner {
         mArrayList=items
-        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_row, items)
+        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_item, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spSpinner.adapter = spinnerArrayAdapter
         initClickListener()
@@ -164,7 +172,7 @@ class FormInputSpinner : RelativeLayout {
 
     fun setAdapter(items: ArrayList<String>, listener: SpinnerSelectionListener) :FormInputSpinner {
         mArrayList=items
-        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_row, items)
+        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_item, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         initClickListener()
         spSpinner.adapter = spinnerArrayAdapter

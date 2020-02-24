@@ -9,9 +9,6 @@
     android:fontFamily="@font/roboto_regular"
     android:singleLine="true"
     android:textAlignment="inherit"
-    android:textColor="@color/colorGrey"
-    android:textSize="14sp"
-    tools:text="@string/app_name"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?attr/selectableItemBackgroundBorderless"/>
+    android:textColor="@color/formInputSpinnerItemColor"
+    android:textSize="@dimen/formInputSpinnerItemTextSize"
+    tools:text="@string/app_name" />

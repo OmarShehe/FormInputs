@@ -40,6 +40,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
     val INPUTTYPE_NUMBER = 3
     val INPUTTYPE_EMAIL = 4
 
+    private var mTextColor=R.color.black
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mValue : String = ""
@@ -77,6 +78,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
          */
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,0,0)
+            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
             mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
             mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
             mValue= Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
@@ -186,6 +188,12 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
         return this
     }
 
+    fun setTextColor(color:Int):FormInputSpinnerInputBox{
+        mTextColor=color
+        txtInputBox.setTextColor(ContextCompat.getColor(context,mTextColor))
+        return this
+    }
+
 
     /**
      * For save Instance State of the view in programmatically access
@@ -216,7 +224,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
      */
     fun setSpinner(items: List<String>): FormInputSpinnerInputBox {
         mArrayList=items
-        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_row, items)
+        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_item, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spSpinner.adapter = spinnerArrayAdapter
         spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -234,7 +242,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
 
     fun setSpinner(items: ArrayList<String>, listener: SpinnerSelectionListener) : FormInputSpinnerInputBox {
         mArrayList=items
-        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_row, items)
+        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_item, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
@@ -321,7 +329,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
 
             if (mInputType == INPUTTYPE_EMAIL) {
                 if (mPresenter.isValidEmail(mValue)) {
-                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.black))
+                    setTextColor(mTextColor)
                     verifyInputError("", View.GONE)
                 } else {
                     txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorRed))
@@ -331,7 +339,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
 
             if (mInputType == INPUTTYPE_PHONE) {
                 if (mPresenter.isValidPhoneNumber(mValue)) {
-                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.black))
+                    setTextColor(mTextColor)
                     verifyInputError("", View.GONE)
                 } else {
                     txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorRed))

@@ -10,13 +10,13 @@
 
         <TextView
             android:id="@+id/tvLabel"
+            style="@style/LabelStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginStart="3dp"
             android:layout_marginLeft="2dp"
-            android:text="@string/label"
-            style="@style/LabelStyle" />
+            android:text="@string/label" />
 
         <RelativeLayout
             android:id="@+id/layInputBox"
@@ -50,7 +50,8 @@
             android:text="@string/app_name"
             android:textColor="@color/colorRed"
             android:textSize="12sp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:visibility="invisible" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgNoError"
@@ -59,9 +60,8 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:contentDescription="@string/app_name"
-            android:visibility="visible"
-            app:srcCompat="@drawable/check_green"
-            tools:visibility="gone" />
+            android:visibility="gone"
+            app:srcCompat="@drawable/check_green" />
 
     </RelativeLayout>
 </merge>

@@ -21,10 +21,15 @@ import com.omarshehe.forminputkotlin.utils.PasswordStrength
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import kotlinx.android.synthetic.main.form_input_password.view.*
+import kotlinx.android.synthetic.main.form_input_password.view.imgNoError
+import kotlinx.android.synthetic.main.form_input_password.view.tvError
+import kotlinx.android.synthetic.main.form_input_password.view.tvLabel
+import kotlinx.android.synthetic.main.form_input_text.view.*
 import kotlin.properties.Delegates
 
 class FormInputPassword : RelativeLayout, TextWatcher {
     var TAG : String ="FormInputPasswordA"
+    private var mTextColor=R.color.black
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mValue : String = ""
@@ -66,6 +71,7 @@ class FormInputPassword : RelativeLayout, TextWatcher {
          */
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,0,0)
+            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
             mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
             mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
             mValue= Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
@@ -160,6 +166,13 @@ class FormInputPassword : RelativeLayout, TextWatcher {
         isShowValidIcon=showIcon
         return this
     }
+
+    fun setTextColor(color:Int):FormInputPassword{
+        mTextColor=color
+        txtInputBox.setTextColor(ContextCompat.getColor(context,mTextColor))
+        return this
+    }
+
     /**
      * For save Instance State of the view in programmatically access
      */

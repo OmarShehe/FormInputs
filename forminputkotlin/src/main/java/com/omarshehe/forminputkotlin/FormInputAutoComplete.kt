@@ -15,6 +15,7 @@ import android.view.*
 import android.widget.EditText
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.omarshehe.forminputkotlin.adapter.AutoCompleteAdapter
@@ -23,6 +24,12 @@ import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import kotlinx.android.synthetic.main.form_input_autocomplete.view.*
+import kotlinx.android.synthetic.main.form_input_autocomplete.view.imgNoError
+import kotlinx.android.synthetic.main.form_input_autocomplete.view.layInputBox
+import kotlinx.android.synthetic.main.form_input_autocomplete.view.tvError
+import kotlinx.android.synthetic.main.form_input_autocomplete.view.tvLabel
+import kotlinx.android.synthetic.main.form_input_autocomplete.view.txtInputBox
+import kotlinx.android.synthetic.main.form_input_text.view.*
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -30,6 +37,7 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
     private lateinit var mAdapterAutocomplete: AutoCompleteAdapter
     private lateinit var mPresenter: FormInputContract.Presenter
 
+    private var mTextColor=R.color.black
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mValue : String = ""
@@ -69,6 +77,7 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
          */
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
+            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
             mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
             mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
             mValue=Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
@@ -171,6 +180,12 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
 
     fun setOnItemSelectedListener(listener: AutoCompleteAdapter.ItemSelectedListener):FormInputAutoComplete{
         mListener=listener
+        return this
+    }
+
+    fun setTextColor(color:Int):FormInputAutoComplete{
+        mTextColor=color
+        txtInputBox.setTextColor(ContextCompat.getColor(context,mTextColor))
         return this
     }
 
@@ -319,11 +334,14 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
         } else {
             if (isMandatory) {
                 if(mArrayList.contains(mValue)){
+                    setTextColor(mTextColor)
                     verifyInputError("", View.GONE)
                 }else{
+                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorRed))
                     verifyInputError(String.format(resources.getString(R.string.isRequired), mLabel), View.VISIBLE)
                 }
             }else{
+                setTextColor(mTextColor)
                 verifyInputError("", View.GONE)
             }
         }

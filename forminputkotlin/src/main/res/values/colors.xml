@@ -31,5 +31,6 @@
     <color name="gr1">#A7076B</color>
     <color name="gr2">#650460</color>
     <color name="formInputAutoCompleteItemColor" >#757575</color>
+    <color name="formInputSpinnerItemColor" >#000000</color>
 
 </resources>
