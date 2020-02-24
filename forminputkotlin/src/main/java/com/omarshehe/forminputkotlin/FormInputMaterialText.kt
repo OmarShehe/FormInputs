@@ -50,7 +50,7 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
     private var isMandatory: Boolean = false
     private var mInputType:Int = 1
     private var isShowValidIcon= true
-    private var viewToConfirm :FormInputMaterialText? = null
+    private var viewToConfirm : FormInputMaterialText? = null
     private var isConfirmText:Boolean=false
     private var isShowClearButton:Boolean=true
     private var isShowLabel:Boolean =true
@@ -71,28 +71,38 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
 
     private fun initView(){
         mPresenter = FormInputPresenterImpl()
-        mNoErrorIcon=ContextCompat.getDrawable(context,R.drawable.check_green)
+        mNoErrorIcon=ContextCompat.getDrawable(context, R.drawable.check_green)
         mClearIcon= ContextCompat.getDrawable(context,R.drawable.ic_close)!!
         mClearIcon.callback=this
 
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
         minHeight=resources.getDimension(R.dimen.input_box_height).toInt()
         bottomTextSize = a.getDimensionPixelSize(R.styleable.FormInputLayout_form_bottomTextSize, resources.getDimensionPixelSize(R.dimen.bottom_text_size))
-        setMandatory(a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false))
         isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
         mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
         isConfirmText= a.getBoolean(R.styleable.FormInputLayout_form_confirm, false)
         isShowClearButton=a.getBoolean(R.styleable.FormInputLayout_form_showClearButton, true)
         isShowLabel=a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true)
+        setMandatory(a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false))
         a.recycle()
 
         setViewInputType(mInputType)
+
+        initTextInputLayout()
+
+        mErrorMessage=formatString()
+    }
+
+    /**
+     * Initialize mTextInputLayout, get default label and text color
+     */
+    private fun initTextInputLayout(){
         if(mTextInputLayout!=null){
             tempTextHelper=mTextInputLayout!!.helperText.toString()
             defaultTextHelperColor=mTextInputLayout!!.helperTextCurrentTextColor
         }
-        mErrorMessage=formatString()
     }
+
 
     private fun initClickListener(){
         this.movementMethod=object : MovementMethod {
@@ -142,39 +152,43 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
      * Set components
      */
     fun setTextInputLayout(textInputLayout: TextInputLayout){
+        initTextInputLayout()
         mTextInputLayout=textInputLayout
         tempTextHelper=mTextInputLayout?.helperText.toString()
-        mTextInputLayout?.isHelperTextEnabled=isShowLabel
         mErrorMessage=formatString()
+
+        setMandatory(isMandatory)
     }
 
-    fun setOnViewClickListener(listener: OnClickListener):FormInputMaterialText{
+
+
+    fun setOnViewClickListener(listener: OnClickListener): FormInputMaterialText {
         mListener=listener
         initClickListener()
         return this
     }
 
-    fun setMandatory(mandatory: Boolean) :FormInputMaterialText{
+    fun setMandatory(mandatory: Boolean) : FormInputMaterialText {
         isMandatory=mandatory
         val stringMandatory= if(isMandatory) "*" else ""
         mTextInputLayout?.helperText = HtmlCompat.fromHtml(String.format(context.getString(R.string.label),tempTextHelper,stringMandatory), HtmlCompat.FROM_HTML_MODE_LEGACY)
         mTextInputLayout?.setHelperTextColor(ContextCompat.getColorStateList(context,defaultTextHelperColor))
-
+        mTextInputLayout?.isHelperTextEnabled=isShowLabel
         return this
     }
 
-    fun setConfirmConfirmText(isConfirm: Boolean): FormInputMaterialText{
+    fun setConfirmConfirmText(isConfirm: Boolean): FormInputMaterialText {
         isConfirmText= isConfirm
         return this
     }
 
 
-    fun setViewToConfirm(view:FormInputMaterialText):FormInputMaterialText{
+    fun setViewToConfirm(view: FormInputMaterialText): FormInputMaterialText {
         viewToConfirm=view
         return this
     }
 
-    fun setViewInputType(type: Int) : FormInputMaterialText  {
+    fun setViewInputType(type: Int) : FormInputMaterialText {
         mInputType = type
         when (mInputType) {
             INPUTTYPE_TEXT -> {
@@ -193,6 +207,7 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
         return this
     }
 
+
     fun setValue(value: String) : FormInputMaterialText {
         setText(value)
         return this
@@ -208,12 +223,15 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
         return this
     }
 
+
+
     /**
      * Get components
      */
     fun getValue(): String {
         return text.toString()
     }
+
 
 
     /**
@@ -282,7 +300,6 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
             inputError=0
             mErrorMessage=""
             setMandatory(isMandatory)
-            mTextInputLayout?.isHelperTextEnabled=isShowLabel
         }
 
     }
@@ -293,8 +310,8 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
             if (parentView != null) {
                 hideKeyboard(parentView.context as Activity)
                 parentView.scrollTo(0, this.top)
-                requestFocus()
             }
+            requestFocus()
             true
         } else {
             verifyInputError("", View.GONE)
@@ -319,13 +336,11 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
     }
 
     private fun showIcon(show: Boolean,icon:Drawable=mClearIcon) {
-        if (isShowClearButton && show) {
+        if ( isShowClearButton && show) {
             setCompoundDrawablesWithIntrinsicBounds (null, null, icon, null)
         } else {
             setCompoundDrawables(null, null, null, null)
         }
-
-
     }
 
     private fun isClearIconClicked(event: MotionEvent): Boolean {

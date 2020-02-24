@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.omarshehe.forminputkotlin.FormInputSpinner
 import com.omarshehe.forminputkotlin.FormInputText
+import com.omarshehe.forminputkotlin.adapter.AutoCompleteAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -18,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         confirmPassword.setViewToConfirm(password)
         confirmEmail.setViewToConfirm(email)
 
-        //startActivity(Intent(this, MaterialView::class.java))
+        startActivity(Intent(this, MaterialView::class.java))
         btnSubmit.setOnClickListener {
             if (!gender.isError(mainView) && !country.isError((mainView)) && !fullName.isError(mainView) && !price.isError(mainView)  && !phoneNumber.isError(mainView)  && !about.isError(mainView) && !email.isError(mainView) && !confirmEmail.isError(mainView) && !password.isError(mainView)) {
                 btnSubmit.showLoading(true)
@@ -39,5 +40,6 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(baseContext,item,Toast.LENGTH_LONG).show()
             }
         })
+
     }
 }

@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 
 
@@ -42,4 +43,6 @@ class AutoCompleteView : AppCompatAutoCompleteTextView{
         super.setOnCreateContextMenuListener(l)
 
     }
+
+
 }

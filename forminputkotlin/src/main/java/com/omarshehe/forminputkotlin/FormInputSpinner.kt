@@ -155,7 +155,7 @@ class FormInputSpinner : RelativeLayout {
      */
     fun setAdapter(items: List<String>):FormInputSpinner {
         mArrayList=items
-        val spinnerArrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, items)
+        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_row, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spSpinner.adapter = spinnerArrayAdapter
         initClickListener()
@@ -164,7 +164,7 @@ class FormInputSpinner : RelativeLayout {
 
     fun setAdapter(items: ArrayList<String>, listener: SpinnerSelectionListener) :FormInputSpinner {
         mArrayList=items
-        val spinnerArrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, items)
+        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_row, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         initClickListener()
         spSpinner.adapter = spinnerArrayAdapter

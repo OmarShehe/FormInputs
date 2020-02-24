@@ -13,20 +13,28 @@ import java.util.*
 
 class AutoCompleteAdapter(context: Context, resource: Int, private val items: ArrayList<String>, private val mListener: ItemSelectedListener)
     : ArrayAdapter<String>(context, resource, items) {
-    private val tempItems: ArrayList<String> = ArrayList(items)
+    private val itemsAll: ArrayList<String> = items.clone() as ArrayList<String>
     private val suggestions: ArrayList<String> = ArrayList()
     private var disableFilter: Boolean = false
 
-    private val nameFilter = object : Filter() {
-        override fun convertResultToString(resultValue: Any): CharSequence {
+
+    fun disableFilter(disableFilter: Boolean) {
+        this.disableFilter = disableFilter
+    }
+    override fun getFilter(): Filter {
+        return nameFilter
+    }
+
+    private val nameFilter: Filter = object : Filter() {
+        override fun convertResultToString(resultValue: Any): String {
             return resultValue as String
         }
 
         @SuppressLint("DefaultLocale")
-        override fun performFiltering(constraint: CharSequence?): FilterResults {
-            return if (constraint != null) {
+        override fun performFiltering(constraint: CharSequence): FilterResults {
+            return run {
                 suggestions.clear()
-                for (item in tempItems) {
+                for (item in itemsAll) {
                     if (item.toLowerCase().contains(constraint.toString().toLowerCase())) {
                         suggestions.add(item)
                     }
@@ -35,57 +43,48 @@ class AutoCompleteAdapter(context: Context, resource: Int, private val items: Ar
                 filterResults.values = suggestions
                 filterResults.count = suggestions.size
                 filterResults
-            } else {
-                FilterResults()
             }
         }
 
         override fun publishResults(constraint: CharSequence, results: FilterResults) {
+
             if (disableFilter) {
                 clear()
-                for (item in tempItems) {
+                for (item in itemsAll) {
                     add(item)
                     notifyDataSetChanged()
                 }
             } else {
-                val filterList = results.values as ArrayList<String>
+                val filteredList = results.values as ArrayList<String>
                 if (results.count > 0) {
                     clear()
-                    for (item in filterList) {
+                    for (item in filteredList) {
                         add(item)
-                        notifyDataSetChanged()
                     }
+                    notifyDataSetChanged()
                 }
             }
+
+
         }
     }
 
-    override fun getFilter(): Filter {
-        return nameFilter
-    }
 
-    fun disableFilter(disableFilter: Boolean) {
-        this.disableFilter = disableFilter
-    }
-
-    override fun getView(position: Int, view: View?, parent: ViewGroup): View {
-        var convertView = view
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        var convertView = convertView
         if (convertView == null) {
             val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             convertView = inflater.inflate(R.layout.listitem_autocomplete, parent, false)
         }
         val item = items[position]
-        val lblName = convertView!!.findViewById<TextView>(R.id.tvView)
-        if (lblName != null){
-            lblName.text = item
-        }
+        val lblName = convertView!!.findViewById<View>(R.id.tvView) as TextView
+        lblName.text = item
         convertView.findViewById<View>(R.id.layParent).setOnClickListener { mListener.onItemSelected(item) }
         return convertView
     }
 
+
     interface ItemSelectedListener {
-        fun onItemSelected(item: String?)
+        fun onItemSelected(item: String)
     }
-
-
 }

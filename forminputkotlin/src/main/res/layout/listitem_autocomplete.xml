@@ -3,18 +3,23 @@
     android:id="@+id/layParent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackgroundBorderless">
 
     <TextView
         android:id="@+id/tvView"
         android:layout_width="match_parent"
         android:layout_height="35dp"
+        android:fontFamily="@font/roboto_regular"
         android:gravity="center_vertical"
         android:paddingStart="5dp"
-        android:paddingEnd="5dp"
         android:paddingLeft="5dp"
+        android:paddingEnd="5dp"
         android:paddingRight="5dp"
         android:text="@string/app_name"
+        android:textColor="@color/formInputAutoCompleteItemColor"
         android:textSize="16sp" />
 
     <View

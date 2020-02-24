@@ -12,10 +12,7 @@
 
 
 
-    <color name="pocket_color_1">#85edb9</color>
-    <color name="pocket_color_2">#34BDB7</color>
-    <color name="pocket_color_3">#ee4458</color>
-    <color name="pocket_color_4">#fcb74d</color>
+
 
     <color name="primary_light">#BBDEFB</color>
     <color name="primary_text">#212121</color>
@@ -33,5 +30,6 @@
 
     <color name="gr1">#A7076B</color>
     <color name="gr2">#650460</color>
+    <color name="formInputAutoCompleteItemColor" >#757575</color>
 
 </resources>

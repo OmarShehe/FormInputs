@@ -216,7 +216,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
      */
     fun setSpinner(items: List<String>): FormInputSpinnerInputBox {
         mArrayList=items
-        val spinnerArrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, items)
+        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_row, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spSpinner.adapter = spinnerArrayAdapter
         spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -234,7 +234,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
 
     fun setSpinner(items: ArrayList<String>, listener: SpinnerSelectionListener) : FormInputSpinnerInputBox {
         mArrayList=items
-        val spinnerArrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, items)
+        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_row, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {

@@ -44,6 +44,7 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
     private var mArrayList :List<String> = emptyArray<String>().toList()
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
+    private var mListener : AutoCompleteAdapter.ItemSelectedListener? =null
 
     constructor(context: Context) : super(context){
         initView()
@@ -168,6 +169,11 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
         animation?.start()
     }
 
+    fun setOnItemSelectedListener(listener: AutoCompleteAdapter.ItemSelectedListener):FormInputAutoComplete{
+        mListener=listener
+        return this
+    }
+
     /**
      * For save Instance State of the view in programmatically access
      */
@@ -220,18 +226,23 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
     fun setAdapter(items: ArrayList<String>): FormInputAutoComplete {
         mArrayList=items
         txtInputBox.setShowAlways(true)
-        mAdapterAutocomplete = AutoCompleteAdapter(context, R.id.tvView, items, object : AutoCompleteAdapter.ItemSelectedListener {
-            override fun onItemSelected(item: String?) {
-                mValue = item.toString()
-                txtInputBox.setText(item)
-                txtInputBox.setSelection(mValue.length)
-                txtInputBox.dismissDropDown()
-                verifyInputError("", View.GONE)
-                arrowIconState=false
-            }
-        })
+        mAdapterAutocomplete = AutoCompleteAdapter(context, R.id.tvView, items, itemSelectListener)
         txtInputBox.setAdapter(mAdapterAutocomplete)
+
+        //txtInputBox.setOnItemClickListener(object :On)
         return this
+    }
+
+    private val itemSelectListener=object :AutoCompleteAdapter.ItemSelectedListener {
+        override fun onItemSelected(item: String) {
+            mValue = item
+            txtInputBox.setText(item)
+            txtInputBox.setSelection(mValue.length)
+            txtInputBox.dismissDropDown()
+            verifyInputError("", View.GONE)
+            arrowIconState=false
+            mListener?.onItemSelected(item)
+        }
     }
 
 
