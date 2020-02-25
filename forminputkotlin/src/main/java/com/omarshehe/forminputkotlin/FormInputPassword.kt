@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.form_input_password.view.*
 import kotlinx.android.synthetic.main.form_input_password.view.imgNoError
 import kotlinx.android.synthetic.main.form_input_password.view.tvError
 import kotlinx.android.synthetic.main.form_input_password.view.tvLabel
-import kotlinx.android.synthetic.main.form_input_text.view.*
+import kotlinx.android.synthetic.main.form_input_spinner.view.*
 import kotlin.properties.Delegates
 
 class FormInputPassword : RelativeLayout, TextWatcher {
@@ -43,6 +43,8 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     private var mPassLength=8
     private var confirmPassword :FormInputPassword? = null
     private var isConfirmPassword:Boolean=false
+    private var isShowLabel:Boolean =true
+
 
 
 
@@ -72,15 +74,17 @@ class FormInputPassword : RelativeLayout, TextWatcher {
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,0,0)
             mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
-            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
-            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
-            mValue= Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
+            mLabel = a.getString(R.styleable.FormInputLayout_form_label).orEmpty()
+            mHint = a.getString(R.styleable.FormInputLayout_form_hint).orEmpty()
+            mValue= a.getString(R.styleable.FormInputLayout_form_value).orEmpty()
             mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.input_box_height)).toInt()
             isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
             mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
             isShowPassStrength = a.getBoolean(R.styleable.FormInputLayout_form_showPassStrength, true)
             isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
             isConfirmPassword= a.getBoolean(R.styleable.FormInputLayout_form_confirm, false)
+            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
+
 
             setIcons()
             mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
@@ -122,6 +126,11 @@ class FormInputPassword : RelativeLayout, TextWatcher {
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
         return this
     }
+    fun setLabelVisibility(show:Boolean): FormInputPassword {
+        isShowLabel=Utils.setViewVisibility(tvLabel,show)
+        return this
+    }
+
 
     fun setHint(hint: String) :FormInputPassword{
         txtPassword.hint = hint
@@ -135,8 +144,8 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     }
 
     fun setHeight(height: Int) : FormInputPassword {
-        val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, height)
-        txtPassword.layoutParams=lp
+        val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height)
+        passView.layoutParams=lp
         return this
     }
 
@@ -169,7 +178,7 @@ class FormInputPassword : RelativeLayout, TextWatcher {
 
     fun setTextColor(color:Int):FormInputPassword{
         mTextColor=color
-        txtInputBox.setTextColor(ContextCompat.getColor(context,mTextColor))
+        txtPassword.setTextColor(ContextCompat.getColor(context,mTextColor))
         return this
     }
 
@@ -270,14 +279,6 @@ class FormInputPassword : RelativeLayout, TextWatcher {
         view.setImageDrawable(animation)
         animation?.start()
     }
-
-
-
-
-
-
-
-
 
 
 

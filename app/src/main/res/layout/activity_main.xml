@@ -2,32 +2,32 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F1F1F1"
     android:orientation="vertical"
-    tools:context=".MainActivity"
-    android:id="@+id/mainView">
+    tools:context=".MainActivity">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusableInTouchMode="true"
         android:orientation="vertical"
-        android:padding="10dp"
-        android:focusableInTouchMode="true">
+        android:padding="10dp">
 
 
         <com.omarshehe.forminputkotlin.FormInputSpinner
             android:id="@+id/gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:form_hint="Select gender"
             app:form_array="@array/array_gender"
+            app:form_hint="Select gender"
             app:form_isMandatory="true"
             app:form_label="Gender"
-            app:form_showValidIcon="false"
-            app:form_showLabel="false"/>
-
+            app:form_showLabel="false"
+            app:form_showValidIcon="false" />
 
 
         <com.omarshehe.forminputkotlin.FormInputAutoComplete
@@ -40,8 +40,7 @@
             app:form_hint="Your country"
             app:form_inputType="text"
             app:form_isMandatory="true"
-            app:form_label="Country"
-            />
+            app:form_label="Country" />
 
         <com.omarshehe.forminputkotlin.FormInputText
             android:id="@+id/fullName"
@@ -74,7 +73,7 @@
             app:form_hint="Your phone number"
             app:form_inputType="phoneNumber"
             app:form_isMandatory="true"
-            app:form_label="Phone Number"/>
+            app:form_label="Phone Number" />
 
         <com.omarshehe.forminputkotlin.FormInputText
             android:id="@+id/ID"
@@ -84,7 +83,7 @@
             app:form_hint="Your ID number"
             app:form_inputType="number"
             app:form_isMandatory="false"
-            app:form_label="ID Number"/>
+            app:form_label="ID Number" />
 
 
         <com.omarshehe.forminputkotlin.FormInputMultiline
@@ -96,19 +95,19 @@
             app:form_hint="About you"
             app:form_isMandatory="true"
             app:form_label="About you"
-            app:form_maxLength="500"/>
+            app:form_maxLength="500" />
 
 
         <com.omarshehe.forminputkotlin.FormInputText
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:inputType="textAutoCorrect"
-        app:form_hint="Your email address"
-        app:form_inputType="email"
-        app:form_isMandatory="true"
-        app:form_label="Email"/>
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:inputType="textAutoCorrect"
+            app:form_hint="Your email address"
+            app:form_inputType="email"
+            app:form_isMandatory="true"
+            app:form_label="Email" />
 
         <com.omarshehe.forminputkotlin.FormInputText
             android:id="@+id/confirmEmail"
@@ -116,11 +115,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:inputType="textAutoCorrect"
+            app:form_confirm="true"
             app:form_hint="Confirm email address"
             app:form_inputType="email"
-            app:form_label="Confirm email"
             app:form_isMandatory="true"
-            app:form_confirm="true"/>
+            app:form_label="Confirm email" />
 
         <com.omarshehe.forminputkotlin.FormInputPassword
             android:id="@+id/password"
@@ -131,19 +130,20 @@
             app:form_isMandatory="true"
             app:form_label="Password"
             app:form_showPassStrength="true"
-            app:form_showValidIcon="true"/>
+            app:form_showValidIcon="true"
+            app:form_showLabel="false"/>
 
         <com.omarshehe.forminputkotlin.FormInputPassword
             android:id="@+id/confirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:form_hint="Confirm your password"
             app:form_confirm="true"
+            app:form_hint="Confirm your password"
             app:form_isMandatory="true"
             app:form_label="Confirm Password"
             app:form_showPassStrength="false"
-            app:form_showValidIcon="true"/>
+            app:form_showValidIcon="true" />
 
         <com.omarshehe.forminputkotlin.FormInputButton
             android:id="@+id/btnSubmit"

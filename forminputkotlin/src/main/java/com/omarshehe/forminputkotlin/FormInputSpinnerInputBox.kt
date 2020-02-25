@@ -19,6 +19,7 @@ import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
+import kotlinx.android.synthetic.main.form_input_password.view.*
 import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.*
 import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.iconCancel
 import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.imgNoError
@@ -53,7 +54,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
     private var mArrayList :List<String> = emptyArray<String>().toList()
     private var firstOpen: Int = 0
     private var isShowValidIcon= true
-
+    private var isShowLabel:Boolean =true
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
@@ -87,6 +88,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
             mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
             mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
             isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
+            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
             val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
             setIcons()
@@ -126,6 +128,10 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
     fun setMandatory(mandatory: Boolean) : FormInputSpinnerInputBox {
         isMandatory =mandatory
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+        return this
+    }
+    fun setLabelVisibility(show:Boolean): FormInputSpinnerInputBox {
+        isShowLabel=Utils.setViewVisibility(tvLabel,show)
         return this
     }
 

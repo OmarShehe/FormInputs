@@ -23,4 +23,8 @@
     <string name="passHintLong">Be at least %d characters long</string>
     <string name="passwordsDoNotMatch">Passwords do not match</string>
     <string name="doNotMatch">%s do not match</string>
+    <string name="include_at_least_one_number">Include at least one number</string>
+    <string name="include_at_least_one_special_character">Include at least one special character</string>
+    <string name="your_password_need_to">Your password need to:</string>
+    <string name="include_at_least_one_upper_case">Include at least one upper case</string>
 </resources>

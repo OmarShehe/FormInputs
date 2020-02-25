@@ -19,12 +19,14 @@ import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
+import kotlinx.android.synthetic.main.form_input_autocomplete.view.*
 import kotlinx.android.synthetic.main.form_input_multiline.view.*
 import kotlinx.android.synthetic.main.form_input_multiline.view.imgNoError
 import kotlinx.android.synthetic.main.form_input_multiline.view.layInputBox
 import kotlinx.android.synthetic.main.form_input_multiline.view.tvError
 import kotlinx.android.synthetic.main.form_input_multiline.view.tvLabel
 import kotlinx.android.synthetic.main.form_input_text.view.*
+import kotlinx.android.synthetic.main.form_input_text.view.txtInputBox
 
 class FormInputMultiline  : RelativeLayout, TextWatcher {
     private lateinit var mPresenter: FormInputContract.Presenter
@@ -40,6 +42,8 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
     private var mHeight: Int = 200
     private var mMaxLines: Int = 5
     private var isShowValidIcon= true
+    private var isShowLabel:Boolean =true
+
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
 
@@ -74,6 +78,7 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
             mMaxLines = a.getInt(R.styleable.FormInputLayout_form_maxLines, 5)
             mMaxLength = a.getInt(R.styleable.FormInputLayout_form_maxLength, 300)
             isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
+            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
             setIcons()
             mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
@@ -106,6 +111,11 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
     fun setMandatory(mandatory: Boolean) : FormInputMultiline {
         isMandatory =mandatory
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+        return this
+    }
+
+    fun setLabelVisibility(show:Boolean): FormInputMultiline {
+        isShowLabel=Utils.setViewVisibility(tvLabel,show)
         return this
     }
 

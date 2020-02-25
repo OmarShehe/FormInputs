@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.form_input_autocomplete.view.layInputBox
 import kotlinx.android.synthetic.main.form_input_autocomplete.view.tvError
 import kotlinx.android.synthetic.main.form_input_autocomplete.view.tvLabel
 import kotlinx.android.synthetic.main.form_input_autocomplete.view.txtInputBox
+import kotlinx.android.synthetic.main.form_input_spinner.view.*
 import kotlinx.android.synthetic.main.form_input_text.view.*
 import java.util.*
 import kotlin.properties.Delegates
@@ -50,6 +51,8 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
     private var isShowValidIcon= true
     private var isFirstOpen: Boolean = true
     private var mArrayList :List<String> = emptyArray<String>().toList()
+    private var isShowLabel:Boolean =true
+
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
     private var mListener : AutoCompleteAdapter.ItemSelectedListener? =null
@@ -86,8 +89,9 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
             isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
             isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
             mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
-            val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
+            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
+            val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
 
             setIcons()
             mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
@@ -132,6 +136,11 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
         return this
     }
+    fun setLabelVisibility(show:Boolean): FormInputAutoComplete {
+        isShowLabel=Utils.setViewVisibility(tvLabel,show)
+        return this
+    }
+
 
     fun setHint(hint: String) :FormInputAutoComplete {
         txtInputBox.hint = hint

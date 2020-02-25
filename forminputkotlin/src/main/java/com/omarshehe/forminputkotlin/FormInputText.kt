@@ -20,7 +20,11 @@ import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
+import kotlinx.android.synthetic.main.form_input_password.view.*
 import kotlinx.android.synthetic.main.form_input_text.view.*
+import kotlinx.android.synthetic.main.form_input_text.view.imgNoError
+import kotlinx.android.synthetic.main.form_input_text.view.tvError
+import kotlinx.android.synthetic.main.form_input_text.view.tvLabel
 
 
 class FormInputText : RelativeLayout, TextWatcher  {
@@ -44,6 +48,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
     private var isShowValidIcon= true
     private var viewToConfirm :FormInputText? = null
     private var isConfirmText:Boolean=false
+    private var isShowLabel:Boolean =true
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
@@ -81,6 +86,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
             isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
             mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
             isConfirmText= a.getBoolean(R.styleable.FormInputLayout_form_confirm, false)
+            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
             setIcons()
             mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
@@ -157,6 +163,10 @@ class FormInputText : RelativeLayout, TextWatcher  {
     fun setMandatory(mandatory: Boolean) : FormInputText {
         isMandatory =mandatory
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+        return this
+    }
+    fun setLabelVisibility(show:Boolean): FormInputText {
+        isShowLabel=Utils.setViewVisibility(tvLabel,show)
         return this
     }
 

@@ -35,7 +35,8 @@
         <item name="boxBackgroundColor">@null</item>
 
         <item name="boxStrokeWidth">1dp</item>
-        <item name="boxCollapsedPaddingTop">14dp</item>
+        <item name="boxCollapsedPaddingTop">5dp</item>
+        <item name="hintTextAppearance">@style/TextInputLayoutTextAppearance</item>
 
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -45,6 +46,11 @@
         <item name="android:layout_marginRight">16dp</item>
         <item name="android:layout_marginTop">16dp</item>
     </style>
+
+    <style name="TextInputLayoutTextAppearance" parent="Base.TextAppearance.MaterialComponents.Subtitle2">
+        <item name="android:textSize">10sp</item>
+    </style>
+
 
     <style name="TextInputStyle">
         <item name="android:layout_width">match_parent</item>
@@ -58,4 +64,7 @@
         <item name="android:textCursorDrawable">@null</item>
         <item name="android:textSize">14sp</item>
     </style>
+
+
+
 </resources>
