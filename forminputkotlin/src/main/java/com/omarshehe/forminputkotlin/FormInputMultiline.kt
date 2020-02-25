@@ -19,14 +19,12 @@ import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
-import kotlinx.android.synthetic.main.form_input_autocomplete.view.*
 import kotlinx.android.synthetic.main.form_input_multiline.view.*
 import kotlinx.android.synthetic.main.form_input_multiline.view.imgNoError
 import kotlinx.android.synthetic.main.form_input_multiline.view.layInputBox
 import kotlinx.android.synthetic.main.form_input_multiline.view.tvError
 import kotlinx.android.synthetic.main.form_input_multiline.view.tvLabel
 import kotlinx.android.synthetic.main.form_input_text.view.*
-import kotlinx.android.synthetic.main.form_input_text.view.txtInputBox
 
 class FormInputMultiline  : RelativeLayout, TextWatcher {
     private lateinit var mPresenter: FormInputContract.Presenter

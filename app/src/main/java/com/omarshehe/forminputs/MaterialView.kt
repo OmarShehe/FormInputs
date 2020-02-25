@@ -3,7 +3,6 @@ package com.omarshehe.forminputs
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
-import com.omarshehe.forminputkotlin.FormInputMaterialText
 import kotlinx.android.synthetic.main.activity_material_view.*
 
 class MaterialView : AppCompatActivity() {
@@ -23,12 +22,5 @@ class MaterialView : AppCompatActivity() {
                 }, 1000)
             }
         }
-
-        txtFullName.setOnViewClickListener(object : FormInputMaterialText.OnClickListener {
-            override fun onClick() {
-            }
-        })
-
-
     }
 }

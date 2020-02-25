@@ -24,13 +24,6 @@ import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import kotlinx.android.synthetic.main.form_input_autocomplete.view.*
-import kotlinx.android.synthetic.main.form_input_autocomplete.view.imgNoError
-import kotlinx.android.synthetic.main.form_input_autocomplete.view.layInputBox
-import kotlinx.android.synthetic.main.form_input_autocomplete.view.tvError
-import kotlinx.android.synthetic.main.form_input_autocomplete.view.tvLabel
-import kotlinx.android.synthetic.main.form_input_autocomplete.view.txtInputBox
-import kotlinx.android.synthetic.main.form_input_spinner.view.*
-import kotlinx.android.synthetic.main.form_input_text.view.*
 import java.util.*
 import kotlin.properties.Delegates
 

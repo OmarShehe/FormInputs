@@ -3,11 +3,7 @@ package com.omarshehe.forminputs
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.omarshehe.forminputkotlin.FormInputSpinner
-import com.omarshehe.forminputkotlin.FormInputText
-import com.omarshehe.forminputkotlin.adapter.AutoCompleteAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -29,17 +25,6 @@ class MainActivity : AppCompatActivity() {
                 }, 1000)
             }
         }
-
-        fullName.setOnViewClickListener(object : FormInputText.OnClickListener{
-            override fun onClick() {
-            }
-        })
-
-        gender.setOnSpinnerItemSelected(object :FormInputSpinner.SpinnerSelectionListener{
-            override fun onSpinnerItemSelected(item: String) {
-                Toast.makeText(baseContext,item,Toast.LENGTH_LONG).show()
-            }
-        })
 
     }
 }

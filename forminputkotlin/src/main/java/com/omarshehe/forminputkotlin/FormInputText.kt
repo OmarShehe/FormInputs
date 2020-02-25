@@ -20,11 +20,7 @@ import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
-import kotlinx.android.synthetic.main.form_input_password.view.*
 import kotlinx.android.synthetic.main.form_input_text.view.*
-import kotlinx.android.synthetic.main.form_input_text.view.imgNoError
-import kotlinx.android.synthetic.main.form_input_text.view.tvError
-import kotlinx.android.synthetic.main.form_input_text.view.tvLabel
 
 
 class FormInputText : RelativeLayout, TextWatcher  {

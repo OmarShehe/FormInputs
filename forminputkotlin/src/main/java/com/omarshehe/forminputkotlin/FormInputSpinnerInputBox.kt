@@ -19,15 +19,7 @@ import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
-import kotlinx.android.synthetic.main.form_input_password.view.*
 import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.*
-import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.iconCancel
-import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.imgNoError
-import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.layInputBox
-import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.tvError
-import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.tvLabel
-import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.txtInputBox
-import kotlinx.android.synthetic.main.form_input_text.view.*
 import java.util.*
 
 class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {

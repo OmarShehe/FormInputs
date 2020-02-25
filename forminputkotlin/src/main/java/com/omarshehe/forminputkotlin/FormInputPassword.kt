@@ -21,10 +21,6 @@ import com.omarshehe.forminputkotlin.utils.PasswordStrength
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import kotlinx.android.synthetic.main.form_input_password.view.*
-import kotlinx.android.synthetic.main.form_input_password.view.imgNoError
-import kotlinx.android.synthetic.main.form_input_password.view.tvError
-import kotlinx.android.synthetic.main.form_input_password.view.tvLabel
-import kotlinx.android.synthetic.main.form_input_spinner.view.*
 import kotlin.properties.Delegates
 
 class FormInputPassword : RelativeLayout, TextWatcher {

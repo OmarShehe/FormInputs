@@ -8,10 +8,8 @@ import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.RelativeLayout
-import android.widget.Spinner
+import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
@@ -20,6 +18,7 @@ import kotlinx.android.synthetic.main.form_input_spinner.view.*
 import java.util.*
 
 class FormInputSpinner : RelativeLayout {
+    private var mTextColor=R.color.black
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mValue : String = ""
@@ -57,6 +56,7 @@ class FormInputSpinner : RelativeLayout {
          */
         if (context != null) {
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout, 0, 0)
+            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
             mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
             mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
             mValue = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
@@ -133,6 +133,12 @@ class FormInputSpinner : RelativeLayout {
     }
     fun showValidIcon(showIcon: Boolean) : FormInputSpinner {
         isShowValidIcon=showIcon
+        return this
+    }
+
+    fun setTextColor(color:Int):FormInputSpinner{
+        mTextColor=color
+      //  txtInputBox.setTextColor(ContextCompat.getColor(context,mTextColor))
         return this
     }
 
@@ -227,6 +233,8 @@ class FormInputSpinner : RelativeLayout {
                     validateSpinner(mHint)
                 }
                 firstOpen=1
+                //Set text color to the selected item
+                (view as TextView?)?.setTextColor(ContextCompat.getColor(context,mTextColor))
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
