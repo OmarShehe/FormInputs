@@ -23,7 +23,6 @@
         <attr name="form_maxLength" format="integer"/>
         <attr name="form_isMultiLine" format="boolean"/>
         <attr name="form_showPassStrength" format="boolean"/>
-        <attr name="form_confirm" format="boolean"/>
         <attr name="form_array" format="reference"/>
 
         <attr name="form_showTips" format="boolean"/>

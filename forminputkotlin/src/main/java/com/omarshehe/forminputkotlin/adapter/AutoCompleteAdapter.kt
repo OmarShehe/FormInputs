@@ -11,7 +11,8 @@ import android.widget.TextView
 import com.omarshehe.forminputkotlin.R
 import java.util.*
 
-class AutoCompleteAdapter(context: Context, resource: Int, private val items: ArrayList<String>, private val mListener: ItemSelectedListener)
+class AutoCompleteAdapter(context: Context, resource: Int,
+                          private val items: ArrayList<String>, private val mListener: ItemSelectedListener)
     : ArrayAdapter<String>(context, resource, items) {
     private val itemsAll: ArrayList<String> = items.clone() as ArrayList<String>
     private val suggestions: ArrayList<String> = ArrayList()

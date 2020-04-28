@@ -60,7 +60,7 @@ class FormInputSpinner : RelativeLayout {
             mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
             mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
             mValue = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
-            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height, resources.getDimension(R.dimen.input_box_height)).toInt()
+            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height, resources.getDimension(R.dimen.formInputInput_box_height)).toInt()
             isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
             mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
             mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
@@ -226,7 +226,7 @@ class FormInputSpinner : RelativeLayout {
     }
 
     private fun initClickListener(){
-        spSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 if (isMandatory && firstOpen!=0) {
                     mListener?.onSpinnerItemSelected(parent.selectedItem.toString())

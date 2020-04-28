@@ -30,4 +30,31 @@
         <item name="android:textAppearance">?attr/textAppearanceSubtitle1</item>
     </style>
 
+    <style name="formInputStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/formInputInput_box_height</item>
+        <item name="android:background">@color/colorWhite</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/colorGrey</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="formPinInputStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_txt_square</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:inputType">phone</item>
+        <item name="android:maxLength">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:hint">@string/_0</item>
+        <item name="android:minHeight">@dimen/formInputInput_box_height</item>
+    </style>
+
 </resources>

@@ -38,7 +38,6 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     private var isShowValidIcon= true
     private var mPassLength=8
     private var confirmPassword :FormInputPassword? = null
-    private var isConfirmPassword:Boolean=false
     private var isShowLabel:Boolean =true
 
 
@@ -73,12 +72,11 @@ class FormInputPassword : RelativeLayout, TextWatcher {
             mLabel = a.getString(R.styleable.FormInputLayout_form_label).orEmpty()
             mHint = a.getString(R.styleable.FormInputLayout_form_hint).orEmpty()
             mValue= a.getString(R.styleable.FormInputLayout_form_value).orEmpty()
-            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.input_box_height)).toInt()
+            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
             isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
             mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
             isShowPassStrength = a.getBoolean(R.styleable.FormInputLayout_form_showPassStrength, true)
             isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
-            isConfirmPassword= a.getBoolean(R.styleable.FormInputLayout_form_confirm, false)
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
 
@@ -87,7 +85,6 @@ class FormInputPassword : RelativeLayout, TextWatcher {
             setHint(mHint)
             setValue(mValue)
             height = mHeight
-            isConfirm(isConfirmPassword)
             showPassStrength(isShowPassStrength)
             setBackground(mBackground)
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
@@ -146,14 +143,8 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     }
 
     fun showPassStrength(isShowStrength: Boolean): FormInputPassword{
-        if(isConfirmPassword) {isShowPassStrength=false}
+        if(confirmPassword!=null) {isShowPassStrength=false}
         isShowPassStrength= Utils.setViewVisibility(layPassStrength,isShowStrength)
-        return this
-    }
-
-    fun isConfirm(isConfirm: Boolean): FormInputPassword{
-        isConfirmPassword= isConfirm
-        if(isConfirmPassword) {isShowPassStrength=false}
         return this
     }
     
@@ -266,10 +257,8 @@ class FormInputPassword : RelativeLayout, TextWatcher {
 
 
     private fun changeIcon(view: AppCompatImageView, state: Boolean) {
-        val animFromDoneToClose: AnimatedVectorDrawableCompat? =
-            AnimatedVectorDrawableCompat.create(context, R.drawable.ic_done_to_close)
-        val animFromCloseToDone: AnimatedVectorDrawableCompat? =
-            AnimatedVectorDrawableCompat.create(context, R.drawable.ic_close_to_done)
+        val animFromDoneToClose: AnimatedVectorDrawableCompat? = AnimatedVectorDrawableCompat.create(context, R.drawable.ic_done_to_close)
+        val animFromCloseToDone: AnimatedVectorDrawableCompat? = AnimatedVectorDrawableCompat.create(context, R.drawable.ic_close_to_done)
         val animation = if (state) animFromCloseToDone else animFromDoneToClose
         if (animation == view.drawable) return
         view.setImageDrawable(animation)
@@ -318,7 +307,7 @@ class FormInputPassword : RelativeLayout, TextWatcher {
         val value=text.toString()
         if(isShowPassStrength) {
             updatePasswordStrengthView(value)
-        }else if(isConfirmPassword){
+        }else if(confirmPassword!=null){
             if(!checkValueNotEmpty(value)){
                 if(confirmPassword?.getValue()==value){
                     verifyInputError("", View.GONE)

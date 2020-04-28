@@ -20,7 +20,7 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-	        implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:1.0.2'
+	        implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:1.0.3'
 	}
 ```
 
@@ -50,7 +50,8 @@ Spinner
             app:form_array="@array/array_gender"
             app:form_isMandatory="true"
             app:form_label="Gender"
-            app:form_showValidIcon="false"/>
+            app:form_showValidIcon="false"
+            app:form_textColor="@color/colorOrange"/>
 ```
 
 Auto Complete
@@ -134,7 +135,6 @@ Email
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:inputType="textAutoCorrect"
             app:form_hint="Your email address"
             app:form_inputType="email"
             app:form_isMandatory="true"
@@ -171,21 +171,35 @@ Password
 ```
 
 
+Pin
+```
+<com.omarshehe.forminputkotlin.FormInputPin
+            android:id="@+id/confirmPin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:form_label="Pin"
+            app:form_isMandatory="true"
+            app:form_hint="0"
+            app:form_inputType="number"/>
+```
+
+
 Button
 ```
 <com.omarshehe.forminputkotlin.FormInputButton
             android:id="@+id/btnSubmit"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
-            app:form_background="@color/colorPrimary"
-            app:form_cornerRadius="100"
-            app:form_height="55dp"
+            android:text="@string/Submit"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/colorPrimary"
+            app:cornerRadius="35dp"
             app:form_progressColor="@color/colorPink"
             app:form_showProgress="true"
-            app:form_textColor="@color/white"
-            app:form_value="@string/Submit"
             app:form_valueOnLoad="Please, wait.." />
 
 ```

@@ -1,11 +1,11 @@
 package com.omarshehe.forminputkotlin
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.text.SpannableString
 import android.text.Spanned
 import android.util.AttributeSet
+import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.google.android.material.button.MaterialButton
 import com.omarshehe.forminputkotlin.utils.DrawableSpan
@@ -46,7 +46,7 @@ class FormInputButton : MaterialButton {
 
         progressDrawable = CircularProgressDrawable(context).apply {
             setStyle(CircularProgressDrawable.LARGE)
-            setColorSchemeColors(Color.WHITE)
+            setColorSchemeColors(ContextCompat.getColor(this@FormInputButton.context,mProgressColor))
             val size = (centerRadius + strokeWidth).toInt() * 2
             setBounds(0, 0, size, size)
         }
@@ -106,7 +106,9 @@ class FormInputButton : MaterialButton {
             }
             isEnabled = false
         } else {
-           text = mValue
+            progressDrawable.callback = null
+            progressDrawable.stop()
+            text = mValue
             isEnabled = true
         }
     }

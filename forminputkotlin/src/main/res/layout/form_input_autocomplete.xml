@@ -28,22 +28,13 @@
 
             <com.omarshehe.forminputkotlin.widget.AutoCompleteView
                 android:id="@+id/txtInputBox"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/input_box_height"
+                style="@style/formInputStyle"
                 android:layout_toStartOf="@+id/iconDropDown"
                 android:layout_toLeftOf="@+id/iconDropDown"
-                android:background="#FFFFFF"
-                android:fontFamily="@font/roboto_regular"
                 android:gravity="center_vertical"
                 android:hint="@string/select"
                 android:inputType="textAutoComplete"
-                android:paddingStart="10dp"
-                android:paddingLeft="10dp"
-                android:paddingEnd="0dp"
-                android:paddingRight="0dp"
-                android:singleLine="true"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iconDropDown"

@@ -28,7 +28,7 @@
             <EditText
                 android:id="@+id/txtInputBox"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/input_box_height"
+                android:layout_height="@dimen/formInputInput_box_height"
                 android:layout_toStartOf="@+id/iconCancel"
                 android:layout_toLeftOf="@+id/iconCancel"
                 android:background="@color/colorTransparent"

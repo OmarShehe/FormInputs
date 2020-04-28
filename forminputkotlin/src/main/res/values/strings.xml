@@ -4,6 +4,7 @@
     <string name="isRequired">%s is required</string>
     <string name="value">value</string>
     <string name="inValidEmail">Invalid email address</string>
+    <string name="inValid">Invalid %s</string>
     <string name="select">Select</string>
     <string name="notSelected">Not selected</string>
     <string name="inValidPhoneNumber">Invalid phone number</string>
@@ -27,4 +28,5 @@
     <string name="include_at_least_one_special_character">Include at least one special character</string>
     <string name="your_password_need_to">Your password need to:</string>
     <string name="include_at_least_one_upper_case">Include at least one upper case</string>
+    <string name="_0">0</string>
 </resources>

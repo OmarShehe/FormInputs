@@ -2,9 +2,9 @@ package com.omarshehe.forminputkotlin
 
 import android.content.Context
 import android.graphics.Canvas
-import android.util.SparseArray
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.SparseArray
 import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
 import java.util.regex.Pattern

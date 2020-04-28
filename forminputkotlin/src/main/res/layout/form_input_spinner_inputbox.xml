@@ -33,7 +33,7 @@
             <Spinner
                 android:id="@+id/spSpinner"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/input_box_height"
+                android:layout_height="@dimen/formInputInput_box_height"
                 android:entries="@array/array"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
@@ -42,7 +42,7 @@
             <EditText
                 android:id="@+id/txtInputBox"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/input_box_height"
+                android:layout_height="@dimen/formInputInput_box_height"
                 android:layout_toStartOf="@+id/iconCancel"
                 android:layout_toLeftOf="@+id/iconCancel"
                 android:layout_toEndOf="@+id/spSpinner"

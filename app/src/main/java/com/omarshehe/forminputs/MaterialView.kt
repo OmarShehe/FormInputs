@@ -14,6 +14,7 @@ class MaterialView : AppCompatActivity() {
         txtFullName.setTextInputLayout(fullNameView)
         txtEmail.setTextInputLayout(emailView)
         txtPhoneNumber.setTextInputLayout(phoneNumberView)
+        btnSubmit.showLoading(true)
         btnSubmit.setOnClickListener {
             if(!txtFullName.isError(mainView) && !txtEmail.isError(mainView) && !txtPhoneNumber.isError(mainView)){
                 btnSubmit.showLoading(true)

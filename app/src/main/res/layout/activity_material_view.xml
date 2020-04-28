@@ -97,9 +97,8 @@
             android:textColor="@color/white"
             app:backgroundTint="@color/colorPrimary"
             app:cornerRadius="35dp"
-            app:form_progressColor="@color/colorPink"
+            app:form_progressColor="@color/colorOrange"
             app:form_showProgress="true"
-            app:form_valueOnLoad="Please, wait.."
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/IdView" />

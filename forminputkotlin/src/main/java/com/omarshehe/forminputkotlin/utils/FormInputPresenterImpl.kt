@@ -36,5 +36,7 @@ class FormInputPresenterImpl : FormInputContract.Presenter {
         }
     }
 
-
+    override fun appendPin(first: String, second: String, third: String, fourth: String): String {
+        return StringBuilder().append(first).append(second).append(third).append(fourth).toString()
+    }
 }

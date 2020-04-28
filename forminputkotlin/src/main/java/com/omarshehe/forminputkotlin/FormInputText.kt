@@ -43,7 +43,6 @@ class FormInputText : RelativeLayout, TextWatcher  {
     private var mInputType:Int = 1
     private var isShowValidIcon= true
     private var viewToConfirm :FormInputText? = null
-    private var isConfirmText:Boolean=false
     private var isShowLabel:Boolean =true
 
     private var attrs: AttributeSet? =null
@@ -76,12 +75,11 @@ class FormInputText : RelativeLayout, TextWatcher  {
             mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
             mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
             mValue=Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
-            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.input_box_height)).toInt()
+            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
             mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
             isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
             isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
             mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
-            isConfirmText= a.getBoolean(R.styleable.FormInputLayout_form_confirm, false)
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
             setIcons()
@@ -188,11 +186,6 @@ class FormInputText : RelativeLayout, TextWatcher  {
         return this
     }
 
-    fun setConfirmConfirmText(isConfirm: Boolean): FormInputText{
-        isConfirmText= isConfirm
-        return this
-    }
-
 
     fun setViewToConfirm(view:FormInputText):FormInputText{
         viewToConfirm=view
@@ -295,7 +288,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
         mValue=value
         iconCancel.visibility = if (mValue.isNotEmpty()) VISIBLE else GONE
 
-        if(isConfirmText){
+        if(viewToConfirm!=null){
             if(mValue.isNotEmpty() && viewToConfirm?.getValue()==mValue){
                 setTextColor(mTextColor)
                 verifyInputError("", View.GONE)

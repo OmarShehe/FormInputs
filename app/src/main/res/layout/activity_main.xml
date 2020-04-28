@@ -28,7 +28,8 @@
             app:form_label="Gender"
             app:form_showLabel="false"
             app:form_showValidIcon="false"
-            app:form_textColor="@color/colorOrange"/>
+            app:form_textColor="@color/colorOrange" />
+
 
 
         <com.omarshehe.forminputkotlin.FormInputAutoComplete
@@ -104,7 +105,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:inputType="textAutoCorrect"
             app:form_hint="Your email address"
             app:form_inputType="email"
             app:form_isMandatory="true"
@@ -116,7 +116,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:inputType="textAutoCorrect"
-            app:form_confirm="true"
             app:form_hint="Confirm email address"
             app:form_inputType="email"
             app:form_isMandatory="true"
@@ -139,12 +138,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:form_confirm="true"
             app:form_hint="Confirm your password"
             app:form_isMandatory="true"
             app:form_label="Confirm Password"
             app:form_showPassStrength="false"
             app:form_showValidIcon="true" />
+
+        <com.omarshehe.forminputkotlin.FormInputPin
+            android:id="@+id/pin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:form_label="Pin"
+            app:form_isMandatory="true"
+            app:form_hint="0"/>
+
+        <com.omarshehe.forminputkotlin.FormInputPin
+            android:id="@+id/confirmPin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:form_label="Conform Pin"
+            app:form_isMandatory="true"
+            app:form_hint="0"
+            app:form_inputType="number"/>
 
         <com.omarshehe.forminputkotlin.FormInputButton
             android:id="@+id/btnSubmit"
