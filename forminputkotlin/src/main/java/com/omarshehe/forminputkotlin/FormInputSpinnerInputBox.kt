@@ -23,9 +23,6 @@ import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.*
 import java.util.*
 
 class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
-
-
-    var TAG : String ="FormInputSpinnerInputBoxA"
     private lateinit var mPresenter: FormInputContract.Presenter
 
     val INPUTTYPE_TEXT = 1
@@ -39,7 +36,6 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
     private var mValue : String = ""
     private var mHeight : Int = 100
     private var mErrorMessage :String = ""
-    private var mBackground: Int =R.drawable.bg_txt_square
     private var inputError:Int = 1
     private var isMandatory: Boolean = false
     private var mInputType:Int = 1
@@ -71,30 +67,25 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
          */
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,0,0)
-            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
-            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
-            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
+            setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+            setLabel(Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label)))
+            setHint(Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint)))
             mValue= Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
-            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
-            isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
-            mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
-            mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
-            isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
+            setHeight(a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
+
+            showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
+            setInputType( a.getInt(R.styleable.FormInputLayout_form_inputType, 1))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
             val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
             setIcons()
-            mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
 
-            setHint(mHint)
-            height = mHeight
-            setInputType(mInputType)
-            setBackground(mBackground)
             imgNoError.visibility= GONE
 
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtInputBox.addTextChangedListener(this)
-
 
             iconCancel.setOnClickListener { txtInputBox.setText("") }
 
@@ -119,6 +110,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
 
     fun setMandatory(mandatory: Boolean) : FormInputSpinnerInputBox {
         isMandatory =mandatory
+        if(!mandatory){ inputError=0 }
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
         return this
     }
@@ -128,20 +120,16 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
     }
 
     fun setHint(hint: String) : FormInputSpinnerInputBox {
-        txtInputBox.hint = hint
+        mHint=hint
+        txtInputBox.hint = mHint
         return this
     }
 
     fun setHeight(height: Int) : FormInputSpinnerInputBox {
-        val lSparams = LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            height
-        )
-        val lInparams = LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            height
-        )
-        //txtInputBox.layoutParams=lInparams
+        mHeight=height
+       /* val lSparams = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, height)
+        val lInparams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+        //txtInputBox.layoutParams=lInparams*/
         return this
     }
 
@@ -272,9 +260,17 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
      */
 
     private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,imgNoError,isShowValidIcon, error, visible)
+        val errorResult=Utils.showInputError(tvError,imgNoError,checkIfShouldShowValidIcon(), error, visible)
         mErrorMessage=errorResult[0].toString()
         inputError=errorResult[1].toString().toInt()
+    }
+
+    private fun checkIfShouldShowValidIcon():Boolean{
+        return if(getValue()[1].isBlank()){
+            false
+        }else{
+            isShowValidIcon
+        }
     }
 
 

@@ -71,7 +71,7 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
             mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
             mValue= Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
             mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
-            isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
+            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false))
             mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
             mMaxLines = a.getInt(R.styleable.FormInputLayout_form_maxLines, 5)
             mMaxLength = a.getInt(R.styleable.FormInputLayout_form_maxLength, 300)
@@ -108,6 +108,7 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
 
     fun setMandatory(mandatory: Boolean) : FormInputMultiline {
         isMandatory =mandatory
+        if(!mandatory){ inputError=0 }
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
         return this
     }
@@ -216,11 +217,18 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
      * Errors
      */
     private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,imgNoError,isShowValidIcon, error, visible)
+        val errorResult=Utils.showInputError(tvError,imgNoError,checkIfShouldShowValidIcon(), error, visible)
         mErrorMessage=errorResult[0].toString()
         inputError=errorResult[1].toString().toInt()
     }
 
+    private fun checkIfShouldShowValidIcon():Boolean{
+        return if(getValue().isBlank()){
+            false
+        }else{
+            isShowValidIcon
+        }
+    }
 
     fun isError(parentView: View?): Boolean {
         return if (inputError == 1) {

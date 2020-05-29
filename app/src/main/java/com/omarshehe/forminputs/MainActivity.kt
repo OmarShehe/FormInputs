@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
                 !fullName.isError(mainView) &&
                 !price.isError(mainView)  &&
                 !phoneNumber.isError(mainView)  &&
+                !ID.isError(mainView)  &&
                 !about.isError(mainView) &&
                 !email.isError(mainView) &&
                 !confirmEmail.isError(mainView) &&

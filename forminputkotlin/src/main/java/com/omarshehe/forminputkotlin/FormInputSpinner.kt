@@ -56,23 +56,21 @@ class FormInputSpinner : RelativeLayout {
          */
         if (context != null) {
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout, 0, 0)
-            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
-            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
-            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
-            mValue = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
-            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height, resources.getDimension(R.dimen.formInputInput_box_height)).toInt()
-            isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
-            mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
-            mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
-            isShowValidIcon = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
+            setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+            setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
+            setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
+            setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
+            setHeight(a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
+
+            showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
+
 
             val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
             setIcons()
-            mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
-            height = mHeight
-            setMandatory(isMandatory)
-            setBackground(mBackground)
+
             imgNoError.visibility = GONE
             mErrorMessage = String.format(resources.getString(R.string.isRequired), mLabel)
             val getIntArray = resources.getStringArray(list)
@@ -93,6 +91,7 @@ class FormInputSpinner : RelativeLayout {
     }
     fun setMandatory(mandatory: Boolean) : FormInputSpinner {
         isMandatory =mandatory
+        if(!mandatory){ inputError=0 }
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
         return this
     }
@@ -119,10 +118,7 @@ class FormInputSpinner : RelativeLayout {
     }
 
     fun setHeight(height: Int) : FormInputSpinner {
-        val lparams = LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            height
-        )
+        val lparams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
         spSpinner.layoutParams=lparams
         return this
     }
@@ -199,9 +195,17 @@ class FormInputSpinner : RelativeLayout {
      * Errors
      */
     private fun verifyInputError(error: String, visible: Int){
-        val errorResult=showInputError(tvError,imgNoError,isShowValidIcon, error, visible)
+        val errorResult=showInputError(tvError,imgNoError,checkIfShouldShowValidIcon(), error, visible)
         mErrorMessage=errorResult[0].toString()
         inputError=errorResult[1].toString().toInt()
+    }
+
+    private fun checkIfShouldShowValidIcon():Boolean{
+        return if(getValue().isBlank()){
+            false
+        }else{
+            isShowValidIcon
+        }
     }
 
     fun isError(parentView: View?): Boolean {

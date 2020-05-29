@@ -74,7 +74,7 @@
             android:layout_marginTop="16dp"
             app:form_hint="Your phone number"
             app:form_inputType="phoneNumber"
-            app:form_isMandatory="true"
+            app:form_isMandatory="false"
             app:form_label="Phone Number" />
 
         <com.omarshehe.forminputkotlin.FormInputText

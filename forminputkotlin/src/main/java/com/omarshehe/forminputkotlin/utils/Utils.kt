@@ -46,9 +46,7 @@ object Utils {
             showDoneIcon(viewNoError.context,viewNoError,false)
             1
         } else {
-            if(showNoErrorIcon){
-                showDoneIcon(viewNoError.context,viewNoError,true)
-            }
+            showDoneIcon(viewNoError.context,viewNoError,showNoErrorIcon)
             0
         }
 
@@ -64,8 +62,6 @@ object Utils {
 
 
     private fun showDoneIcon(context: Context,view: AppCompatImageView,shouldShow: Boolean) {
-
-
         if(view.isVisible!=shouldShow){
             setViewVisibility(view, shouldShow)
             val animCheckIcon: AnimatedVectorDrawableCompat? = AnimatedVectorDrawableCompat.create(context, R.drawable.check_anim)

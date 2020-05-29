@@ -69,7 +69,7 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
             mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
             setValidPin(Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value)))
             mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
-            isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
+            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false))
             isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
             setInputType( a.getInt(R.styleable.FormInputLayout_form_inputType, 3))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
@@ -111,6 +111,7 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
 
     fun setMandatory(mandatory: Boolean) : FormInputPin {
         isMandatory =mandatory
+        if(!mandatory){ inputError=0 }
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
         return this
     }
@@ -209,9 +210,17 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
      * Errors
      */
     private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,imgNoError,isShowValidIcon, error, visible)
+        val errorResult=Utils.showInputError(tvError,imgNoError,checkIfShouldShowValidIcon(), error, visible)
         mErrorMessage=errorResult[0].toString()
         inputError=errorResult[1].toString().toInt()
+    }
+
+    private fun checkIfShouldShowValidIcon():Boolean{
+        return if(getValue().isBlank()){
+            false
+        }else{
+            isShowValidIcon
+        }
     }
 
 

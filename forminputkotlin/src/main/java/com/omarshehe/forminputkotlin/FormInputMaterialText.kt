@@ -167,6 +167,7 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
 
     fun setMandatory(mandatory: Boolean) : FormInputMaterialText {
         isMandatory=mandatory
+        if(!mandatory){ inputError=0 }
         val stringMandatory= if(isMandatory) "*" else ""
         mTextInputLayout?.helperText = HtmlCompat.fromHtml(String.format(context.getString(R.string.label),tempTextHelper,stringMandatory), HtmlCompat.FROM_HTML_MODE_LEGACY)
         mTextInputLayout?.setHelperTextColor(ContextCompat.getColorStateList(context,defaultTextHelperColor))

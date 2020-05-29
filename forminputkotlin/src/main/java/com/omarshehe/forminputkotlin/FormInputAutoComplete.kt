@@ -40,7 +40,6 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
     private var mBackground: Int =R.drawable.bg_txt_square
     private var inputError:Int = 1
     private var isMandatory: Boolean = false
-    private var mInputType:Int = 1
     private var isShowValidIcon= true
     private var isFirstOpen: Boolean = true
     private var mArrayList :List<String> = emptyArray<String>().toList()
@@ -73,25 +72,21 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
          */
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
-            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
-            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
-            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
-            mValue=Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
-            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
-            mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
-            isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
-            isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
-            mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
+            setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+            setLabel(Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label)))
+            setHint(Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint)))
+            setValue(Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value)))
+            setHeight(a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
+            showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
+
 
             val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
 
             setIcons()
-            mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
-            setHint(mHint)
-            setValue(mValue)
-            height = mHeight
-            setBackground(mBackground)
+
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtInputBox.addTextChangedListener(this)
 
@@ -126,6 +121,7 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
 
     fun setMandatory(mandatory: Boolean) : FormInputAutoComplete {
         isMandatory =mandatory
+        if(!mandatory){ inputError=0 }
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
         return this
     }
@@ -136,6 +132,7 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
 
 
     fun setHint(hint: String) :FormInputAutoComplete {
+        mHint=hint
         txtInputBox.hint = hint
         return this
     }
@@ -155,12 +152,14 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
     }
 
     fun setHeight(height: Int) : FormInputAutoComplete {
+        mHeight=height
         val lp = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
         txtInputBox.layoutParams=lp
         return this
     }
 
     fun setBackground(background: Int) : FormInputAutoComplete  {
+        mBackground=background
         layInputBox.setBackgroundResource(background)
         return this
     }
@@ -215,11 +214,17 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
      * Errors
      */
     private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,imgNoError,isShowValidIcon, error, visible)
+        val errorResult=Utils.showInputError(tvError,imgNoError,checkIfShouldShowValidIcon(), error, visible)
         mErrorMessage=errorResult[0].toString()
         inputError=errorResult[1].toString().toInt()
     }
-
+    private fun checkIfShouldShowValidIcon():Boolean{
+        return if(getValue().isBlank()){
+            false
+        }else{
+            isShowValidIcon
+        }
+    }
 
     fun isError(parentView: View?): Boolean {
         return if (inputError == 1) {

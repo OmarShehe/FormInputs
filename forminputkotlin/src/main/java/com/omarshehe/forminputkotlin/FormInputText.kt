@@ -1,29 +1,25 @@
 package com.omarshehe.forminputkotlin
 
 import android.content.Context
-import android.os.Parcelable
 import android.text.Editable
 import android.text.InputType
 import android.text.Spannable
 import android.text.TextWatcher
 import android.text.method.MovementMethod
 import android.util.AttributeSet
-import android.util.SparseArray
+import android.util.Log
 import android.view.*
 import android.widget.EditText
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
 import com.omarshehe.forminputkotlin.utils.FormInputContract
 import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
-import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
 import kotlinx.android.synthetic.main.form_input_text.view.*
 
 
-class FormInputText : RelativeLayout, TextWatcher  {
+class FormInputText : BaseFormInput, TextWatcher  {
     private lateinit var mPresenter: FormInputContract.Presenter
 
     val INPUTTYPE_TEXT = 1
@@ -37,9 +33,8 @@ class FormInputText : RelativeLayout, TextWatcher  {
     private var mValue : String = ""
     private var mHeight : Int = 100
     private var mErrorMessage :String = ""
-    private var mBackground: Int =R.drawable.bg_txt_square
     private var inputError:Int = 1
-    private var isMandatory: Boolean = false
+    private var isMandatory: Boolean = true
     private var mInputType:Int = 1
     private var isShowValidIcon= true
     private var viewToConfirm :FormInputText? = null
@@ -71,25 +66,20 @@ class FormInputText : RelativeLayout, TextWatcher  {
          */
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
-            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
-            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
-            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
-            mValue=Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
-            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
-            mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
-            isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
-            isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
-            mInputType = a.getInt(R.styleable.FormInputLayout_form_inputType, 1)
+            setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+            setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
+            setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
+            setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
+            setHeight(a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
+
+            showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
+            setInputType( a.getInt(R.styleable.FormInputLayout_form_inputType, 1))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
             setIcons()
-            mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
 
-            setHint(mHint)
-            setValue(mValue)
-            height = mHeight
-            setInputType(mInputType)
-            setBackground(mBackground)
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtInputBox.addTextChangedListener(this)
             iconCancel.setOnClickListener { txtInputBox.setText("") }
@@ -144,6 +134,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
     /**
      * Set components
      */
+
     private fun setIcons(){
         iconCancel.setImageResource(R.drawable.ic_close_grey)
         imgNoError.setImageResource(R.drawable.check_green)
@@ -156,16 +147,19 @@ class FormInputText : RelativeLayout, TextWatcher  {
 
     fun setMandatory(mandatory: Boolean) : FormInputText {
         isMandatory =mandatory
+        if(!mandatory){ inputError=0 }
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
         return this
     }
+
     fun setLabelVisibility(show:Boolean): FormInputText {
         isShowLabel=Utils.setViewVisibility(tvLabel,show)
         return this
     }
 
     fun setHint(hint: String) :FormInputText {
-        txtInputBox.hint = hint
+        mHint=hint
+        txtInputBox.hint = mHint
         return this
     }
 
@@ -176,6 +170,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
     }
 
     fun setHeight(height: Int) : FormInputText {
+        mHeight=height
         val lp = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
         txtInputBox.layoutParams=lp
         return this
@@ -251,9 +246,17 @@ class FormInputText : RelativeLayout, TextWatcher  {
      * Errors
      */
     private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,imgNoError,isShowValidIcon, error, visible)
+        val errorResult=Utils.showInputError(tvError,imgNoError,checkIfShouldShowValidIcon(), error, visible)
         mErrorMessage=errorResult[0].toString()
         inputError=errorResult[1].toString().toInt()
+    }
+
+    private fun checkIfShouldShowValidIcon():Boolean{
+        return if(getValue().isBlank()){
+             false
+        }else{
+            isShowValidIcon
+        }
     }
 
 
@@ -298,10 +301,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
             }
         }else if (mValue.isEmpty()) {
             if (isMandatory) {
-                verifyInputError(
-                    String.format(resources.getString(R.string.cantBeEmpty), mLabel),
-                    View.VISIBLE
-                )
+                verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
             } else {
                 verifyInputError("", View.GONE)
             }
@@ -331,48 +331,7 @@ class FormInputText : RelativeLayout, TextWatcher  {
     }
 
 
-
-
     interface OnClickListener{
         fun onClick()
-    }
-
-
-    /**
-     * Save Instance State of the view
-     * */
-    public override fun onSaveInstanceState(): Parcelable? {
-        return SavedState(super.onSaveInstanceState()).apply {
-            childrenStates = saveChildViewStates()
-        }
-    }
-
-    public override fun onRestoreInstanceState(state: Parcelable) {
-        when (state) {
-            is SavedState -> {
-                super.onRestoreInstanceState(state.superState)
-                state.childrenStates?.let { restoreChildViewStates(it) }
-            }
-            else -> super.onRestoreInstanceState(state)
-        }
-    }
-
-    private fun ViewGroup.saveChildViewStates(): SparseArray<Parcelable> {
-        val childViewStates = SparseArray<Parcelable>()
-        children.forEach { child -> child.saveHierarchyState(childViewStates) }
-        return childViewStates
-    }
-
-    private fun ViewGroup.restoreChildViewStates(childViewStates: SparseArray<Parcelable>) {
-        children.forEach { child -> child.restoreHierarchyState(childViewStates) }
-    }
-
-    override
-    fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
-        dispatchFreezeSelfOnly(container)
-    }
-    override
-    fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
-        dispatchThawSelfOnly(container)
     }
 }

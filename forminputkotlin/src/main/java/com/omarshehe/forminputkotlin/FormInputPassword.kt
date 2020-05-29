@@ -24,14 +24,11 @@ import kotlinx.android.synthetic.main.form_input_password.view.*
 import kotlin.properties.Delegates
 
 class FormInputPassword : RelativeLayout, TextWatcher {
-    var TAG : String ="FormInputPasswordA"
     private var mTextColor=R.color.black
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mValue : String = ""
-    private var mHeight : Int = 100
     private var mErrorMessage :String = ""
-    private var mBackground: Int =R.drawable.bg_txt_square
     private var inputError:Int = 1
     private var isMandatory: Boolean = false
     private var isShowPassStrength: Boolean =false
@@ -67,30 +64,24 @@ class FormInputPassword : RelativeLayout, TextWatcher {
          * Get Attributes
          */
         if(context!=null){
-            val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,0,0)
-            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
-            mLabel = a.getString(R.styleable.FormInputLayout_form_label).orEmpty()
-            mHint = a.getString(R.styleable.FormInputLayout_form_hint).orEmpty()
-            mValue= a.getString(R.styleable.FormInputLayout_form_value).orEmpty()
-            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
-            isMandatory = a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false)
-            mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
-            isShowPassStrength = a.getBoolean(R.styleable.FormInputLayout_form_showPassStrength, true)
-            isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
-            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
+            val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
+            setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+            setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
+            setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
+            setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
+            setHeight(a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
 
+            showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
+            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
+            showPassStrength(a.getBoolean(R.styleable.FormInputLayout_form_showPassStrength, true))
+            setPassLength(mPassLength)
 
             setIcons()
-            mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
-            setHint(mHint)
-            setValue(mValue)
-            height = mHeight
-            showPassStrength(isShowPassStrength)
-            setBackground(mBackground)
+
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtPassword.addTextChangedListener(this)
-
-            setPassLength(mPassLength)
             a.recycle()
 
 
@@ -116,6 +107,7 @@ class FormInputPassword : RelativeLayout, TextWatcher {
 
     fun setMandatory(mandatory: Boolean) : FormInputPassword {
         isMandatory =mandatory
+        if(!mandatory){ inputError=0 }
         mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
         return this
     }
@@ -126,6 +118,7 @@ class FormInputPassword : RelativeLayout, TextWatcher {
 
 
     fun setHint(hint: String) :FormInputPassword{
+        mHint=hint
         txtPassword.hint = hint
         return this
     }
