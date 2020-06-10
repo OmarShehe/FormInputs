@@ -2,31 +2,20 @@ package com.omarshehe.forminputkotlin
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Resources
-import android.os.Parcelable
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.SparseArray
 import android.view.*
 import android.widget.EditText
-import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
 import com.omarshehe.forminputkotlin.utils.FormInputContract
 import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
-import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
 import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
 import kotlinx.android.synthetic.main.form_input_multiline.view.*
-import kotlinx.android.synthetic.main.form_input_multiline.view.imgNoError
-import kotlinx.android.synthetic.main.form_input_multiline.view.layInputBox
-import kotlinx.android.synthetic.main.form_input_multiline.view.tvError
-import kotlinx.android.synthetic.main.form_input_multiline.view.tvLabel
-import kotlinx.android.synthetic.main.form_input_text.view.*
 
-class FormInputMultiline  : RelativeLayout, TextWatcher {
+class FormInputMultiline  :BaseFormInput, TextWatcher {
     private lateinit var mPresenter: FormInputContract.Presenter
     private var mTextColor=R.color.black
     private var mLabel: String = ""
@@ -66,28 +55,23 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
          */
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
-            mTextColor = a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black)
-            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
-            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
-            mValue= Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
-            mHeight = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
-            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false))
-            mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
-            mMaxLines = a.getInt(R.styleable.FormInputLayout_form_maxLines, 5)
-            mMaxLength = a.getInt(R.styleable.FormInputLayout_form_maxLength, 300)
-            isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
+            setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+            setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
+            setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
+            setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
+            setHeight(a.getDimensionPixelSize(R.styleable.FormInputLayout_form_height,resources.getDimensionPixelSize( R.dimen.formInputInput_box_height)))
+            setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
+            showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
-            setIcons()
-            mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+            setMaxLines(a.getInt(R.styleable.FormInputLayout_form_maxLines, 5))
+            setMaxLength( a.getInt(R.styleable.FormInputLayout_form_maxLength, 300))
 
-            setHint(mHint)
-            setValue(mValue)
-            height()
-            setBackground(mBackground)
+
+            setIcons()
+
             setScroll()
-            setMaxLength(mMaxLength)
-            setMaxLines(mMaxLines)
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtMultiline.addTextChangedListener(this)
             a.recycle()
@@ -120,6 +104,7 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
 
 
     fun setHint(hint: String) : FormInputMultiline {
+        mHint=hint
         txtMultiline.hint = hint
         return this
     }
@@ -130,12 +115,8 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
         return this
     }
 
-    private fun height(){
-        txtMultiline.layoutParams=LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mHeight)
-    }
-
     fun setHeight(height: Int) : FormInputMultiline {
-        mHeight = (height * Resources.getSystem().displayMetrics.density).toInt()
+        mHeight =  height
         val lp = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mHeight)
         txtMultiline.layoutParams = lp
         return this
@@ -152,7 +133,7 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
 
     @SuppressLint("ClickableViewAccessibility", "RtlHardcoded")
     private fun setScroll() {
-        txtMultiline.setSingleLine(false)
+        txtMultiline.isSingleLine = false
         txtMultiline.gravity = Gravity.LEFT or Gravity.TOP
         txtMultiline.setPadding(15, 15, 15, 15)
         txtMultiline.scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
@@ -172,11 +153,13 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
     }
 
     fun setMaxLines(maxLines: Int) : FormInputMultiline{
+        mMaxLines=maxLines
         txtMultiline.maxLines = maxLines
         return this
     }
 
     fun setBackground(background: Int) : FormInputMultiline{
+        mBackground=background
         layInputBox.setBackgroundResource(background)
         return this
     }
@@ -188,7 +171,7 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
 
     fun setTextColor(color:Int):FormInputMultiline{
         mTextColor=color
-        txtInputBox.setTextColor(ContextCompat.getColor(context,mTextColor))
+        txtMultiline.setTextColor(ContextCompat.getColor(context,mTextColor))
         return this
     }
 
@@ -279,43 +262,5 @@ class FormInputMultiline  : RelativeLayout, TextWatcher {
     private fun countRemainInput(){
         val rem = mMaxLength - mValue.length
         txtLengthDesc.text = "$rem / $mMaxLength Characters Only"
-    }
-
-    /**
-     * Save Instance State of the view
-     * */
-    public override fun onSaveInstanceState(): Parcelable? {
-        return SavedState(super.onSaveInstanceState()).apply {
-            childrenStates = saveChildViewStates()
-        }
-    }
-
-    public override fun onRestoreInstanceState(state: Parcelable) {
-        when (state) {
-            is SavedState -> {
-                super.onRestoreInstanceState(state.superState)
-                state.childrenStates?.let { restoreChildViewStates(it) }
-            }
-            else -> super.onRestoreInstanceState(state)
-        }
-    }
-
-    private fun ViewGroup.saveChildViewStates(): SparseArray<Parcelable> {
-        val childViewStates = SparseArray<Parcelable>()
-        children.forEach { child -> child.saveHierarchyState(childViewStates) }
-        return childViewStates
-    }
-
-    private fun ViewGroup.restoreChildViewStates(childViewStates: SparseArray<Parcelable>) {
-        children.forEach { child -> child.restoreHierarchyState(childViewStates) }
-    }
-
-    override
-    fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
-        dispatchFreezeSelfOnly(container)
-    }
-    override
-    fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
-        dispatchThawSelfOnly(container)
     }
 }

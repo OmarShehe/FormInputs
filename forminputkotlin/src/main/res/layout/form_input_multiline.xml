@@ -36,7 +36,9 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:textSize="14sp"
-                android:visibility="visible" />
+                android:visibility="visible"
+                android:textColor="@color/black"
+                android:importantForAutofill="auto" />
 
             <TextView
                 android:id="@+id/txtLengthDesc"

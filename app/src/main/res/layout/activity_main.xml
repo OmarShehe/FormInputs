@@ -93,7 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:form_height="100dp"
+            app:form_height="90dp"
             app:form_hint="About you"
             app:form_isMandatory="true"
             app:form_label="About you"

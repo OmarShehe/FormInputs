@@ -94,7 +94,7 @@ class Programmatically : AppCompatActivity() {
             setHint("About you")
             setLabel("About you")
             setMandatory(true)
-            setHeight(100)
+            setHeight(resources.getDimensionPixelSize(R.dimen.formInputInput_box_height))
             setMaxLength(500)
             setPadding(0,50,0,0)
         }

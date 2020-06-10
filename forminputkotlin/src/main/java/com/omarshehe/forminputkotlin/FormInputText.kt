@@ -7,7 +7,6 @@ import android.text.Spannable
 import android.text.TextWatcher
 import android.text.method.MovementMethod
 import android.util.AttributeSet
-import android.util.Log
 import android.view.*
 import android.widget.EditText
 import android.widget.TextView
