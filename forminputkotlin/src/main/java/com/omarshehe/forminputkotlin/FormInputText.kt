@@ -43,6 +43,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
     private var styleAttr: Int = 0
 
     private var mListener : OnClickListener? =null
+    private var mTextChangeListener : OnTextChangeListener? =null
 
     constructor(context: Context) : super(context){
         initView()
@@ -214,6 +215,11 @@ class FormInputText : BaseFormInput, TextWatcher  {
         return this
     }
 
+    fun setOnTextChangeListener(listener: OnTextChangeListener):FormInputText{
+        mTextChangeListener=listener
+        return this
+    }
+
     fun setTextColor(color:Int):FormInputText{
         mTextColor=color
         txtInputBox.setTextColor(ContextCompat.getColor(context,mTextColor))
@@ -287,6 +293,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
         inputBoxOnTextChange(s.toString())
     }
     private fun inputBoxOnTextChange(value: String) {
+        mTextChangeListener?.onTextChange(value)
         mValue=value
         iconCancel.visibility = if (mValue.isNotEmpty()) VISIBLE else GONE
 
@@ -332,5 +339,9 @@ class FormInputText : BaseFormInput, TextWatcher  {
 
     interface OnClickListener{
         fun onClick()
+    }
+
+    interface OnTextChangeListener{
+        fun onTextChange(value: String)
     }
 }
