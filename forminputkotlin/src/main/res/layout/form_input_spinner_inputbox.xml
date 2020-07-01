@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <RelativeLayout
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.AppCompat.DayNight">
+        android:theme="@style/Theme.AppCompat.DayNight"
+        android:orientation="vertical">
 
 
-
-        <TextView
-            android:id="@+id/tvLabel"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/labelView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="3dp"
-            android:layout_marginLeft="2dp"
-            android:text="@string/label"
-            style="@style/LabelStyle" />
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/tvLabel"
+                style="@style/formInputLabelStyle"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgNoError"
+                style="@style/formInputImgNoErrorStyle"
+                tools:visibility="visible"
+                />
+        </LinearLayout>
 
 
 
@@ -26,7 +34,6 @@
             android:id="@+id/layInputBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvLabel"
             android:background="@drawable/bg_txt_square"
             android:visibility="visible">
 
@@ -39,60 +46,31 @@
                 android:paddingBottom="10dp"
                 android:visibility="visible" />
 
+
             <EditText
                 android:id="@+id/txtInputBox"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/formInputInput_box_height"
+                style="@style/formInputTxtInputBoxStyle"
                 android:layout_toStartOf="@+id/iconCancel"
                 android:layout_toLeftOf="@+id/iconCancel"
                 android:layout_toEndOf="@+id/spSpinner"
-                android:layout_toRightOf="@+id/spSpinner"
-                android:background="@color/colorTransparent"
-                android:fontFamily="@font/roboto_regular"
-                android:hint="@string/app_name"
-                android:maxLines="1"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:textSize="14sp"
-                android:visibility="visible" />
+                android:layout_toRightOf="@+id/spSpinner"/>
 
             <ImageView
                 android:id="@+id/iconCancel"
-                android:layout_width="30dp"
-                android:layout_height="40dp"
+                style="@style/formInputIconCancelStyle"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:contentDescription="@string/app_name"
-                android:padding="8dp"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_close_grey" />
+                app:srcCompat="@drawable/ic_close"
+                tools:visibility="visible" />
+
 
         </RelativeLayout>
 
         <TextView
             android:id="@+id/tvError"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/layInputBox"
-            android:fontFamily="@font/roboto_light"
-            android:gravity="end"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingRight="10dp"
-            android:text="@string/app_name"
-            android:textColor="@color/colorRed"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            style="@style/formInputTvErrorStyle"
+            tools:visibility="visible" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imgNoError"
-            android:layout_width="17dp"
-            android:layout_height="17dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:contentDescription="@string/app_name"
-            android:visibility="gone"
-            app:srcCompat="@drawable/check_green" />
 
-    </RelativeLayout>
+    </LinearLayout>
 </merge>

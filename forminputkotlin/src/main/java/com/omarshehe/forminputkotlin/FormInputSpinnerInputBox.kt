@@ -2,27 +2,24 @@ package com.omarshehe.forminputkotlin
 
 import android.app.Activity
 import android.content.Context
-import android.os.Parcelable
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.Spinner
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
-import com.omarshehe.forminputkotlin.utils.FormInputContract
-import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
-import com.omarshehe.forminputkotlin.utils.SavedState
-import com.omarshehe.forminputkotlin.utils.Utils
+import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
+import com.omarshehe.forminputkotlin.utils.*
 import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
 import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.*
 import java.util.*
 
-class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
+class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     private lateinit var mPresenter: FormInputContract.Presenter
 
     val INPUTTYPE_TEXT = 1
@@ -33,8 +30,6 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
     private var mTextColor=R.color.black
     private var mLabel: String = ""
     private var mHint: String = ""
-    private var mValue : String = ""
-    private var mHeight : Int = 100
     private var mErrorMessage :String = ""
     private var inputError:Int = 1
     private var isMandatory: Boolean = false
@@ -69,12 +64,10 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,0,0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
-            setLabel(Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label)))
-            setHint(Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint)))
-            mValue= Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value))
+            setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
+            setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
             setHeight(a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
             setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
-
             showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
             setInputType( a.getInt(R.styleable.FormInputLayout_form_inputType, 1))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
@@ -82,7 +75,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
             val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
             setIcons()
 
-            imgNoError.visibility= GONE
+            imgNoError.gone()
 
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtInputBox.addTextChangedListener(this)
@@ -91,7 +84,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
 
             val getIntArray = resources.getStringArray(list)
             setSpinner(listOf(*getIntArray))
-            setValue(spSpinner.selectedItem.toString(),mValue)
+            setValue(spSpinner.selectedItem.toString(),a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
             a.recycle()
         }
     }
@@ -126,7 +119,6 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
     }
 
     fun setHeight(height: Int) : FormInputSpinnerInputBox {
-        mHeight=height
        /* val lSparams = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, height)
         val lInparams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
         //txtInputBox.layoutParams=lInparams*/
@@ -134,7 +126,6 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
     }
 
     fun setValue(spinnerValue: String,inputBoxValue: String ) : FormInputSpinnerInputBox{
-        mValue = inputBoxValue
         txtInputBox.setText(inputBoxValue)
         setSpinnerValue(spinnerValue)
         return this
@@ -308,9 +299,8 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
 
     }
 
-    private fun inputBoxOnTextChange(value: String) {
-        mValue=value
-        iconCancel.visibility = if (mValue.isNotEmpty()) VISIBLE else GONE
+    private fun inputBoxOnTextChange(mValue: String) {
+        iconCancel.showOrHide(mValue.isNotEmpty())
 
         if (mValue.isEmpty()) {
             if (isMandatory) {
@@ -326,7 +316,7 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
                     setTextColor(mTextColor)
                     verifyInputError("", View.GONE)
                 } else {
-                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorRed))
+                    txtInputBox.textColor(R.color.colorRed)
                     verifyInputError(resources.getString(R.string.inValidEmail), View.VISIBLE)
                 }
             }
@@ -336,59 +326,11 @@ class FormInputSpinnerInputBox  : RelativeLayout, TextWatcher {
                     setTextColor(mTextColor)
                     verifyInputError("", View.GONE)
                 } else {
-                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorRed))
+                    txtInputBox.textColor(R.color.colorRed)
                     verifyInputError(resources.getString(R.string.inValidPhoneNumber), View.VISIBLE)
                 }
             }
         }
-    }
-
-
-    /**
-     * Interface and Listener
-     */
-
-    interface SpinnerSelectionListener {
-        fun onSpinnerItemSelected(item: String)
-    }
-
-
-    /**
-     * Save Instance State of the view
-     * */
-    public override fun onSaveInstanceState(): Parcelable? {
-        return SavedState(super.onSaveInstanceState()).apply {
-            childrenStates = saveChildViewStates()
-        }
-    }
-
-    public override fun onRestoreInstanceState(state: Parcelable) {
-        when (state) {
-            is SavedState -> {
-                super.onRestoreInstanceState(state.superState)
-                state.childrenStates?.let { restoreChildViewStates(it) }
-            }
-            else -> super.onRestoreInstanceState(state)
-        }
-    }
-
-    private fun ViewGroup.saveChildViewStates(): SparseArray<Parcelable> {
-        val childViewStates = SparseArray<Parcelable>()
-        children.forEach { child -> child.saveHierarchyState(childViewStates) }
-        return childViewStates
-    }
-
-    private fun ViewGroup.restoreChildViewStates(childViewStates: SparseArray<Parcelable>) {
-        children.forEach { child -> child.restoreHierarchyState(childViewStates) }
-    }
-
-    override
-    fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
-        dispatchFreezeSelfOnly(container)
-    }
-    override
-    fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
-        dispatchThawSelfOnly(container)
     }
 
 }

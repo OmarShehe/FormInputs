@@ -2,29 +2,34 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <RelativeLayout
-
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.AppCompat.DayNight">
+        android:theme="@style/Theme.AppCompat.DayNight"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvLabel"
-            style="@style/LabelStyle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/labelView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="3dp"
-            android:layout_marginLeft="2dp"
-            android:text="@string/label" />
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/tvLabel"
+                style="@style/formInputLabelStyle"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgNoError"
+                style="@style/formInputImgNoErrorStyle"
+                tools:visibility="visible"
+                />
+        </LinearLayout>
+
 
         <RelativeLayout
             android:id="@+id/layInputBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvLabel"
-            android:background="@drawable/bg_txt_square"
-            android:visibility="visible">
+            style="@style/formInputLytInputBox">
 
             <Spinner
                 android:id="@+id/spSpinner"
@@ -39,28 +44,8 @@
 
         <TextView
             android:id="@+id/tvError"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/layInputBox"
-            android:fontFamily="@font/roboto_light"
-            android:gravity="end"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingRight="10dp"
-            android:text="@string/app_name"
-            android:textColor="@color/colorRed"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            style="@style/formInputTvErrorStyle"
+            tools:visibility="visible" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imgNoError"
-            android:layout_width="17dp"
-            android:layout_height="17dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:contentDescription="@string/app_name"
-            android:visibility="gone"
-            app:srcCompat="@drawable/check_green" />
-
-    </RelativeLayout>
+    </LinearLayout>
 </merge>

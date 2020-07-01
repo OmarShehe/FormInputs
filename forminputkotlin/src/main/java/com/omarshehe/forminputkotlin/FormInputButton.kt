@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.google.android.material.button.MaterialButton
 import com.omarshehe.forminputkotlin.utils.DrawableSpan
-import com.omarshehe.forminputkotlin.utils.Utils
+import com.omarshehe.forminputkotlin.utils.ifNullSetThis
 
 
 class FormInputButton : MaterialButton {
@@ -40,7 +40,7 @@ class FormInputButton : MaterialButton {
 
     private fun initView() {
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout, 0, 0)
-        mValueOnLoad = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_valueOnLoad),resources.getString(R.string.pleaseWait))
+        mValueOnLoad = a.getString(R.styleable.FormInputLayout_form_valueOnLoad).ifNullSetThis(resources.getString(R.string.pleaseWait))
         isShowProgress = a.getBoolean(R.styleable.FormInputLayout_form_showProgress, true)
         mProgressColor = a.getResourceId(R.styleable.FormInputLayout_form_progressColor, R.color.white)
 

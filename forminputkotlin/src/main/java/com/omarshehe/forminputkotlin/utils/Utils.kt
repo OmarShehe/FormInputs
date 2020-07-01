@@ -18,10 +18,6 @@ import com.omarshehe.forminputkotlin.R
  * Author omars
  */
 object Utils {
-    fun checkTextNotNull(txt :String?,default:String="") :String{
-        return txt ?: default
-    }
-
     fun setLabel(txtView : TextView, label: String,isMandatory: Boolean) :String {
         if (label != "") {
             val mandatory= if(isMandatory) "*" else ""

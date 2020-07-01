@@ -2,78 +2,63 @@
 <merge  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".FormInputAutoComplete"
-        android:focusableInTouchMode="true">
-        <TextView
-            android:id="@+id/tvLabel"
-            android:layout_width="wrap_content"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/labelView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="3dp"
-            android:layout_marginLeft="2dp"
-            android:text="@string/label"
-            style="@style/LabelStyle" />
+            android:gravity="end">
 
-        <RelativeLayout
+            <TextView
+                android:id="@+id/tvLabel"
+                style="@style/formInputLabelStyle"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgNoError"
+                style="@style/formInputImgNoErrorStyle"
+                tools:visibility="visible"
+                />
+        </LinearLayout>
+
+        <FrameLayout
             android:id="@+id/layInputBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvLabel"
             android:background="@drawable/bg_txt_square"
             android:padding="2dp"
             android:visibility="visible">
 
             <com.omarshehe.forminputkotlin.widget.AutoCompleteView
                 android:id="@+id/txtInputBox"
-                style="@style/formInputStyle"
-                android:layout_toStartOf="@+id/iconDropDown"
-                android:layout_toLeftOf="@+id/iconDropDown"
+                style="@style/formInputTxtInputBoxStyle"
+                android:layout_marginRight="0dp"
+                android:layout_marginEnd="0dp"
+                android:paddingEnd="30dp"
+                android:paddingRight="30dp"
+                android:background="@color/colorTransparent"
                 android:gravity="center_vertical"
-                android:hint="@string/select"
-                android:inputType="textAutoComplete"
-                />
+                android:inputType="textAutoComplete" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iconDropDown"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:padding="8dp"
-                app:srcCompat="@drawable/arrow_downtoup" />
+                style="@style/formInputIconCancelStyle"
+                app:srcCompat="@drawable/arrow_downtoup"
+                android:visibility="visible"/>
 
-        </RelativeLayout>
+        </FrameLayout>
 
         <TextView
             android:id="@+id/tvError"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/layInputBox"
-            android:fontFamily="@font/roboto_light"
-            android:gravity="end"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingRight="10dp"
-            android:text="@string/app_name"
-            android:textColor="@color/colorRed"
-            android:textSize="12sp"
-            android:visibility="gone" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imgNoError"
-            android:layout_width="17dp"
-            android:layout_height="17dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:contentDescription="@string/app_name"
-            android:visibility="gone"
-            app:srcCompat="@drawable/check_green" />
+            style="@style/formInputTvErrorStyle"
+            tools:visibility="visible" />
 
 
-    </RelativeLayout>
+
+    </LinearLayout>
 
 </merge>

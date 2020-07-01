@@ -6,28 +6,22 @@ package com.omarshehe.forminputkotlin
  */
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.SparseArray
 import android.view.*
 import android.widget.EditText
-import android.widget.RelativeLayout
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.omarshehe.forminputkotlin.adapter.AutoCompleteAdapter
 import com.omarshehe.forminputkotlin.utils.FormInputContract
 import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
-import com.omarshehe.forminputkotlin.utils.SavedState
 import com.omarshehe.forminputkotlin.utils.Utils
+import com.omarshehe.forminputkotlin.utils.changeIconState
 import kotlinx.android.synthetic.main.form_input_autocomplete.view.*
 import java.util.*
 import kotlin.properties.Delegates
 
-class FormInputAutoComplete : RelativeLayout, TextWatcher {
+class FormInputAutoComplete : BaseFormInput, TextWatcher {
     private lateinit var mAdapterAutocomplete: AutoCompleteAdapter
     private lateinit var mPresenter: FormInputContract.Presenter
 
@@ -35,7 +29,6 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mValue : String = ""
-    private var mHeight : Int = 100
     private var mErrorMessage :String = ""
     private var mBackground: Int =R.drawable.bg_txt_square
     private var inputError:Int = 1
@@ -74,9 +67,9 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
-            setLabel(Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label)))
-            setHint(Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint)))
-            setValue(Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value)))
+            setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
+            setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
+            setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
             setHeight(a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
             setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
             showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
@@ -104,7 +97,7 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
         }
     }
     private var arrowIconState: Boolean by Delegates.observable(false) { _, old, new ->
-        if (new != old) changeIconState(iconDropDown!!, new)
+        if (new != old) iconDropDown.changeIconState(new)
     }
 
     /**
@@ -152,9 +145,7 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
     }
 
     fun setHeight(height: Int) : FormInputAutoComplete {
-        mHeight=height
-        val lp = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
-        txtInputBox.layoutParams=lp
+        txtInputBox.height=height
         return this
     }
 
@@ -168,16 +159,7 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
         isShowValidIcon=showIcon
         return this
     }
-    private fun changeIconState(view: AppCompatImageView, state: Boolean) {
-        val animFromDoneToClose: AnimatedVectorDrawableCompat? =
-            AnimatedVectorDrawableCompat.create(context, R.drawable.arrow_down_to_up)
-        val animFromCloseToDone: AnimatedVectorDrawableCompat? =
-            AnimatedVectorDrawableCompat.create(context, R.drawable.arrow_downtoup)
-        val animation = if (state) animFromCloseToDone else animFromDoneToClose
-        if (animation == view.drawable) return
-        view.setImageDrawable(animation)
-        animation?.start()
-    }
+
 
     fun setOnItemSelectedListener(listener: AutoCompleteAdapter.ItemSelectedListener):FormInputAutoComplete{
         mListener=listener
@@ -354,43 +336,4 @@ class FormInputAutoComplete : RelativeLayout, TextWatcher {
         }
     }
 
-
-
-    /**
-     * Save Instance State of the view
-     * */
-    public override fun onSaveInstanceState(): Parcelable? {
-        return SavedState(super.onSaveInstanceState()).apply {
-            childrenStates = saveChildViewStates()
-        }
-    }
-
-    public override fun onRestoreInstanceState(state: Parcelable) {
-        when (state) {
-            is SavedState -> {
-                super.onRestoreInstanceState(state.superState)
-                state.childrenStates?.let { restoreChildViewStates(it) }
-            }
-            else -> super.onRestoreInstanceState(state)
-        }
-    }
-
-    private fun ViewGroup.saveChildViewStates(): SparseArray<Parcelable> {
-        val childViewStates = SparseArray<Parcelable>()
-        children.forEach { child -> child.saveHierarchyState(childViewStates) }
-        return childViewStates
-    }
-
-    private fun ViewGroup.restoreChildViewStates(childViewStates: SparseArray<Parcelable>) {
-        children.forEach { child -> child.restoreHierarchyState(childViewStates) }
-    }
-
-    override
-    fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
-        dispatchFreezeSelfOnly(container)
-    }
-    override
-    fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
-        dispatchThawSelfOnly(container)
-    }
 }

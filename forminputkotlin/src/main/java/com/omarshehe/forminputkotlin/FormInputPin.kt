@@ -65,9 +65,9 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
-            mLabel = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_label))
-            mHint = Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_hint))
-            setValidPin(Utils.checkTextNotNull(a.getString(R.styleable.FormInputLayout_form_value)))
+            mLabel = a.getString(R.styleable.FormInputLayout_form_label).orEmpty()
+            mHint = a.getString(R.styleable.FormInputLayout_form_hint).orEmpty()
+            setValidPin(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
             mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false))
             isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
