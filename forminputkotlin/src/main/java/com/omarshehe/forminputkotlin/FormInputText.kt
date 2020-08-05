@@ -23,21 +23,14 @@ import kotlinx.android.synthetic.main.form_input_text.view.*
 class FormInputText : BaseFormInput, TextWatcher  {
     private lateinit var mPresenter: FormInputContract.Presenter
 
-    val INPUTTYPE_TEXT = 1
-    val INPUTTYPE_PHONE = 2
-    val INPUTTYPE_NUMBER = 3
-    val INPUTTYPE_EMAIL = 4
-
+    private var inputError:Boolean = true
     private var mTextColor=R.color.black
     private var mLabel: String = ""
-    private var mHint: String = ""
     private var mErrorMessage :String = ""
-    private var inputError:Int = 1
     private var isMandatory: Boolean = true
     private var mInputType:Int = 1
-    private var isShowValidIcon= true
+    private var showValidIcon= true
     private var viewToConfirm :FormInputText? = null
-    private var isShowLabel:Boolean =true
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
@@ -78,7 +71,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
             setInputType( a.getInt(R.styleable.FormInputLayout_form_inputType, 1))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
-            setIcons()
+           // setIcons()
 
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtInputBox.addTextChangedListener(this)
@@ -135,31 +128,29 @@ class FormInputText : BaseFormInput, TextWatcher  {
      * Set components
      */
 
-    private fun setIcons(){
-        iconCancel.setImageResource(R.drawable.ic_close_grey)
-        imgNoError.setImageResource(R.drawable.check_green)
-    }
-
     fun setLabel(text:String): FormInputText{
-        mLabel=Utils.setLabel(tvLabel,text,isMandatory)
+        mLabel=tvLabel.setLabel(text,isMandatory)
         return this
     }
 
+    /**
+     * set red star in the label for mandatory view.
+     * if view not mandatory set [inputError] false
+     */
     fun setMandatory(mandatory: Boolean) : FormInputText {
         isMandatory =mandatory
-        if(!mandatory){ inputError=0 }
-        mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+        if(!mandatory){ inputError=false }
+        mLabel=tvLabel.setLabel(mLabel,isMandatory)
         return this
     }
 
     fun setLabelVisibility(show:Boolean): FormInputText {
-        isShowLabel=Utils.setViewVisibility(tvLabel,show)
+        tvLabel.visibleIf(show)
         return this
     }
 
     fun setHint(hint: String) :FormInputText {
-        mHint=hint
-        txtInputBox.hint = mHint
+        txtInputBox.hint = hint
         return this
     }
 
@@ -186,7 +177,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
 
 
     fun showValidIcon(showIcon: Boolean) : FormInputText {
-        isShowValidIcon=showIcon
+        showValidIcon=showIcon
         return this
     }
 
@@ -194,13 +185,14 @@ class FormInputText : BaseFormInput, TextWatcher  {
         mInputType = inputType
 
         when (mInputType) {
-            INPUTTYPE_TEXT -> {
+            INPUT_TYPE_TEXT -> {
                 txtInputBox.inputType = InputType.TYPE_CLASS_TEXT
                 txtInputBox.inputType = InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
             }
-            INPUTTYPE_PHONE -> txtInputBox.inputType = InputType.TYPE_CLASS_PHONE
-            INPUTTYPE_NUMBER ->  txtInputBox.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
-            INPUTTYPE_EMAIL -> txtInputBox.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            INPUT_TYPE_PHONE -> txtInputBox.inputType = InputType.TYPE_CLASS_PHONE
+            INPUT_TYPE_NUMBER ->  txtInputBox.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
+            INPUT_TYPE_EMAIL -> txtInputBox.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            INPUT_TYPE_URL -> txtInputBox.inputType=InputType.TYPE_TEXT_VARIATION_URI
         }
 
         return this
@@ -247,32 +239,29 @@ class FormInputText : BaseFormInput, TextWatcher  {
     /**
      * Errors
      */
-    private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,imgNoError,checkIfShouldShowValidIcon(), error, visible)
-        mErrorMessage=errorResult[0].toString()
-        inputError=errorResult[1].toString().toInt()
+    private fun verifyInputError(stringError: String, visible: Int){
+        mErrorMessage=stringError
+        inputError=tvError.showInputError(validIcon,checkIfShouldShowValidIcon(), stringError, visible)
     }
 
     private fun checkIfShouldShowValidIcon():Boolean{
         return if(getValue().isBlank()){
              false
         }else{
-            isShowValidIcon
+            showValidIcon
         }
     }
 
 
-    fun isError(parentView: View?): Boolean {
-        return if (inputError == 1) {
+    fun isError(parentView: View?=null): Boolean {
+        return if (inputError) {
             verifyInputError(mErrorMessage, VISIBLE)
-            if (parentView != null) {
-                hideKeyboard(context)
-                parentView.scrollTo(0, tvError.top)
-            }
+            hideKeyboard(context)
+            parentView?.scrollTo(0, tvError.top)
             txtInputBox.requestFocus()
             true
         } else {
-            verifyInputError("", View.GONE)
+            verifyInputError("", GONE)
             false
         }
     }
@@ -291,26 +280,38 @@ class FormInputText : BaseFormInput, TextWatcher  {
     }
     private fun inputBoxOnTextChange(mValue: String) {
         mTextChangeListener?.onTextChange(mValue)
-        iconCancel.showOrHide(mValue.isNotEmpty())
+        iconCancel.visibleIf(mValue.isNotEmpty())
 
+        /**
+         *  Compare this view textValue to [viewToConfirm] textValue if [viewToConfirm] is not equal to null
+         */
         if(viewToConfirm.isNotNull()){
-            if(mValue.isNotEmpty() && viewToConfirm?.getValue()==mValue){
+            if(mValue.isNotEmpty() && viewToConfirm?.getValue() == mValue){
                 setTextColor(mTextColor)
-                verifyInputError("", View.GONE)
+                verifyInputError("", GONE)
             }else{
                 txtInputBox.textColor(R.color.colorRed)
-                verifyInputError(String.format(resources.getString(R.string.doNotMatch),mLabel), View.VISIBLE)
+                verifyInputError(String.format(resources.getString(R.string.doNotMatch),mLabel), VISIBLE)
             }
+
+            /**
+             *  If the [mValue] is empty, show input error only if [isMandatory] is true
+             */
         }else if (mValue.isEmpty()) {
             if (isMandatory) {
-                verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
+                verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), VISIBLE)
             } else {
-                verifyInputError("", View.GONE)
+                verifyInputError("", GONE)
             }
-        }else {
-            verifyInputError("", View.GONE)
 
-            if (mInputType == INPUTTYPE_EMAIL) {
+            /**
+             * The [mValue] is not empty, remove error.
+             * Validate view based on [mInputType]
+             */
+        }else {
+            verifyInputError("", GONE)
+
+            if (mInputType == INPUT_TYPE_EMAIL) {
                 if (mPresenter.isValidEmail(mValue)) {
                     setTextColor(mTextColor)
                     verifyInputError("", View.GONE)
@@ -320,13 +321,22 @@ class FormInputText : BaseFormInput, TextWatcher  {
                 }
             }
 
-            if (mInputType == INPUTTYPE_PHONE) {
+            if (mInputType == INPUT_TYPE_PHONE) {
                 if (mPresenter.isValidPhoneNumber(mValue)) {
                     setTextColor(mTextColor)
                     verifyInputError("", View.GONE)
                 } else {
                     txtInputBox.textColor(R.color.colorRed)
                     verifyInputError(resources.getString(R.string.inValidPhoneNumber), View.VISIBLE)
+                }
+            }
+            if(mInputType== INPUT_TYPE_URL){
+                if (mPresenter.isValidUrl(mValue)) {
+                    setTextColor(mTextColor)
+                    verifyInputError("", View.GONE)
+                } else {
+                    txtInputBox.textColor(R.color.colorRed)
+                    verifyInputError(resources.getString(R.string.invalidUrl), View.VISIBLE)
                 }
             }
         }

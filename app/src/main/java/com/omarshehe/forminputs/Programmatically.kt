@@ -7,6 +7,10 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.omarshehe.forminputkotlin.*
+import com.omarshehe.forminputkotlin.BaseFormInput.Companion.INPUT_TYPE_EMAIL
+import com.omarshehe.forminputkotlin.BaseFormInput.Companion.INPUT_TYPE_NUMBER
+import com.omarshehe.forminputkotlin.BaseFormInput.Companion.INPUT_TYPE_PHONE
+import com.omarshehe.forminputkotlin.BaseFormInput.Companion.INPUT_TYPE_TEXT
 import com.omarshehe.forminputkotlin.utils.Density
 import kotlinx.android.synthetic.main.activity_programmatical.*
 
@@ -44,7 +48,7 @@ class Programmatically : AppCompatActivity() {
 
 
         val fullName = FormInputText(applicationContext)
-        fullName.setInputType(fullName.INPUTTYPE_TEXT).apply {
+        fullName.setInputType(INPUT_TYPE_TEXT).apply {
             setID(3)
             setHint("Your full name")
             setLabel("Full Name")
@@ -55,7 +59,7 @@ class Programmatically : AppCompatActivity() {
 
         val currencyArray = resources.getStringArray(R.array.array_currency)
         val price = FormInputSpinnerInputBox(this).apply {
-            setInputType(fullName.INPUTTYPE_NUMBER)
+            setInputType(INPUT_TYPE_NUMBER)
             setID(4)
             setHint("Your price")
             setLabel("Price")
@@ -70,7 +74,7 @@ class Programmatically : AppCompatActivity() {
 
 
         val phoneNumber = FormInputText(applicationContext)
-        phoneNumber.setInputType(phoneNumber.INPUTTYPE_PHONE).apply {
+        phoneNumber.setInputType(INPUT_TYPE_PHONE).apply {
             setID(5)
             setHint("Your phone number")
             setLabel("Phone Number")
@@ -80,7 +84,7 @@ class Programmatically : AppCompatActivity() {
 
 
         val idNumber = FormInputText(applicationContext)
-        idNumber.setInputType(idNumber.INPUTTYPE_NUMBER).apply {
+        idNumber.setInputType(INPUT_TYPE_NUMBER).apply {
             setID(6)
             setHint("Your ID number")
             setLabel("ID Number")
@@ -101,7 +105,7 @@ class Programmatically : AppCompatActivity() {
 
 
         val email = FormInputText(applicationContext)
-        email.setInputType(email.INPUTTYPE_EMAIL).apply {
+        email.setInputType(INPUT_TYPE_EMAIL).apply {
             setID(8)
             setHint("Your email address")
             setLabel("Email")

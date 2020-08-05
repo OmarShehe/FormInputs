@@ -2,18 +2,55 @@ package com.omarshehe.forminputkotlin
 
 import android.content.Context
 import android.os.Parcelable
+import android.text.Spanned
 import android.util.AttributeSet
 import android.util.SparseArray
+import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.text.HtmlCompat
 import androidx.core.view.children
+import androidx.core.view.isVisible
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.omarshehe.forminputkotlin.utils.SavedState
+import com.omarshehe.forminputkotlin.utils.Utils
+import com.omarshehe.forminputkotlin.utils.showDoneIcon
+import com.omarshehe.forminputkotlin.utils.toHtml
 
 open class BaseFormInput : RelativeLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs,defStyleAttr)
 
+
+
+    fun TextView.showInputError( validIcon: AppCompatImageView, showValidIcon: Boolean, stringError: String, visible: Int): Boolean  {
+        text = stringError
+        visibility = visible
+        return if (visible == View.VISIBLE) {
+            validIcon.showDoneIcon(false)
+            true
+        } else {
+            validIcon.showDoneIcon( showValidIcon)
+            false
+        }
+    }
+
+    /**
+     * Set label text, add red star if required
+     */
+    fun TextView.setLabel(label: String,isMandatory: Boolean):String {
+        text = if (label.isNotBlank()) {
+            val mandatory= if(isMandatory) "*" else ""
+            String.format(context.getString(R.string.label),label,mandatory).toHtml()
+        } else {
+            val mandatory= if(isMandatory) "*" else ""
+           String.format(context.getString(R.string.label),"",mandatory).toHtml()
+        }
+        return label
+    }
 
     /**
      * Save Instance State of the view
@@ -52,4 +89,15 @@ open class BaseFormInput : RelativeLayout {
     fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
         dispatchThawSelfOnly(container)
     }
+
+
+    companion object{
+        const val INPUT_TYPE_TEXT = 1
+        const val INPUT_TYPE_PHONE = 2
+        const val INPUT_TYPE_NUMBER = 3
+        const val INPUT_TYPE_EMAIL = 4
+        const val INPUT_TYPE_URL = 5
+    }
 }
+
+

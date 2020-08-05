@@ -23,7 +23,8 @@ class MainActivity : AppCompatActivity() {
         //startActivity(Intent(this, MaterialView::class.java))
         btnSubmit.setOnClickListener {
             if (!gender.isError(mainView) &&
-                !country.isError((mainView)) &&
+                !country.isError(mainView) &&
+                !txtUrl.isError(mainView) &&
                 !fullName.isError(mainView) &&
                 !price.isError(mainView)  &&
                 !phoneNumber.isError(mainView)  &&

@@ -19,7 +19,7 @@ import com.omarshehe.forminputkotlin.R
  */
 object Utils {
     fun setLabel(txtView : TextView, label: String,isMandatory: Boolean) :String {
-        if (label != "") {
+        if (label.isNotBlank()) {
             val mandatory= if(isMandatory) "*" else ""
             txtView.text = HtmlCompat.fromHtml(String.format(txtView.context.getString(R.string.label),label,mandatory), HtmlCompat.FROM_HTML_MODE_LEGACY)
         } else {
@@ -67,8 +67,6 @@ object Utils {
             animCheckIcon?.start()
         }
         setViewVisibility(view, shouldShow)
-
-
     }
 
 }

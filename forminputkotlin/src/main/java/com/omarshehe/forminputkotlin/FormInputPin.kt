@@ -101,7 +101,7 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
      * Set components
      */
     private fun setIcons(){
-        imgNoError.setImageResource(R.drawable.check_green)
+        validIcon.setImageResource(R.drawable.check_green)
     }
 
     fun setLabel(text:String): FormInputPin{
@@ -210,7 +210,7 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
      * Errors
      */
     private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,imgNoError,checkIfShouldShowValidIcon(), error, visible)
+        val errorResult=Utils.showInputError(tvError,validIcon,checkIfShouldShowValidIcon(), error, visible)
         mErrorMessage=errorResult[0].toString()
         inputError=errorResult[1].toString().toInt()
     }

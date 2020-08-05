@@ -2,6 +2,7 @@ package com.omarshehe.forminputkotlin.utils
 
 import android.text.TextUtils
 import android.util.Patterns
+import android.webkit.URLUtil
 import java.util.*
 
 class FormInputPresenterImpl : FormInputContract.Presenter {
@@ -14,7 +15,7 @@ class FormInputPresenterImpl : FormInputContract.Presenter {
     }
 
     override fun isValidPhoneNumber(phoneNumber: CharSequence): Boolean {
-        return if (phoneNumber != "") {
+        return if (phoneNumber.isNotBlank()) {
             if (phoneNumber.length == 10 || phoneNumber.length == 13) {
                 Patterns.PHONE.matcher(phoneNumber).matches()
             } else {
@@ -26,11 +27,9 @@ class FormInputPresenterImpl : FormInputContract.Presenter {
     }
 
 
-    override fun isValidUrl(url: CharSequence): Boolean {
-        return if (url != "") {
-            val p = Patterns.WEB_URL
-            val m = p.matcher(url.toString().toLowerCase(Locale(toString())))
-            m.matches()
+    override fun isValidUrl(input: CharSequence): Boolean {
+        return if (input.isNotBlank()) {
+            URLUtil.isValidUrl(input.toString()) && Patterns.WEB_URL.matcher(input).matches()
         } else {
             false
         }

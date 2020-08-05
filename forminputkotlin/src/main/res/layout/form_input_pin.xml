@@ -19,7 +19,7 @@
                 style="@style/formInputLabelStyle" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imgNoError"
+                android:id="@+id/validIcon"
                 style="@style/formInputImgNoErrorStyle"
                 tools:visibility="visible" />
         </LinearLayout>

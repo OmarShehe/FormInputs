@@ -95,8 +95,8 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     }
 
     private fun setIcons(){
-        Utils.setViewVisibility(imgNoError,false)
-        imgNoError.setImageResource(R.drawable.check_anim)
+        Utils.setViewVisibility(validIcon,false)
+        validIcon.setImageResource(R.drawable.check_anim)
     }
 
     fun setLabel(text:String): FormInputPassword{
@@ -266,7 +266,7 @@ class FormInputPassword : RelativeLayout, TextWatcher {
      * Errors
      */
     private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,imgNoError,isShowValidIcon, error, visible)
+        val errorResult=Utils.showInputError(tvError,validIcon,isShowValidIcon, error, visible)
         mErrorMessage=errorResult[0].toString()
         inputError=errorResult[1].toString().toInt()
     }

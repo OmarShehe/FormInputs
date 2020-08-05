@@ -71,7 +71,7 @@ class FormInputSpinner : RelativeLayout {
             val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
             setIcons()
 
-            imgNoError.visibility = GONE
+            validIcon.visibility = GONE
             mErrorMessage = String.format(resources.getString(R.string.isRequired), mLabel)
             val getIntArray = resources.getStringArray(list)
             setAdapter(listOf(*getIntArray))
@@ -83,7 +83,7 @@ class FormInputSpinner : RelativeLayout {
      * Set components
      */
     private fun setIcons(){
-        imgNoError.setImageResource(R.drawable.check_green)
+        validIcon.setImageResource(R.drawable.check_green)
     }
     fun setLabel(text:String): FormInputSpinner{
         mLabel=Utils.setLabel(tvLabel,text,isMandatory)
@@ -195,7 +195,7 @@ class FormInputSpinner : RelativeLayout {
      * Errors
      */
     private fun verifyInputError(error: String, visible: Int){
-        val errorResult=showInputError(tvError,imgNoError,checkIfShouldShowValidIcon(), error, visible)
+        val errorResult=showInputError(tvError,validIcon,checkIfShouldShowValidIcon(), error, visible)
         mErrorMessage=errorResult[0].toString()
         inputError=errorResult[1].toString().toInt()
     }

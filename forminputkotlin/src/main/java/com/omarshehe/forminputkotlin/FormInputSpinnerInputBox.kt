@@ -75,7 +75,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
             val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
             setIcons()
 
-            imgNoError.gone()
+            validIcon.gone()
 
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtInputBox.addTextChangedListener(this)
@@ -94,7 +94,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
      */
     private fun setIcons(){
         iconCancel.setImageResource(R.drawable.ic_close_grey)
-        imgNoError.setImageResource(R.drawable.check_green)
+        validIcon.setImageResource(R.drawable.check_green)
     }
     fun setLabel(text:String): FormInputSpinnerInputBox{
         mLabel=Utils.setLabel(tvLabel,text,isMandatory)
@@ -251,7 +251,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
      */
 
     private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,imgNoError,checkIfShouldShowValidIcon(), error, visible)
+        val errorResult=Utils.showInputError(tvError,validIcon,checkIfShouldShowValidIcon(), error, visible)
         mErrorMessage=errorResult[0].toString()
         inputError=errorResult[1].toString().toInt()
     }
@@ -300,7 +300,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     }
 
     private fun inputBoxOnTextChange(mValue: String) {
-        iconCancel.showOrHide(mValue.isNotEmpty())
+        iconCancel.visibleIf(mValue.isNotEmpty())
 
         if (mValue.isEmpty()) {
             if (isMandatory) {

@@ -44,6 +44,19 @@
             app:form_isMandatory="true"
             app:form_label="Country" />
 
+
+
+        <com.omarshehe.forminputkotlin.FormInputText
+            android:id="@+id/txtUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:form_height="40dp"
+            app:form_hint="Your portfolio"
+            app:form_inputType="url"
+            app:form_isMandatory="true"
+            app:form_label="Portfolio" />
+
         <com.omarshehe.forminputkotlin.FormInputText
             android:id="@+id/fullName"
             android:layout_width="match_parent"
