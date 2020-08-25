@@ -27,7 +27,7 @@
             app:form_isMandatory="true"
             app:form_label="Gender"
             app:form_showLabel="false"
-            app:form_showValidIcon="false"
+            app:form_showValidIcon="true"
             app:form_textColor="@color/colorOrange" />
 
 

@@ -12,7 +12,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
-import androidx.core.content.ContextCompat
 import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
 import com.omarshehe.forminputkotlin.utils.*
 import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
@@ -22,16 +21,11 @@ import java.util.*
 class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     private lateinit var mPresenter: FormInputContract.Presenter
 
-    val INPUTTYPE_TEXT = 1
-    val INPUTTYPE_PHONE = 2
-    val INPUTTYPE_NUMBER = 3
-    val INPUTTYPE_EMAIL = 4
-
+    private var inputError:Boolean = true
     private var mTextColor=R.color.black
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mErrorMessage :String = ""
-    private var inputError:Int = 1
     private var isMandatory: Boolean = false
     private var mInputType:Int = 1
     private var mArrayList :List<String> = emptyArray<String>().toList()
@@ -73,9 +67,6 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
             val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
-            setIcons()
-
-            validIcon.gone()
 
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtInputBox.addTextChangedListener(this)
@@ -92,19 +83,15 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     /**
      * Set components
      */
-    private fun setIcons(){
-        iconCancel.setImageResource(R.drawable.ic_close_grey)
-        validIcon.setImageResource(R.drawable.check_green)
-    }
     fun setLabel(text:String): FormInputSpinnerInputBox{
-        mLabel=Utils.setLabel(tvLabel,text,isMandatory)
+        mLabel=tvLabel.setLabel(text,isMandatory)
         return this
     }
 
     fun setMandatory(mandatory: Boolean) : FormInputSpinnerInputBox {
         isMandatory =mandatory
-        if(!mandatory){ inputError=0 }
-        mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+        if(!mandatory){ inputError=false }
+        mLabel=tvLabel.setLabel(mLabel,isMandatory)
         return this
     }
     fun setLabelVisibility(show:Boolean): FormInputSpinnerInputBox {
@@ -145,6 +132,14 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
         return this
     }
 
+    /**
+     * Set custom error
+     */
+    fun setError(errorMessage: String){
+        txtInputBox.textColor(R.color.colorRed)
+        verifyInputError(errorMessage, VISIBLE)
+    }
+
     fun showValidIcon(showIcon: Boolean) : FormInputSpinnerInputBox {
         isShowValidIcon=showIcon
         return this
@@ -154,20 +149,20 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
         mInputType = inputType
 
         when (mInputType) {
-            INPUTTYPE_TEXT -> {
+            INPUT_TYPE_TEXT -> {
                 txtInputBox.inputType = InputType.TYPE_CLASS_TEXT
                 txtInputBox.inputType = InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
             }
-            INPUTTYPE_PHONE -> txtInputBox.inputType = InputType.TYPE_CLASS_PHONE
-            INPUTTYPE_NUMBER ->  txtInputBox.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
-            INPUTTYPE_EMAIL -> txtInputBox.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            INPUT_TYPE_PHONE -> txtInputBox.inputType = InputType.TYPE_CLASS_PHONE
+            INPUT_TYPE_NUMBER ->  txtInputBox.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
+            INPUT_TYPE_EMAIL -> txtInputBox.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
         }
         return this
     }
 
     fun setTextColor(color:Int):FormInputSpinnerInputBox{
         mTextColor=color
-        txtInputBox.setTextColor(ContextCompat.getColor(context,mTextColor))
+        txtInputBox.textColor(mTextColor)
         return this
     }
 
@@ -235,10 +230,10 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
 
     private fun validateSpinner(hint: String) {
         if (getValue()[0] == hint) {
-            verifyInputError(String.format(resources.getString(R.string.isRequired), mLabel), View.VISIBLE)
+            verifyInputError(String.format(resources.getString(R.string.isRequired), mLabel), VISIBLE)
         } else {
             if(txtInputBox.text.toString() != ""){
-                verifyInputError("", View.GONE)
+                verifyInputError("", GONE)
             }
 
         }
@@ -249,11 +244,9 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     /**
      * Errors
      */
-
-    private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,validIcon,checkIfShouldShowValidIcon(), error, visible)
-        mErrorMessage=errorResult[0].toString()
-        inputError=errorResult[1].toString().toInt()
+    private fun verifyInputError(stringError: String, visible: Int){
+        mErrorMessage=stringError
+        inputError=tvError.showInputError(validIcon,checkIfShouldShowValidIcon(),stringError,visible)
     }
 
     private fun checkIfShouldShowValidIcon():Boolean{
@@ -265,14 +258,12 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     }
 
 
-    fun isError(parentView: View?): Boolean {
-        return if (inputError == 1) {
+    fun isError(parentView: View?=null): Boolean {
+        return if (inputError ) {
             verifyInputError(mErrorMessage, VISIBLE)
-            if (parentView != null) {
-                hideKeyboard(context)
-                parentView.scrollTo(0, tvError.top)
-                txtInputBox.requestFocus()
-            }
+            hideKeyboard(context)
+            parentView?.scrollTo(0, tvError.top)
+            txtInputBox.requestFocus()
             true
         } else {
             verifyInputError("", View.GONE)
@@ -302,35 +293,65 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     private fun inputBoxOnTextChange(mValue: String) {
         iconCancel.visibleIf(mValue.isNotEmpty())
 
+        /**
+         *  If the [mValue] is empty, show input error only if [isMandatory] is true
+         */
         if (mValue.isEmpty()) {
             if (isMandatory) {
                 verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
             } else {
                 verifyInputError("", View.GONE)
             }
+
+            /**
+             * The [mValue] is not empty, remove error.
+             * Validate view based on [mInputType]
+             */
         } else {
             verifyInputError("", View.GONE)
 
-            if (mInputType == INPUTTYPE_EMAIL) {
-                if (mPresenter.isValidEmail(mValue)) {
-                    setTextColor(mTextColor)
-                    verifyInputError("", View.GONE)
-                } else {
-                    txtInputBox.textColor(R.color.colorRed)
-                    verifyInputError(resources.getString(R.string.inValidEmail), View.VISIBLE)
+            when(mInputType){
+                INPUT_TYPE_NUMBER->{
+                    if(mPresenter.isValidNumber(mValue) ){
+                        setTextColor(mTextColor)
+                        verifyInputError("", GONE)
+                    }else{
+                        txtInputBox.textColor(R.color.colorRed)
+                        verifyInputError(String.format(resources.getString(R.string.isInvalid), mLabel), VISIBLE)
+                    }
+                }
+
+                INPUT_TYPE_EMAIL-> {
+                    if (mPresenter.isValidEmail(mValue)) {
+                        setTextColor(mTextColor)
+                        verifyInputError("", GONE)
+                    } else {
+                        txtInputBox.textColor(R.color.colorRed)
+                        verifyInputError(resources.getString(R.string.inValidEmail), VISIBLE)
+                    }
+                }
+
+                INPUT_TYPE_PHONE-> {
+                    if (mPresenter.isValidPhoneNumber(mValue)) {
+                        setTextColor(mTextColor)
+                        verifyInputError("", GONE)
+                    } else {
+                        txtInputBox.textColor(R.color.colorRed)
+                        verifyInputError(resources.getString(R.string.inValidPhoneNumber), VISIBLE)
+                    }
+                }
+
+                INPUT_TYPE_URL->{
+                    if (mPresenter.isValidUrl(mValue)) {
+                        setTextColor(mTextColor)
+                        verifyInputError("", GONE)
+                    } else {
+                        txtInputBox.textColor(R.color.colorRed)
+                        verifyInputError(resources.getString(R.string.invalidUrl), VISIBLE)
+                    }
                 }
             }
 
-            if (mInputType == INPUTTYPE_PHONE) {
-                if (mPresenter.isValidPhoneNumber(mValue)) {
-                    setTextColor(mTextColor)
-                    verifyInputError("", View.GONE)
-                } else {
-                    txtInputBox.textColor(R.color.colorRed)
-                    verifyInputError(resources.getString(R.string.inValidPhoneNumber), View.VISIBLE)
-                }
-            }
         }
     }
-
 }

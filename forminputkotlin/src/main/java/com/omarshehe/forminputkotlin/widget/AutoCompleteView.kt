@@ -11,9 +11,9 @@ import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 
 class AutoCompleteView : AppCompatAutoCompleteTextView{
     private var mShowAlways: Boolean = false
-    constructor(context: Context?) : super(context)
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-    constructor( context: Context?, attrs: AttributeSet?, defStyleAttr: Int ) : super(context, attrs,defStyleAttr)
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor( context: Context, attrs: AttributeSet?, defStyleAttr: Int ) : super(context, attrs,defStyleAttr)
     fun setShowAlways (showAlways: Boolean){
         mShowAlways=showAlways
     }

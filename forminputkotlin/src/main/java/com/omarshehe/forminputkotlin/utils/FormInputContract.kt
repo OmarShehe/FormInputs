@@ -21,5 +21,7 @@ interface FormInputContract {
          * For [FormInputPin], append the pin in one string
          */
         fun appendPin(first: String, second: String, third: String, fourth: String): String
+
+        fun isValidNumber(number: String): Boolean
     }
 }

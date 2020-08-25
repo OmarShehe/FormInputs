@@ -30,4 +30,5 @@
     <string name="include_at_least_one_upper_case">Include at least one upper case</string>
     <string name="_0">0</string>
     <string name="invalidUrl">Invalid URL</string>
+    <string name="isInvalid">%s is invalid</string>
 </resources>

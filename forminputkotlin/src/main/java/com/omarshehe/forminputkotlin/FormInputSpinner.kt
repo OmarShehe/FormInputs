@@ -2,39 +2,35 @@ package com.omarshehe.forminputkotlin
 
 import android.app.Activity
 import android.content.Context
-import android.os.Parcelable
 import android.util.AttributeSet
-import android.util.SparseArray
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.core.content.ContextCompat
-import androidx.core.view.children
-import com.omarshehe.forminputkotlin.utils.SavedState
-import com.omarshehe.forminputkotlin.utils.Utils
-import com.omarshehe.forminputkotlin.utils.Utils.showInputError
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.TextView
+import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
+import com.omarshehe.forminputkotlin.utils.textColor
+import com.omarshehe.forminputkotlin.utils.visibleIf
 import kotlinx.android.synthetic.main.form_input_spinner.view.*
 import java.util.*
 
-class FormInputSpinner : RelativeLayout {
+class FormInputSpinner : BaseFormInput {
+    private var inputError:Boolean = true
     private var mTextColor=R.color.black
     private var mLabel: String = ""
     private var mHint: String = ""
-    private var mValue : String = ""
-    private var mHeight : Int = 100
     private var mErrorMessage :String = ""
-    private var mBackground: Int =R.drawable.bg_txt_square
-    private var inputError:Int = 1
     private var isMandatory: Boolean = false
-    private var mInputType:Int = 1
     private var mArrayList :List<String> = emptyArray<String>().toList()
+    private var isFirstOpen: Boolean = true
+    private var mListener : SpinnerSelectionListener? =null
     private var isShowValidIcon= true
-    private var firstOpen: Int = 0
+
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
-    private var mListener : SpinnerSelectionListener? =null
-    private var isShowLabel:Boolean =true
 
     constructor(activity: Activity) : super(activity){
         initView()
@@ -69,7 +65,7 @@ class FormInputSpinner : RelativeLayout {
 
 
             val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
-            setIcons()
+
 
             validIcon.visibility = GONE
             mErrorMessage = String.format(resources.getString(R.string.isRequired), mLabel)
@@ -82,22 +78,24 @@ class FormInputSpinner : RelativeLayout {
     /**
      * Set components
      */
-    private fun setIcons(){
-        validIcon.setImageResource(R.drawable.check_green)
-    }
     fun setLabel(text:String): FormInputSpinner{
-        mLabel=Utils.setLabel(tvLabel,text,isMandatory)
+        mLabel=tvLabel.setLabel(text,isMandatory)
         return this
     }
+
+    /**
+     * set red star in the label for mandatory view.
+     * if view not mandatory set [inputError] false
+     */
     fun setMandatory(mandatory: Boolean) : FormInputSpinner {
         isMandatory =mandatory
-        if(!mandatory){ inputError=0 }
-        mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+        if(!mandatory){ inputError=false }
+        mLabel=tvLabel.setLabel(mLabel,isMandatory)
         return this
     }
 
     fun setLabelVisibility(show:Boolean): FormInputSpinner {
-        isShowLabel=Utils.setViewVisibility(tvLabel,show)
+        tvLabel.visibleIf(show)
         return this
     }
 
@@ -108,9 +106,8 @@ class FormInputSpinner : RelativeLayout {
 
 
     fun setValue(value: String) {
-        mValue = value
         for (index in mArrayList.indices) {
-            if (mValue == mArrayList[index]) {
+            if (value == mArrayList[index]) {
                 spSpinner.setSelection(index)
                 validateSpinner(mHint)
             }
@@ -132,9 +129,16 @@ class FormInputSpinner : RelativeLayout {
         return this
     }
 
+    /**
+     * Set custom error
+     */
+    fun setError(errorMessage: String){
+        verifyInputError(errorMessage, VISIBLE)
+    }
+
     fun setTextColor(color:Int):FormInputSpinner{
         mTextColor=color
-      //  txtInputBox.setTextColor(ContextCompat.getColor(context,mTextColor))
+        (spSpinner.selectedView as TextView?)?.textColor(mTextColor)
         return this
     }
 
@@ -178,7 +182,6 @@ class FormInputSpinner : RelativeLayout {
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         initClickListener()
         spSpinner.adapter = spinnerArrayAdapter
-
         return this
     }
 
@@ -194,27 +197,18 @@ class FormInputSpinner : RelativeLayout {
     /**
      * Errors
      */
-    private fun verifyInputError(error: String, visible: Int){
-        val errorResult=showInputError(tvError,validIcon,checkIfShouldShowValidIcon(), error, visible)
-        mErrorMessage=errorResult[0].toString()
-        inputError=errorResult[1].toString().toInt()
+    private fun verifyInputError(stringError: String, visible: Int){
+        mErrorMessage=stringError
+        inputError=tvError.showInputError(validIcon,isShowValidIcon, stringError, visible)
+        (spSpinner.selectedView as TextView?)?.textColor(if(visible== View.VISIBLE)R.color.colorRed else mTextColor)
     }
 
-    private fun checkIfShouldShowValidIcon():Boolean{
-        return if(getValue().isBlank()){
-            false
-        }else{
-            isShowValidIcon
-        }
-    }
 
     fun isError(parentView: View?): Boolean {
-        return if (inputError == 1) {
+        return if (inputError) {
             verifyInputError(mErrorMessage, View.VISIBLE)
-            if (parentView != null) {
-                parentView.scrollTo(0, tvError.top)
-                spSpinner.requestFocus()
-            }
+            parentView?.scrollTo(0, spSpinner.top)
+            spSpinner.requestFocus()
             true
         } else {
             verifyInputError("", View.GONE)
@@ -232,60 +226,18 @@ class FormInputSpinner : RelativeLayout {
     private fun initClickListener(){
         spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (isMandatory && firstOpen!=0) {
-                    mListener?.onSpinnerItemSelected(parent.selectedItem.toString())
-                    validateSpinner(mHint)
+
+                when{
+                    !isFirstOpen-> mListener?.onSpinnerItemSelected(parent.selectedItem.toString())
+                  isMandatory && !isFirstOpen-> validateSpinner(mHint)
+                    isFirstOpen-> (view as TextView?)?.textColor(mTextColor)
+                        
                 }
-                firstOpen=1
-                //Set text color to the selected item
-                (view as TextView?)?.setTextColor(ContextCompat.getColor(context,mTextColor))
+
+                isFirstOpen=false
+
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
-    }
-
-    /**
-     * Interface and Listener
-     */
-    interface SpinnerSelectionListener {
-        fun onSpinnerItemSelected(item: String)
-    }
-
-    /**
-     * Save Instance State of the view
-     * */
-    public override fun onSaveInstanceState(): Parcelable? {
-        return SavedState(super.onSaveInstanceState()).apply {
-            childrenStates = saveChildViewStates()
-        }
-    }
-
-    public override fun onRestoreInstanceState(state: Parcelable) {
-        when (state) {
-            is SavedState -> {
-                super.onRestoreInstanceState(state.superState)
-                state.childrenStates?.let { restoreChildViewStates(it) }
-            }
-            else -> super.onRestoreInstanceState(state)
-        }
-    }
-
-    private fun ViewGroup.saveChildViewStates(): SparseArray<Parcelable> {
-        val childViewStates = SparseArray<Parcelable>()
-        children.forEach { child -> child.saveHierarchyState(childViewStates) }
-        return childViewStates
-    }
-
-    private fun ViewGroup.restoreChildViewStates(childViewStates: SparseArray<Parcelable>) {
-        children.forEach { child -> child.restoreHierarchyState(childViewStates) }
-    }
-
-    override
-    fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
-        dispatchFreezeSelfOnly(container)
-    }
-    override
-    fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
-        dispatchThawSelfOnly(container)
     }
 }

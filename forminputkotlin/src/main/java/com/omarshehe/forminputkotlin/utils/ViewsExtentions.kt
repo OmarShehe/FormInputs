@@ -36,6 +36,10 @@ fun EditText.textColor(color: Int) {
     setTextColor(ContextCompat.getColor(context,color))
 }
 
+fun TextView.textColor(color: Int) {
+    setTextColor(ContextCompat.getColor(context,color))
+}
+
 fun AppCompatImageView.changeIconState(state: Boolean) {
     val animFromDoneToClose: AnimatedVectorDrawableCompat? = AnimatedVectorDrawableCompat.create(context, R.drawable.arrow_down_to_up)
     val animFromCloseToDone: AnimatedVectorDrawableCompat? = AnimatedVectorDrawableCompat.create(context, R.drawable.arrow_downtoup)
@@ -56,15 +60,4 @@ fun AppCompatImageView.showDoneIcon(visibility: Boolean) {
         animCheckIcon?.start()
     }
     this.visibleIf(visibility)
-}
-
-fun setLabel(txtView : TextView, label: String, isMandatory: Boolean) :String {
-    if (label != "") {
-        val mandatory= if(isMandatory) "*" else ""
-        txtView.text = HtmlCompat.fromHtml(String.format(txtView.context.getString(R.string.label),label,mandatory), HtmlCompat.FROM_HTML_MODE_LEGACY)
-    } else {
-        val mandatory= if(isMandatory) "*" else ""
-        txtView.text = HtmlCompat.fromHtml(String.format(txtView.context.getString(R.string.label),"",mandatory), HtmlCompat.FROM_HTML_MODE_LEGACY)
-    }
-    return label
 }

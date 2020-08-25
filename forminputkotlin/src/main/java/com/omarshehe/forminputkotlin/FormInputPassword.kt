@@ -2,43 +2,36 @@ package com.omarshehe.forminputkotlin
 
 import android.app.Activity
 import android.content.Context
-import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
-import com.omarshehe.forminputkotlin.utils.PasswordStrength
-import com.omarshehe.forminputkotlin.utils.SavedState
-import com.omarshehe.forminputkotlin.utils.Utils
+import com.omarshehe.forminputkotlin.utils.*
+import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
 import kotlinx.android.synthetic.main.form_input_password.view.*
+import kotlinx.android.synthetic.main.form_input_password.view.tvError
+import kotlinx.android.synthetic.main.form_input_password.view.tvLabel
+import kotlinx.android.synthetic.main.form_input_password.view.txtInputBox
+import kotlinx.android.synthetic.main.form_input_password.view.validIcon
+import kotlinx.android.synthetic.main.form_input_text.view.*
 import kotlin.properties.Delegates
 
-class FormInputPassword : RelativeLayout, TextWatcher {
+class FormInputPassword : BaseFormInput, TextWatcher {
+    private var inputError:Boolean = true
     private var mTextColor=R.color.black
     private var mLabel: String = ""
-    private var mHint: String = ""
-    private var mValue : String = ""
     private var mErrorMessage :String = ""
-    private var inputError:Int = 1
     private var isMandatory: Boolean = false
     private var isShowPassStrength: Boolean =false
-    private var isShowValidIcon= true
+    private var showValidIcon= true
     private var mPassLength=8
     private var confirmPassword :FormInputPassword? = null
-    private var isShowLabel:Boolean =true
-
-
-
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
@@ -63,8 +56,8 @@ class FormInputPassword : RelativeLayout, TextWatcher {
         /**
          * Get Attributes
          */
-        if(context!=null){
-            val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
+        context?.let {
+            val a = it.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
@@ -78,12 +71,9 @@ class FormInputPassword : RelativeLayout, TextWatcher {
             showPassStrength(a.getBoolean(R.styleable.FormInputLayout_form_showPassStrength, true))
             setPassLength(mPassLength)
 
-            setIcons()
-
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
-            txtPassword.addTextChangedListener(this)
+            txtInputBox.addTextChangedListener(this)
             a.recycle()
-
 
         }
     }
@@ -94,38 +84,31 @@ class FormInputPassword : RelativeLayout, TextWatcher {
 
     }
 
-    private fun setIcons(){
-        Utils.setViewVisibility(validIcon,false)
-        validIcon.setImageResource(R.drawable.check_anim)
-    }
-
     fun setLabel(text:String): FormInputPassword{
-        mLabel=Utils.setLabel(tvLabel,text,isMandatory)
+        mLabel=tvLabel.setLabel(text,isMandatory)
         return this
     }
 
 
     fun setMandatory(mandatory: Boolean) : FormInputPassword {
         isMandatory =mandatory
-        if(!mandatory){ inputError=0 }
-        mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+        if(!mandatory){ inputError=false }
+        mLabel=tvLabel.setLabel(mLabel,isMandatory)
         return this
     }
     fun setLabelVisibility(show:Boolean): FormInputPassword {
-        isShowLabel=Utils.setViewVisibility(tvLabel,show)
+        tvLabel.visibleIf(show)
         return this
     }
 
 
     fun setHint(hint: String) :FormInputPassword{
-        mHint=hint
-        txtPassword.hint = hint
+        txtInputBox.hint = hint
         return this
     }
 
     fun setValue(value: String) : FormInputPassword {
-        mValue = value
-        txtPassword.setText(value)
+        txtInputBox.setText(value)
         return this
     }
 
@@ -136,29 +119,39 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     }
 
     fun showPassStrength(isShowStrength: Boolean): FormInputPassword{
-        if(confirmPassword!=null) {isShowPassStrength=false}
-        isShowPassStrength= Utils.setViewVisibility(layPassStrength,isShowStrength)
+        if(confirmPassword.isNotNull()) {isShowPassStrength=false}
+        isShowPassStrength= isShowStrength
+        layPassStrength.visibleIf(isShowStrength)
         return this
     }
     
 
-    fun setViewToConfirm(passwordView:FormInputPassword):FormInputPassword{
-        confirmPassword=passwordView
-        return this
-    }
     fun setBackground(background: Int) : FormInputPassword{
         passView.setBackgroundResource(background)
         return this
     }
 
+    fun setViewToConfirm(passwordView:FormInputPassword):FormInputPassword{
+        confirmPassword=passwordView
+        return this
+    }
+
+    /**
+     * Set custom error
+     */
+    fun setError(errorMessage: String){
+        txtInputBox.textColor(R.color.colorRed)
+        verifyInputError(errorMessage, VISIBLE)
+    }
+
     fun showValidIcon(showIcon: Boolean) : FormInputPassword {
-        isShowValidIcon=showIcon
+        showValidIcon=showIcon
         return this
     }
 
     fun setTextColor(color:Int):FormInputPassword{
         mTextColor=color
-        txtPassword.setTextColor(ContextCompat.getColor(context,mTextColor))
+        txtInputBox.textColor(mTextColor)
         return this
     }
 
@@ -174,11 +167,11 @@ class FormInputPassword : RelativeLayout, TextWatcher {
      * Get components
      */
     fun getValue(): String {
-        return txtPassword.text.toString()
+        return txtInputBox.text.toString()
     }
 
     fun getInputBox(): EditText {
-        return txtPassword
+        return txtInputBox
     }
 
 
@@ -186,7 +179,7 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     private fun updatePasswordStrengthView(password: String) {
         when {
             password.isEmpty() -> {
-                verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
+                verifyInputError(resources.getString(R.string.cantBeEmpty, mLabel), View.VISIBLE)
                 passView.updateProgress(0)
                 upperCaseIcon=false
                 numberIcon=false
@@ -265,20 +258,25 @@ class FormInputPassword : RelativeLayout, TextWatcher {
     /**
      * Errors
      */
-    private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,validIcon,isShowValidIcon, error, visible)
-        mErrorMessage=errorResult[0].toString()
-        inputError=errorResult[1].toString().toInt()
+    private fun verifyInputError(stringError: String, visible: Int){
+        mErrorMessage=stringError
+        inputError=tvError.showInputError(validIcon,checkIfShouldShowValidIcon(), stringError, visible)
     }
 
-    fun isError(parentView: View?): Boolean {
-        return if (inputError == 1) {
+    private fun checkIfShouldShowValidIcon():Boolean{
+        return if(getValue().isBlank()){
+            false
+        }else{
+            showValidIcon
+        }
+    }
+
+    fun isError(parentView: View?=null): Boolean {
+        return if (inputError) {
             verifyInputError(mErrorMessage, VISIBLE)
-            if (parentView != null) {
-                Utils.hideKeyboard(context)
-                parentView.scrollTo(0, tvError.top)
-                txtPassword.requestFocus()
-            }
+            hideKeyboard(context)
+            parentView?.scrollTo(0, tvError.top)
+            txtInputBox.requestFocus()
             true
         } else {
             verifyInputError("", View.GONE)
@@ -300,7 +298,7 @@ class FormInputPassword : RelativeLayout, TextWatcher {
         val value=text.toString()
         if(isShowPassStrength) {
             updatePasswordStrengthView(value)
-        }else if(confirmPassword!=null){
+        }else if(confirmPassword.isNotNull()){
             if(!checkValueNotEmpty(value)){
                 if(confirmPassword?.getValue()==value){
                     verifyInputError("", View.GONE)
@@ -310,7 +308,6 @@ class FormInputPassword : RelativeLayout, TextWatcher {
             }
         }else{
             checkValueNotEmpty(value)
-
         }
     }
 
@@ -323,45 +320,4 @@ class FormInputPassword : RelativeLayout, TextWatcher {
             false
         }
     }
-
-
-    /**
-     * Save Instance State of the view
-     * */
-    public override fun onSaveInstanceState(): Parcelable? {
-        return SavedState(super.onSaveInstanceState()).apply {
-            childrenStates = saveChildViewStates()
-        }
-    }
-
-    public override fun onRestoreInstanceState(state: Parcelable) {
-        when (state) {
-            is SavedState -> {
-                super.onRestoreInstanceState(state.superState)
-                state.childrenStates?.let { restoreChildViewStates(it) }
-            }
-            else -> super.onRestoreInstanceState(state)
-        }
-    }
-
-    private fun ViewGroup.saveChildViewStates(): SparseArray<Parcelable> {
-        val childViewStates = SparseArray<Parcelable>()
-        children.forEach { child -> child.saveHierarchyState(childViewStates) }
-        return childViewStates
-    }
-
-    private fun ViewGroup.restoreChildViewStates(childViewStates: SparseArray<Parcelable>) {
-        children.forEach { child -> child.restoreHierarchyState(childViewStates) }
-    }
-
-    override
-    fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
-        dispatchFreezeSelfOnly(container)
-    }
-    override
-    fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
-        dispatchThawSelfOnly(container)
-    }
-
-
 }

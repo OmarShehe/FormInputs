@@ -57,8 +57,8 @@ class FormInputText : BaseFormInput, TextWatcher  {
         /**
          * Get Attributes
          */
-        if(context!=null){
-            val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
+       context?.let{
+            val a = it.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
@@ -70,8 +70,6 @@ class FormInputText : BaseFormInput, TextWatcher  {
             showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
             setInputType( a.getInt(R.styleable.FormInputLayout_form_inputType, 1))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
-
-           // setIcons()
 
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtInputBox.addTextChangedListener(this)
@@ -175,6 +173,13 @@ class FormInputText : BaseFormInput, TextWatcher  {
         return this
     }
 
+    /**
+     * Set custom error
+     */
+    fun setError(errorMessage: String){
+        txtInputBox.textColor(R.color.colorRed)
+        verifyInputError(errorMessage, VISIBLE)
+    }
 
     fun showValidIcon(showIcon: Boolean) : FormInputText {
         showValidIcon=showIcon
@@ -311,32 +316,45 @@ class FormInputText : BaseFormInput, TextWatcher  {
         }else {
             verifyInputError("", GONE)
 
-            if (mInputType == INPUT_TYPE_EMAIL) {
-                if (mPresenter.isValidEmail(mValue)) {
-                    setTextColor(mTextColor)
-                    verifyInputError("", View.GONE)
-                } else {
-                    txtInputBox.textColor(R.color.colorRed)
-                    verifyInputError(resources.getString(R.string.inValidEmail), View.VISIBLE)
+            when(mInputType){
+                INPUT_TYPE_NUMBER->{
+                    if(mPresenter.isValidNumber(mValue) ){
+                        setTextColor(mTextColor)
+                        verifyInputError("", GONE)
+                    }else{
+                        txtInputBox.textColor(R.color.colorRed)
+                        verifyInputError(String.format(resources.getString(R.string.isInvalid), mLabel), VISIBLE)
+                    }
                 }
-            }
 
-            if (mInputType == INPUT_TYPE_PHONE) {
-                if (mPresenter.isValidPhoneNumber(mValue)) {
-                    setTextColor(mTextColor)
-                    verifyInputError("", View.GONE)
-                } else {
-                    txtInputBox.textColor(R.color.colorRed)
-                    verifyInputError(resources.getString(R.string.inValidPhoneNumber), View.VISIBLE)
+                INPUT_TYPE_EMAIL->{
+                    if (mPresenter.isValidEmail(mValue)) {
+                        setTextColor(mTextColor)
+                        verifyInputError("", View.GONE)
+                    } else {
+                        txtInputBox.textColor(R.color.colorRed)
+                        verifyInputError(resources.getString(R.string.inValidEmail), View.VISIBLE)
+                    }
                 }
-            }
-            if(mInputType== INPUT_TYPE_URL){
-                if (mPresenter.isValidUrl(mValue)) {
-                    setTextColor(mTextColor)
-                    verifyInputError("", View.GONE)
-                } else {
-                    txtInputBox.textColor(R.color.colorRed)
-                    verifyInputError(resources.getString(R.string.invalidUrl), View.VISIBLE)
+
+                INPUT_TYPE_PHONE-> {
+                    if (mPresenter.isValidPhoneNumber(mValue)) {
+                        setTextColor(mTextColor)
+                        verifyInputError("", View.GONE)
+                    } else {
+                        txtInputBox.textColor(R.color.colorRed)
+                        verifyInputError(resources.getString(R.string.inValidPhoneNumber), View.VISIBLE)
+                    }
+                }
+
+                INPUT_TYPE_URL->{
+                    if (mPresenter.isValidUrl(mValue)) {
+                        setTextColor(mTextColor)
+                        verifyInputError("", View.GONE)
+                    } else {
+                        txtInputBox.textColor(R.color.colorRed)
+                        verifyInputError(resources.getString(R.string.invalidUrl), View.VISIBLE)
+                    }
                 }
             }
         }

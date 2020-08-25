@@ -50,10 +50,12 @@
             <EditText
                 android:id="@+id/txtInputBox"
                 style="@style/formInputTxtInputBoxStyle"
+                android:layout_marginEnd="0dp"
+                android:layout_marginRight="0dp"
                 android:layout_toStartOf="@+id/iconCancel"
                 android:layout_toLeftOf="@+id/iconCancel"
                 android:layout_toEndOf="@+id/spSpinner"
-                android:layout_toRightOf="@+id/spSpinner"/>
+                android:layout_toRightOf="@+id/spSpinner" />
 
             <ImageView
                 android:id="@+id/iconCancel"

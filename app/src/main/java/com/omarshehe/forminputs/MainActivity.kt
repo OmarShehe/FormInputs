@@ -6,6 +6,7 @@ import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.omarshehe.forminputkotlin.FormInputSpinner
+import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -45,11 +46,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        gender.setOnSpinnerItemSelected(object :FormInputSpinner.SpinnerSelectionListener{
+        gender.setOnSpinnerItemSelected(object :SpinnerSelectionListener{
             override fun onSpinnerItemSelected(item: String) {
                 Toast.makeText(baseContext,item,Toast.LENGTH_LONG).show()
             }
-
         })
 
     }

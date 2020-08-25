@@ -3,12 +3,8 @@ package com.omarshehe.forminputkotlin.utils
 import android.text.TextUtils
 import android.util.Patterns
 import android.webkit.URLUtil
-import java.util.*
 
 class FormInputPresenterImpl : FormInputContract.Presenter {
-
-
-
 
     override fun isValidEmail(email: CharSequence): Boolean {
         return (!TextUtils.isEmpty(email)) && Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -27,9 +23,9 @@ class FormInputPresenterImpl : FormInputContract.Presenter {
     }
 
 
-    override fun isValidUrl(input: CharSequence): Boolean {
-        return if (input.isNotBlank()) {
-            URLUtil.isValidUrl(input.toString()) && Patterns.WEB_URL.matcher(input).matches()
+    override fun isValidUrl(url: CharSequence): Boolean {
+        return if (url.isNotBlank()) {
+            URLUtil.isValidUrl(url.toString()) && Patterns.WEB_URL.matcher(url).matches()
         } else {
             false
         }
@@ -37,5 +33,9 @@ class FormInputPresenterImpl : FormInputContract.Presenter {
 
     override fun appendPin(first: String, second: String, third: String, fourth: String): String {
         return StringBuilder().append(first).append(second).append(third).append(fourth).toString()
+    }
+
+    override fun isValidNumber(number: String): Boolean {
+        return !(number == "." || number == "-")
     }
 }
