@@ -16,13 +16,11 @@
 
             <TextView
                 android:id="@+id/tvLabel"
-                style="@style/formInputLabelStyle"
-                tools:visibility="visible" />
+                style="@style/formInputLabelStyle" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/validIcon"
                 style="@style/formInputImgNoErrorStyle"
-                tools:visibility="visible"
                 />
         </LinearLayout>
 
@@ -31,8 +29,7 @@
             android:id="@+id/layInputBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_txt_square"
-            android:visibility="visible">
+            android:background="@drawable/bg_txt_square">
 
             <EditText
                 android:id="@+id/txtInputBox"
@@ -41,14 +38,12 @@
             <ImageView
                 android:id="@+id/iconCancel"
                 style="@style/formInputIconCancelStyle"
-                app:srcCompat="@drawable/ic_close"
-                tools:visibility="visible" />
+                app:srcCompat="@drawable/ic_close" />
 
         </FrameLayout>
 
         <TextView
             android:id="@+id/tvError"
-            style="@style/formInputTvErrorStyle"
-            tools:visibility="visible" />
+            style="@style/formInputTvErrorStyle" />
     </LinearLayout>
 </merge>

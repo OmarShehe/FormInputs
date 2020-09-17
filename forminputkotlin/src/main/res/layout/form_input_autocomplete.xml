@@ -15,13 +15,11 @@
 
             <TextView
                 android:id="@+id/tvLabel"
-                style="@style/formInputLabelStyle"
-                tools:visibility="visible" />
+                style="@style/formInputLabelStyle" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/validIcon"
                 style="@style/formInputImgNoErrorStyle"
-                tools:visibility="visible"
                 />
         </LinearLayout>
 
@@ -30,8 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_txt_square"
-            android:padding="2dp"
-            android:visibility="visible">
+            android:padding="2dp">
 
             <com.omarshehe.forminputkotlin.widget.AutoCompleteView
                 android:id="@+id/txtInputBox"
@@ -47,15 +44,14 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iconDropDown"
                 style="@style/formInputIconCancelStyle"
-                app:srcCompat="@drawable/arrow_downtoup"
+                app:srcCompat="@drawable/arrow_up_to_down"
                 android:visibility="visible"/>
 
         </FrameLayout>
 
         <TextView
             android:id="@+id/tvError"
-            style="@style/formInputTvErrorStyle"
-            tools:visibility="visible" />
+            style="@style/formInputTvErrorStyle" />
 
 
 

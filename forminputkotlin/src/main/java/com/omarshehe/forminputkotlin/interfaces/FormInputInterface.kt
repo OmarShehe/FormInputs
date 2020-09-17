@@ -10,3 +10,7 @@ interface OnTextChangeListener {
 interface SpinnerSelectionListener {
     fun onSpinnerItemSelected(item: String)
 }
+
+interface ItemSelectedListener {
+    fun onItemSelected(item: String)
+}

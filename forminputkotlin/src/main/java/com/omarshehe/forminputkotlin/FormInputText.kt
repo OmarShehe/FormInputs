@@ -2,7 +2,6 @@ package com.omarshehe.forminputkotlin
 
 import android.content.Context
 import android.text.Editable
-import android.text.InputType
 import android.text.Spannable
 import android.text.TextWatcher
 import android.text.method.MovementMethod
@@ -16,7 +15,6 @@ import android.widget.TextView
 import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
 import com.omarshehe.forminputkotlin.interfaces.ViewOnClickListener
 import com.omarshehe.forminputkotlin.utils.*
-import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
 import kotlinx.android.synthetic.main.form_input_text.view.*
 
 
@@ -64,7 +62,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
             setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
-            setHeight(a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            height = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
             setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
 
             showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
@@ -137,7 +135,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
      */
     fun setMandatory(mandatory: Boolean) : FormInputText {
         isMandatory =mandatory
-        if(!mandatory){ inputError=false }
+        mandatory.isNotTrue{ inputError=false }
         mLabel=tvLabel.setLabel(mLabel,isMandatory)
         return this
     }
@@ -188,18 +186,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
 
     fun setInputType(inputType: Int) : FormInputText  {
         mInputType = inputType
-
-        when (mInputType) {
-            INPUT_TYPE_TEXT -> {
-                txtInputBox.inputType = InputType.TYPE_CLASS_TEXT
-                txtInputBox.inputType = InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-            }
-            INPUT_TYPE_PHONE -> txtInputBox.inputType = InputType.TYPE_CLASS_PHONE
-            INPUT_TYPE_NUMBER ->  txtInputBox.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
-            INPUT_TYPE_EMAIL -> txtInputBox.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-            INPUT_TYPE_URL -> txtInputBox.inputType=InputType.TYPE_TEXT_VARIATION_URI
-        }
-
+        txtInputBox.setInputTypes(mInputType)
         return this
     }
 
@@ -257,21 +244,27 @@ class FormInputText : BaseFormInput, TextWatcher  {
         }
     }
 
-
-    fun isError(parentView: View?=null): Boolean {
-        return if (inputError) {
+    /**
+     * Check if there is an error.
+     * if there any
+     * * * return true,
+     * * * hide softKeyboard
+     * * * scroll top to the view
+     * * * put view on focus
+     * * * show error message
+     * else return false
+     */
+    fun noError(parentView: View?=null):Boolean{
+        inputError.isTrue {
             verifyInputError(mErrorMessage, VISIBLE)
-            hideKeyboard(context)
+            parentView.hideKeyboard()
             parentView?.scrollTo(0, tvError.top)
             txtInputBox.requestFocus()
-            true
-        } else {
-            verifyInputError("", GONE)
-            false
+        }.isNotTrue {
+            verifyInputError("", View.GONE)
         }
+        return !inputError
     }
-
-
 
     /**
      * Listener on text change

@@ -46,12 +46,11 @@ Spinner
             android:id="@+id/gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:form_hint="Select gender"
             app:form_array="@array/array_gender"
-            app:form_isMandatory="true"
+            app:form_hint="Select gender"
             app:form_label="Gender"
-            app:form_showValidIcon="false"
-            app:form_textColor="@color/colorOrange"/>
+            app:form_showLabel="false"
+            app:form_textColor="@color/colorGrey" />
 ```
 
 Auto Complete
@@ -62,10 +61,9 @@ Auto Complete
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:form_array="@array/array_country"
-            app:form_height="40dp"
+            app:form_height="@dimen/formInputInput_box_height"
             app:form_hint="Your country"
             app:form_inputType="text"
-            app:form_isMandatory="true"
             app:form_label="Country" />
 
 ```
@@ -78,10 +76,8 @@ Text
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:form_height="40dp"
             app:form_hint="Your full name"
             app:form_inputType="text"
-            app:form_isMandatory="true"
             app:form_label="Full Name" />
 
 ```
@@ -96,7 +92,6 @@ Text
             app:form_array="@array/array_currency"
             app:form_hint="Enter Price"
             app:form_inputType="number"
-            app:form_isMandatory="true"
             app:form_label="Price" />
 ```
 
@@ -110,8 +105,8 @@ Phone number
             android:layout_marginTop="16dp"
             app:form_hint="Your phone number"
             app:form_inputType="phoneNumber"
-            app:form_isMandatory="true"
-            app:form_label="Phone Number"/>
+            app:form_isMandatory="false"
+            app:form_label="Phone Number" />
 ```
 
 
@@ -137,7 +132,6 @@ Email
             android:layout_marginTop="16dp"
             app:form_hint="Your email address"
             app:form_inputType="email"
-            app:form_isMandatory="true"
             app:form_label="Email"/>
 ```
 
@@ -149,11 +143,11 @@ Mault line
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:form_height="100dp"
+            app:form_height="130dp"
             app:form_hint="About you"
-            app:form_isMandatory="true"
             app:form_label="About you"
-            app:form_maxLength="500"/>
+            app:form_maxLength="500" />
+
 ```
 
 
@@ -165,7 +159,6 @@ Password
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:form_hint="Your password"
-            app:form_isMandatory="true"
             app:form_label="Password"
             app:form_showPassStrength="true" />
 ```
@@ -179,7 +172,6 @@ Pin
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:form_label="Pin"
-            app:form_isMandatory="true"
             app:form_hint="0"
             app:form_inputType="number"/>
 ```

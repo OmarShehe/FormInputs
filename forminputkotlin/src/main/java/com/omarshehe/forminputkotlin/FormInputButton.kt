@@ -10,12 +10,14 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.google.android.material.button.MaterialButton
 import com.omarshehe.forminputkotlin.utils.DrawableSpan
 import com.omarshehe.forminputkotlin.utils.ifNullSetThis
+import com.omarshehe.forminputkotlin.utils.isNotTrue
+import com.omarshehe.forminputkotlin.utils.isTrue
 
 
 class FormInputButton : MaterialButton {
     private var mValue : String = ""
     private var mValueOnLoad : String = ""
-    private var isShowProgress : Boolean = true
+    private var mShowProgress : Boolean = true
     private var mProgressColor: Int =R.color.white
 
     private lateinit var drawableSpan: DrawableSpan
@@ -40,9 +42,8 @@ class FormInputButton : MaterialButton {
 
     private fun initView() {
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout, 0, 0)
-        mValueOnLoad = a.getString(R.styleable.FormInputLayout_form_valueOnLoad).ifNullSetThis(resources.getString(R.string.pleaseWait))
-        isShowProgress = a.getBoolean(R.styleable.FormInputLayout_form_showProgress, true)
-        mProgressColor = a.getResourceId(R.styleable.FormInputLayout_form_progressColor, R.color.white)
+        setShowProgress(a.getBoolean(R.styleable.FormInputLayout_form_showProgress, true))
+        setProgressColor(a.getResourceId(R.styleable.FormInputLayout_form_progressColor, R.color.white))
 
         progressDrawable = CircularProgressDrawable(context).apply {
             setStyle(CircularProgressDrawable.LARGE)
@@ -62,8 +63,8 @@ class FormInputButton : MaterialButton {
             }
         }
 
+        setValueOnLoad( a.getString(R.styleable.FormInputLayout_form_valueOnLoad).ifNullSetThis(resources.getString(R.string.pleaseWait)))
         mValue=text.toString()
-        setValueOnLoad(mValueOnLoad)
         a.recycle()
 
     }
@@ -86,8 +87,11 @@ class FormInputButton : MaterialButton {
         return this
     }
 
-    fun showProgressOnClick(show: Boolean) : FormInputButton {
-        isShowProgress=show
+    /**
+     * Set if should show or not show circular progress on click the button
+     */
+    fun setShowProgress(show: Boolean) : FormInputButton {
+        mShowProgress=show
         return this
     }
 
@@ -98,14 +102,14 @@ class FormInputButton : MaterialButton {
 
 
    fun showLoading(visibility: Boolean) {
-        if (visibility) {
+        visibility.isTrue {
             text = spannableString
-            if(isShowProgress){
+            if(mShowProgress){
                 progressDrawable.callback = callback
                 progressDrawable.start()
             }
             isEnabled = false
-        } else {
+        } .isNotTrue {
             progressDrawable.callback = null
             progressDrawable.stop()
             text = mValue

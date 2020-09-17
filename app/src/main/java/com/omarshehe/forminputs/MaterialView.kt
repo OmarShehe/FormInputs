@@ -1,4 +1,4 @@
-package com.omarshehe.forminputs
+    package com.omarshehe.forminputs
 
 import android.os.Bundle
 import android.os.Handler
@@ -14,9 +14,8 @@ class MaterialView : AppCompatActivity() {
         txtFullName.setTextInputLayout(fullNameView)
         txtEmail.setTextInputLayout(emailView)
         txtPhoneNumber.setTextInputLayout(phoneNumberView)
-        btnSubmit.showLoading(true)
         btnSubmit.setOnClickListener {
-            if(!txtFullName.isError(mainView) && !txtEmail.isError(mainView) && !txtPhoneNumber.isError(mainView)){
+            if(txtFullName.noError(mainView) && txtEmail.noError(mainView) && txtPhoneNumber.noError(mainView)){
                 btnSubmit.showLoading(true)
                 Handler().postDelayed({
                     btnSubmit.showLoading(false)

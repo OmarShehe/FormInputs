@@ -3,18 +3,13 @@ package com.omarshehe.forminputkotlin
 import android.app.Activity
 import android.content.Context
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.Spinner
+import android.widget.*
 import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
 import com.omarshehe.forminputkotlin.utils.*
-import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
 import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.*
 import java.util.*
 
@@ -24,14 +19,13 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     private var inputError:Boolean = true
     private var mTextColor=R.color.black
     private var mLabel: String = ""
-    private var mHint: String = ""
     private var mErrorMessage :String = ""
     private var isMandatory: Boolean = false
     private var mInputType:Int = 1
     private var mArrayList :List<String> = emptyArray<String>().toList()
-    private var firstOpen: Int = 0
-    private var isShowValidIcon= true
-    private var isShowLabel:Boolean =true
+    private var isFirstOpen: Boolean = true
+    private var mListener : SpinnerSelectionListener? =null
+    private var showValidIcon = true
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
@@ -60,7 +54,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
-            setHeight(a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            height = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
             setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
             showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
             setInputType( a.getInt(R.styleable.FormInputLayout_form_inputType, 1))
@@ -95,20 +89,17 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
         return this
     }
     fun setLabelVisibility(show:Boolean): FormInputSpinnerInputBox {
-        isShowLabel=Utils.setViewVisibility(tvLabel,show)
+        tvLabel.visibleIf(show)
         return this
     }
 
     fun setHint(hint: String) : FormInputSpinnerInputBox {
-        mHint=hint
-        txtInputBox.hint = mHint
+        txtInputBox.hint = hint
         return this
     }
 
     fun setHeight(height: Int) : FormInputSpinnerInputBox {
-       /* val lSparams = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, height)
-        val lInparams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
-        //txtInputBox.layoutParams=lInparams*/
+        layInputBox.layoutParams=LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height)
         return this
     }
 
@@ -141,22 +132,13 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     }
 
     fun showValidIcon(showIcon: Boolean) : FormInputSpinnerInputBox {
-        isShowValidIcon=showIcon
+        showValidIcon=showIcon
         return this
     }
 
     fun setInputType(inputType: Int) : FormInputSpinnerInputBox {
         mInputType = inputType
-
-        when (mInputType) {
-            INPUT_TYPE_TEXT -> {
-                txtInputBox.inputType = InputType.TYPE_CLASS_TEXT
-                txtInputBox.inputType = InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-            }
-            INPUT_TYPE_PHONE -> txtInputBox.inputType = InputType.TYPE_CLASS_PHONE
-            INPUT_TYPE_NUMBER ->  txtInputBox.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
-            INPUT_TYPE_EMAIL -> txtInputBox.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-        }
+        txtInputBox.setInputTypes(mInputType)
         return this
     }
 
@@ -199,29 +181,16 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
         val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_item, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spSpinner.adapter = spinnerArrayAdapter
-        spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (isMandatory && firstOpen!=0) {
-                    validateSpinner(mHint)
-                }
-                firstOpen=1
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
-
+        initClickListener()
         return this
     }
 
-    fun setSpinner(items: ArrayList<String>, listener: SpinnerSelectionListener) : FormInputSpinnerInputBox {
+    fun setSpinner(items: ArrayList<String>,listener: SpinnerSelectionListener) : FormInputSpinnerInputBox {
         mArrayList=items
+        mListener=listener
         val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_item, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                listener.onSpinnerItemSelected(parent.selectedItem.toString())
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
+        initClickListener()
         spSpinner.adapter = spinnerArrayAdapter
 
         return this
@@ -253,24 +222,32 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
         return if(getValue()[1].isBlank()){
             false
         }else{
-            isShowValidIcon
+            showValidIcon
         }
     }
 
 
-    fun isError(parentView: View?=null): Boolean {
-        return if (inputError ) {
+    /**
+     * Check if there is an error.
+     * if there any
+     * * * return true,
+     * * * hide softKeyboard
+     * * * scroll top to the view
+     * * * put view on focus
+     * * * show error message
+     * else return false
+     */
+    fun noError(parentView: View?=null):Boolean{
+        inputError.isTrue {
             verifyInputError(mErrorMessage, VISIBLE)
-            hideKeyboard(context)
+            parentView.hideKeyboard()
             parentView?.scrollTo(0, tvError.top)
             txtInputBox.requestFocus()
-            true
-        } else {
+        }.isNotTrue {
             verifyInputError("", View.GONE)
-            false
         }
+        return !inputError
     }
-
 
 
     /**
@@ -283,11 +260,9 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     }
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        if(firstOpen !=0){
-            inputBoxOnTextChange(s.toString())
-        }
-        firstOpen=1
-
+       isFirstOpen.isNotTrue{
+           inputBoxOnTextChange(s.toString())
+       }
     }
 
     private fun inputBoxOnTextChange(mValue: String) {
@@ -297,9 +272,9 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
          *  If the [mValue] is empty, show input error only if [isMandatory] is true
          */
         if (mValue.isEmpty()) {
-            if (isMandatory) {
+            isMandatory.isTrue {
                 verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
-            } else {
+            }.isNotTrue{
                 verifyInputError("", View.GONE)
             }
 
@@ -354,4 +329,20 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
 
         }
     }
+
+    private fun initClickListener(){
+        spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+               isFirstOpen.isTrue{
+                    (view as TextView?)?.textColor(mTextColor)
+                }.isNotTrue{
+                    (view as TextView?)?.textColor(mTextColor)
+                    mListener?.onSpinnerItemSelected(parent.selectedItem.toString())
+                }
+                isFirstOpen=false
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+    }
+
 }

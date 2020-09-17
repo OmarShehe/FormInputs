@@ -13,13 +13,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.omarshehe.forminputkotlin.utils.*
-import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
 import kotlinx.android.synthetic.main.form_input_password.view.*
-import kotlinx.android.synthetic.main.form_input_password.view.tvError
-import kotlinx.android.synthetic.main.form_input_password.view.tvLabel
-import kotlinx.android.synthetic.main.form_input_password.view.txtInputBox
-import kotlinx.android.synthetic.main.form_input_password.view.validIcon
-import kotlinx.android.synthetic.main.form_input_text.view.*
 import kotlin.properties.Delegates
 
 class FormInputPassword : BaseFormInput, TextWatcher {
@@ -27,8 +21,8 @@ class FormInputPassword : BaseFormInput, TextWatcher {
     private var mTextColor=R.color.black
     private var mLabel: String = ""
     private var mErrorMessage :String = ""
-    private var isMandatory: Boolean = false
-    private var isShowPassStrength: Boolean =false
+    private var isMandatory: Boolean = true
+    private var isShowPassStrength: Boolean =true
     private var showValidIcon= true
     private var mPassLength=8
     private var confirmPassword :FormInputPassword? = null
@@ -63,13 +57,14 @@ class FormInputPassword : BaseFormInput, TextWatcher {
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
             setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
-            setHeight(a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            height = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
             setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
 
             showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
             showPassStrength(a.getBoolean(R.styleable.FormInputLayout_form_showPassStrength, true))
-            setPassLength(mPassLength)
+
+            setPassLength(a.getInt(R.styleable.FormInputLayout_form_passLength,mPassLength))
 
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtInputBox.addTextChangedListener(this)
@@ -102,7 +97,7 @@ class FormInputPassword : BaseFormInput, TextWatcher {
     }
 
 
-    fun setHint(hint: String) :FormInputPassword{
+    fun setHint(hint: String) : FormInputPassword {
         txtInputBox.hint = hint
         return this
     }
@@ -113,8 +108,7 @@ class FormInputPassword : BaseFormInput, TextWatcher {
     }
 
     fun setHeight(height: Int) : FormInputPassword {
-        val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height)
-        passView.layoutParams=lp
+        passView.layoutParams=LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height)
         return this
     }
 
@@ -253,8 +247,6 @@ class FormInputPassword : BaseFormInput, TextWatcher {
 
 
 
-
-
     /**
      * Errors
      */
@@ -271,17 +263,16 @@ class FormInputPassword : BaseFormInput, TextWatcher {
         }
     }
 
-    fun isError(parentView: View?=null): Boolean {
-        return if (inputError) {
+    fun noError(parentView: View?=null):Boolean{
+        inputError.isTrue {
             verifyInputError(mErrorMessage, VISIBLE)
-            hideKeyboard(context)
+            parentView.hideKeyboard()
             parentView?.scrollTo(0, tvError.top)
             txtInputBox.requestFocus()
-            true
-        } else {
+        }.isNotTrue {
             verifyInputError("", View.GONE)
-            false
         }
+        return !inputError
     }
 
 

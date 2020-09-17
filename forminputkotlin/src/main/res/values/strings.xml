@@ -31,4 +31,5 @@
     <string name="_0">0</string>
     <string name="invalidUrl">Invalid URL</string>
     <string name="isInvalid">%s is invalid</string>
+    <string name="remainCharacters">%d / %d Characters Only</string>
 </resources>

@@ -13,10 +13,8 @@ import android.view.*
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import com.omarshehe.forminputkotlin.adapter.AutoCompleteAdapter
-import com.omarshehe.forminputkotlin.utils.FormInputContract
-import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
-import com.omarshehe.forminputkotlin.utils.Utils
-import com.omarshehe.forminputkotlin.utils.changeIconState
+import com.omarshehe.forminputkotlin.interfaces.ItemSelectedListener
+import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_autocomplete.view.*
 import java.util.*
 import kotlin.properties.Delegates
@@ -25,22 +23,19 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
     private lateinit var mAdapterAutocomplete: AutoCompleteAdapter
     private lateinit var mPresenter: FormInputContract.Presenter
 
+    private var inputError:Boolean = true
     private var mTextColor=R.color.black
     private var mLabel: String = ""
-    private var mHint: String = ""
-    private var mValue : String = ""
     private var mErrorMessage :String = ""
-    private var mBackground: Int =R.drawable.bg_txt_square
-    private var inputError:Int = 1
-    private var isMandatory: Boolean = false
-    private var isShowValidIcon= true
+    private var isMandatory: Boolean = true
+    private var showValidIcon= true
     private var isFirstOpen: Boolean = true
     private var mArrayList :List<String> = emptyArray<String>().toList()
-    private var isShowLabel:Boolean =true
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
-    private var mListener : AutoCompleteAdapter.ItemSelectedListener? =null
+
+    private var mListener : ItemSelectedListener? =null
 
     constructor(context: Context) : super(context){
         initView()
@@ -70,15 +65,10 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
             setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
-            setHeight(a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            height = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
             setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
             showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
-
-
-            val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
-
-            setIcons()
 
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             txtInputBox.addTextChangedListener(this)
@@ -86,7 +76,7 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
             txtInputBox.setOnClickListener { txtInputBox.showDropDown() }
             disableAutoCompleteTextSelection()
 
-            val autoCompleteArray = resources.getStringArray(list)
+            val autoCompleteArray = resources.getStringArray(a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array))
             val autoCompleteListArray = ArrayList(listOf(*autoCompleteArray))
             setAdapter(autoCompleteListArray)
 
@@ -103,36 +93,31 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
     /**
      * Set components
      */
-    private fun setIcons(){
-        validIcon.setImageResource(R.drawable.check_green)
-    }
 
     fun setLabel(text:String): FormInputAutoComplete{
-        mLabel=Utils.setLabel(tvLabel,text,isMandatory)
+        mLabel=tvLabel.setLabel(text,isMandatory)
         return this
     }
 
     fun setMandatory(mandatory: Boolean) : FormInputAutoComplete {
         isMandatory =mandatory
-        if(!mandatory){ inputError=0 }
-        mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+        mandatory.isNotTrue{ inputError=false }
+        mLabel=tvLabel.setLabel(mLabel,isMandatory)
         return this
     }
     fun setLabelVisibility(show:Boolean): FormInputAutoComplete {
-        isShowLabel=Utils.setViewVisibility(tvLabel,show)
+        tvLabel.visibleIf(show)
         return this
     }
 
 
     fun setHint(hint: String) :FormInputAutoComplete {
-        mHint=hint
         txtInputBox.hint = hint
         return this
     }
 
     fun setValue(value: String) :FormInputAutoComplete {
-        mValue = value
-        if(mArrayList.contains(mValue)){
+        if(mArrayList.contains(value)){
             txtInputBox.setText(value)
             verifyInputError("", View.GONE)
         }else{
@@ -150,18 +135,25 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
     }
 
     fun setBackground(background: Int) : FormInputAutoComplete  {
-        mBackground=background
         layInputBox.setBackgroundResource(background)
         return this
     }
 
+    /**
+     * Set custom error
+     */
+    fun setError(errorMessage: String){
+        txtInputBox.textColor(R.color.colorRed)
+        verifyInputError(errorMessage, VISIBLE)
+    }
+
     fun showValidIcon(showIcon: Boolean) : FormInputAutoComplete {
-        isShowValidIcon=showIcon
+        showValidIcon=showIcon
         return this
     }
 
 
-    fun setOnItemSelectedListener(listener: AutoCompleteAdapter.ItemSelectedListener):FormInputAutoComplete{
+    fun setOnItemSelectedListener(listener: ItemSelectedListener):FormInputAutoComplete{
         mListener=listener
         return this
     }
@@ -195,31 +187,38 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
     /**
      * Errors
      */
-    private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,validIcon,checkIfShouldShowValidIcon(), error, visible)
-        mErrorMessage=errorResult[0].toString()
-        inputError=errorResult[1].toString().toInt()
+    private fun verifyInputError(stringError: String, visible: Int){
+        mErrorMessage=stringError
+        inputError=tvError.showInputError(validIcon,checkIfShouldShowValidIcon(), stringError, visible)
     }
     private fun checkIfShouldShowValidIcon():Boolean{
         return if(getValue().isBlank()){
             false
         }else{
-            isShowValidIcon
+            showValidIcon
         }
     }
 
-    fun isError(parentView: View?): Boolean {
-        return if (inputError == 1) {
+    /**
+     * Check if there is an error.
+     * if there any
+     * * * return true,
+     * * * hide softKeyboard
+     * * * scroll top to the view
+     * * * put view on focus
+     * * * show error message
+     * else return false
+     */
+    fun noError(parentView: View?=null):Boolean{
+        inputError.isTrue {
             verifyInputError(mErrorMessage, VISIBLE)
-            if (parentView != null) {
-                parentView.scrollTo(0, tvError.top)
-                txtInputBox.requestFocus()
-            }
-            true
-        } else {
+            parentView.hideKeyboard()
+            parentView?.scrollTo(0, tvError.top)
+            txtInputBox.requestFocus()
+        }.isNotTrue {
             verifyInputError("", View.GONE)
-            false
         }
+        return !inputError
     }
 
 
@@ -232,16 +231,13 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
         txtInputBox.setShowAlways(true)
         mAdapterAutocomplete = AutoCompleteAdapter(context, R.id.tvView, items, itemSelectListener)
         txtInputBox.setAdapter(mAdapterAutocomplete)
-
-        //txtInputBox.setOnItemClickListener(object :On)
         return this
     }
 
-    private val itemSelectListener=object :AutoCompleteAdapter.ItemSelectedListener {
+    private val itemSelectListener=object :ItemSelectedListener {
         override fun onItemSelected(item: String) {
-            mValue = item
             txtInputBox.setText(item)
-            txtInputBox.setSelection(mValue.length)
+            txtInputBox.setSelection(item.length)
             txtInputBox.dismissDropDown()
             verifyInputError("", View.GONE)
             arrowIconState=false
@@ -306,28 +302,27 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
     }
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        if (!isFirstOpen) {
+        isFirstOpen.isNotTrue {
             inputBoxOnTextChange(s.toString())
         }
         isFirstOpen=false
     }
     private fun inputBoxOnTextChange(value: String) {
-        mValue=value
         arrowIconState = txtInputBox.isPopupShowing
-        if (mValue.isEmpty()) {
+        if (value.isEmpty()) {
             if (isMandatory) {
-                verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
+                verifyInputError(resources.getString(R.string.cantBeEmpty, mLabel), View.VISIBLE)
             } else {
                 verifyInputError("", View.GONE)
             }
         } else {
             if (isMandatory) {
-                if(mArrayList.contains(mValue)){
+                if(mArrayList.contains(value)){
                     setTextColor(mTextColor)
                     verifyInputError("", View.GONE)
                 }else{
                     txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorRed))
-                    verifyInputError(String.format(resources.getString(R.string.isRequired), mLabel), View.VISIBLE)
+                    verifyInputError(resources.getString(R.string.isRequired, mLabel), View.VISIBLE)
                 }
             }else{
                 setTextColor(mTextColor)

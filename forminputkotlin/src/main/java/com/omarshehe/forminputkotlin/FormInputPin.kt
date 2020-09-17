@@ -9,33 +9,23 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
-import androidx.core.content.ContextCompat
-import com.omarshehe.forminputkotlin.utils.FormInputContract
-import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
-import com.omarshehe.forminputkotlin.utils.Utils
+import android.widget.LinearLayout
+import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_pin.view.*
 
 class FormInputPin:  BaseFormInput,TextWatcher  {
     private lateinit var mPresenter: FormInputContract.Presenter
-    val INPUTTYPE_TEXT = 1
-    val INPUTTYPE_NUMBER = 3
 
-
-
-
+    private var inputError:Boolean = true
     private var mTextColor=R.color.black
     private var mLabel: String = ""
-    private var mHint: String = ""
+    private var mErrorMessage :String = ""
+    private var isMandatory: Boolean = true
+    private var mInputType:Int = 3
+    private var showValidIcon= true
+    private var viewToConfirm :FormInputPin? = null
     private var mPinValue : String = ""
     private var mValidPin : String = ""
-    private var mErrorMessage :String = ""
-    private var mBackground: Int =R.drawable.bg_txt_square
-    private var inputError:Int = 1
-    private var isMandatory: Boolean = false
-    private var mInputType:Int = 3
-    private var isShowValidIcon= true
-    private var viewToConfirm :FormInputPin? = null
-    private var isShowLabel:Boolean =true
     private var pinViewList= emptyList<EditText>()
 
     private var attrs: AttributeSet? =null
@@ -65,21 +55,16 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
-            mLabel = a.getString(R.styleable.FormInputLayout_form_label).orEmpty()
-            mHint = a.getString(R.styleable.FormInputLayout_form_hint).orEmpty()
-            setValidPin(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
-            mBackground = a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square)
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false))
-            isShowValidIcon  = a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true)
+            setLabel( a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
+            setHint( a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
+            height = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
+            setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
+
+            showValidIcon( a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
             setInputType( a.getInt(R.styleable.FormInputLayout_form_inputType, 3))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
-            setIcons()
-            mLabel= Utils.setLabel(tvLabel,mLabel,isMandatory)
-
-            setHint(mHint)
-
-            setBackground(mBackground)
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
             initEvents()
             a.recycle()
@@ -100,42 +85,48 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
     /**
      * Set components
      */
-    private fun setIcons(){
-        validIcon.setImageResource(R.drawable.check_green)
-    }
 
     fun setLabel(text:String): FormInputPin{
-        mLabel=Utils.setLabel(tvLabel,text,isMandatory)
+        mLabel=tvLabel.setLabel(text,isMandatory)
         return this
     }
 
     fun setMandatory(mandatory: Boolean) : FormInputPin {
         isMandatory =mandatory
-        if(!mandatory){ inputError=0 }
-        mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+        mandatory.isNotTrue{ inputError=false }
+        mLabel=tvLabel.setLabel(mLabel,isMandatory)
         return this
     }
     fun setLabelVisibility(show:Boolean): FormInputPin {
-        isShowLabel=Utils.setViewVisibility(tvLabel,show)
+        tvLabel.visibleIf(show)
         return this
     }
 
     fun setHint(hint: String) :FormInputPin {
-        for(view in pinViewList){
-            view.hint= hint
+        pinViewList.forEach{
+            it.hint= hint
         }
         return this
     }
 
-    fun setValidPin(value: String) :FormInputPin {
-        mValidPin = value
+    /**
+     * Set pin values
+     */
+    fun setValues(vararg values: String) :FormInputPin {
+        pinViewList.forEachIndexed{index,view->
+            view.setText(values[index])
+        }
         return this
     }
 
+    fun setHeight(height: Int) : FormInputPin {
+        viewPins.layoutParams= LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height)
+        return this
+    }
 
     fun setBackground(background: Int) : FormInputPin  {
-        for(view in pinViewList){
-            view.setBackgroundResource(background)
+        pinViewList.forEach{
+            it.setBackgroundResource(background)
         }
         return this
     }
@@ -146,9 +137,18 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
         return this
     }
 
+    /**
+     * Set custom error
+     */
+    fun setError(errorMessage: String){
+        pinViewList.forEach{
+            it.textColor(R.color.colorRed)
+        }
+        verifyInputError(errorMessage, VISIBLE)
+    }
 
     fun showValidIcon(showIcon: Boolean) : FormInputPin {
-        isShowValidIcon=showIcon
+        showValidIcon=showIcon
         return this
     }
 
@@ -157,19 +157,16 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
         mInputType = inputType
 
         when (mInputType) {
-            INPUTTYPE_TEXT -> {
-                for(view in pinViewList){
-                    view.inputType = InputType.TYPE_CLASS_TEXT
-                    view.inputType = InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
-                }
-
-            }
-            INPUTTYPE_NUMBER ->  {
-                for(view in pinViewList){
-                    view.inputType = InputType.TYPE_CLASS_NUMBER
+            INPUT_TYPE_NUMBER ->  {
+                pinViewList.forEach{
+                    it.inputType = InputType.TYPE_CLASS_NUMBER
                 }
             }
-
+            else -> {
+                 pinViewList.forEach{
+                    it.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                }
+            }
         }
 
         return this
@@ -177,16 +174,17 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
 
 
 
-
-
-    fun setTextColor(color:Int,updateValue:Boolean=true):FormInputPin{
-        if(updateValue){
-            mTextColor=color
-        }
-        for(view in pinViewList){
-            view.setTextColor(ContextCompat.getColor(context,mTextColor))
+    fun setTextColor(color:Int):FormInputPin{
+        mTextColor=color
+        pinViewList.forEach{
+            it.textColor(mTextColor)
         }
         return this
+    }
+    private fun setRedTextColor(){
+        pinViewList.forEach{
+            it.textColor(R.color.colorRed)
+        }
     }
 
     /**
@@ -209,34 +207,29 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
     /**
      * Errors
      */
-    private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,validIcon,checkIfShouldShowValidIcon(), error, visible)
-        mErrorMessage=errorResult[0].toString()
-        inputError=errorResult[1].toString().toInt()
+    private fun verifyInputError(stringError: String, visible: Int){
+        mErrorMessage=stringError
+        inputError=tvError.showInputError(validIcon,checkIfShouldShowValidIcon(), stringError, visible)
     }
 
     private fun checkIfShouldShowValidIcon():Boolean{
         return if(getValue().isBlank()){
             false
         }else{
-            isShowValidIcon
+            showValidIcon
         }
     }
 
-
-    fun isError(parentView: View?): Boolean {
-        return if (inputError == 1) {
+    fun noError(parentView: View?=null):Boolean{
+        inputError.isTrue {
             verifyInputError(mErrorMessage, VISIBLE)
-            if (parentView != null) {
-                Utils.hideKeyboard(context)
-                parentView.scrollTo(0, tvError.top)
-            }
+            parentView.hideKeyboard()
+            parentView?.scrollTo(0, tvError.top)
             txtPinOne.requestFocus()
-            true
-        } else {
+        }.isNotTrue {
             verifyInputError("", View.GONE)
-            false
         }
+        return !inputError
     }
 
 
@@ -248,19 +241,23 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
     }
-    override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-        val editText = (context as Activity).currentFocus as EditText?
-        if (editText != null && editText.length() > 0) {
-            editText.focusSearch(View.FOCUS_RIGHT)?.requestFocus()
+    override fun onTextChanged(s: CharSequence, i: Int, i1: Int, i2: Int) {
+        inputBoxOnTextChange(s.toString())
+    }
+
+    private fun inputBoxOnTextChange(value:String) {
+        if(value.isNotEmpty()){
+            val editText = (context as Activity).currentFocus as EditText?
+            editText?.focusSearch(View.FOCUS_RIGHT)?.requestFocus()
         }
         mPinValue=mPresenter.appendPin(txtPinOne.text.toString(), txtPinTwo.text.toString(), txtPinThree.text.toString(), txtPinFour.text.toString())
-        if(viewToConfirm!=null){
+        if(viewToConfirm.isNotNull()){
             if(pinViewIsNotEmpty() && viewToConfirm?.getValue()==mPinValue){
                 setTextColor(mTextColor)
                 verifyInputError("", View.GONE)
             }else{
-                setTextColor(ContextCompat.getColor(context,R.color.colorRed),false)
-                verifyInputError(String.format(resources.getString(R.string.doNotMatch),mLabel), View.VISIBLE)
+                setRedTextColor()
+                verifyInputError(resources.getString(R.string.doNotMatch,mLabel), View.VISIBLE)
             }
         }else {
             if (pinViewIsNotEmpty()) {
@@ -272,22 +269,21 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
                         setTextColor(mTextColor)
                         verifyInputError("", View.GONE)
                     }else{
-                        setTextColor(ContextCompat.getColor(context,R.color.colorRed),false)
-                        verifyInputError(String.format(resources.getString(R.string.inValid),mLabel), View.VISIBLE)
+                        setRedTextColor()
+                        verifyInputError(resources.getString(R.string.inValid,mLabel), View.VISIBLE)
                     }
                 }
             } else {
-                setTextColor(ContextCompat.getColor(context,R.color.colorRed),false)
-                verifyInputError(String.format(resources.getString(R.string.isRequired),mLabel), View.VISIBLE)
+                setRedTextColor()
+                verifyInputError(resources.getString(R.string.isRequired,mLabel), View.VISIBLE)
             }
         }
-
 
     }
 
     private fun pinViewIsNotEmpty(): Boolean {
-        for(view in pinViewList){
-            if(view.text.isNullOrEmpty()){
+       pinViewList.forEach{
+            if(it.text.isNullOrEmpty()){
                 return false
             }
         }

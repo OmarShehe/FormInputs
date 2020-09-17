@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.omarshehe.forminputkotlin.FormInputSpinner
 import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -21,22 +20,24 @@ class MainActivity : AppCompatActivity() {
         confirmEmail.setViewToConfirm(email)
         confirmPin.setViewToConfirm(pin)
 
-        //startActivity(Intent(this, MaterialView::class.java))
+        pin.setValues("1","2","3","4")
+
+       // startActivity(Intent(this, MaterialView::class.java))
         btnSubmit.setOnClickListener {
-            if (!gender.isError(mainView) &&
-                !country.isError(mainView) &&
-                !txtUrl.isError(mainView) &&
-                !fullName.isError(mainView) &&
-                !price.isError(mainView)  &&
-                !phoneNumber.isError(mainView)  &&
-                !ID.isError(mainView)  &&
-                !about.isError(mainView) &&
-                !email.isError(mainView) &&
-                !confirmEmail.isError(mainView) &&
-                !password.isError(mainView) &&
-                !confirmPassword.isError(mainView) &&
-                !pin.isError(mainView) &&
-                !confirmPin.isError(mainView)) {
+            if (gender.noError(mainView) &&
+                country.noError(mainView) &&
+                txtUrl.noError(mainView) &&
+                fullName.noError(mainView) &&
+                price.noError(mainView)  &&
+                phoneNumber.noError(mainView)  &&
+                ID.noError(mainView)  &&
+                about.noError(mainView) &&
+                email.noError(mainView) &&
+                confirmEmail.noError(mainView) &&
+                password.noError(mainView) &&
+                confirmPassword.noError(mainView) &&
+                pin.noError(mainView) &&
+                confirmPin.noError(mainView)) {
 
                 btnSubmit.showLoading(true)
                 Handler().postDelayed({

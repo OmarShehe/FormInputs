@@ -1,15 +1,10 @@
 package com.omarshehe.forminputkotlin.utils
 
 import android.text.Spanned
-import android.view.View
-import android.widget.EditText
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
-import com.omarshehe.forminputkotlin.R
 
 
+fun Any?.isNotNull(): Boolean = this!=null
 
 
 fun String?.ifNullSetThis(default: String):String{
@@ -17,4 +12,25 @@ fun String?.ifNullSetThis(default: String):String{
 }
 fun String.toHtml() : Spanned {
     return HtmlCompat.fromHtml(this, HtmlCompat.FROM_HTML_MODE_LEGACY)
+}
+
+inline fun Boolean.isTrue(action: () -> Unit): Boolean {
+    if(this){
+        action()
+    }
+    return this
+}
+
+inline fun Boolean.isNotTrue(action: () -> Unit) {
+    if(!this){
+        action()
+    }
+}
+
+fun Int?.isGreaterThan(number: Int): Boolean {
+    return if(this.isNotNull()){
+        this!! > number
+    }else{
+        false
+    }
 }

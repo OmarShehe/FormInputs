@@ -8,28 +8,18 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.*
 import android.widget.EditText
-import androidx.core.content.ContextCompat
-import com.omarshehe.forminputkotlin.utils.FormInputContract
-import com.omarshehe.forminputkotlin.utils.FormInputPresenterImpl
-import com.omarshehe.forminputkotlin.utils.Utils
-import com.omarshehe.forminputkotlin.utils.Utils.hideKeyboard
+import androidx.annotation.DrawableRes
+import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_multiline.view.*
 
 class FormInputMultiline  :BaseFormInput, TextWatcher {
-    private lateinit var mPresenter: FormInputContract.Presenter
+    private var inputError:Boolean = true
     private var mTextColor=R.color.black
     private var mLabel: String = ""
-    private var mHint: String = ""
-    private var mValue : String = ""
     private var mErrorMessage :String = ""
-    private var mBackground: Int =R.drawable.bg_txt_square
-    private var inputError:Int = 1
-    private var isMandatory: Boolean = false
+    private var isMandatory: Boolean = true
     private var mMaxLength:Int = 0
-    private var mHeight: Int = 200
-    private var mMaxLines: Int = 5
-    private var isShowValidIcon= true
-    private var isShowLabel:Boolean =true
+    private var showValidIcon= true
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
@@ -49,7 +39,6 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
 
     private fun initView(){
         LayoutInflater.from(context).inflate(R.layout.form_input_multiline, this, true)
-        mPresenter = FormInputPresenterImpl()
         /**
          * Get Attributes
          */
@@ -60,16 +49,14 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
             setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
-            setHeight(a.getDimensionPixelSize(R.styleable.FormInputLayout_form_height,resources.getDimensionPixelSize( R.dimen.formInputInput_box_height)))
+            height = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
             setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
+
             showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
             setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
             setMaxLines(a.getInt(R.styleable.FormInputLayout_form_maxLines, 5))
             setMaxLength( a.getInt(R.styleable.FormInputLayout_form_maxLength, 300))
-
-
-            setIcons()
 
             setScroll()
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
@@ -81,61 +68,59 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
     /**
      * Set components
      */
-    private fun setIcons(){
-        validIcon.setImageResource(R.drawable.check_green)
-    }
-
     fun setLabel(text:String): FormInputMultiline{
-        mLabel=Utils.setLabel(tvLabel,text,isMandatory)
+        mLabel=tvLabel.setLabel(text,isMandatory)
         return this
     }
 
+    /**
+     * set red star in the label for mandatory view.
+     * if view not mandatory set [inputError] false
+     */
     fun setMandatory(mandatory: Boolean) : FormInputMultiline {
         isMandatory =mandatory
-        if(!mandatory){ inputError=0 }
-        mLabel=Utils.setLabel(tvLabel,mLabel,isMandatory)
+        mandatory.isNotTrue{ inputError=false }
+        mLabel=tvLabel.setLabel(mLabel,isMandatory)
         return this
     }
 
     fun setLabelVisibility(show:Boolean): FormInputMultiline {
-        isShowLabel=Utils.setViewVisibility(tvLabel,show)
+        tvLabel.visibleIf(show)
         return this
     }
 
 
     fun setHint(hint: String) : FormInputMultiline {
-        mHint=hint
         txtMultiline.hint = hint
         return this
     }
 
     fun setValue(value: String) : FormInputMultiline{
-        mValue = value
         txtMultiline.setText(value)
         return this
     }
 
     fun setHeight(height: Int) : FormInputMultiline {
-        mHeight =  height
-        val lp = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mHeight)
-        txtMultiline.layoutParams = lp
+        txtMultiline.layoutParams =  LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
         return this
     }
 
-    fun setMaxLength(getMaxLength: Int) : FormInputMultiline{
-        mMaxLength = getMaxLength
+    fun setMaxLength(maxLength: Int) : FormInputMultiline{
+        mMaxLength = maxLength
         val filterArray = arrayOfNulls<InputFilter>(1)
         filterArray[0] = InputFilter.LengthFilter(mMaxLength)
         txtMultiline.filters = filterArray
-        countRemainInput()
+        countRemainInput(getValue())
         return this
     }
+
+
 
     @SuppressLint("ClickableViewAccessibility", "RtlHardcoded")
     private fun setScroll() {
         txtMultiline.isSingleLine = false
         txtMultiline.gravity = Gravity.LEFT or Gravity.TOP
-        txtMultiline.setPadding(15, 15, 15, 15)
+        txtMultiline.setPadding(getDimension(R.dimen.space_normal), getDimension(R.dimen.space_normal), getDimension(R.dimen.space_normal), getDimension(R.dimen.space_tiny))
         txtMultiline.scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
         txtMultiline.isVerticalScrollBarEnabled = true
         txtMultiline.overScrollMode = 0
@@ -153,25 +138,31 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
     }
 
     fun setMaxLines(maxLines: Int) : FormInputMultiline{
-        mMaxLines=maxLines
         txtMultiline.maxLines = maxLines
         return this
     }
 
-    fun setBackground(background: Int) : FormInputMultiline{
-        mBackground=background
+    fun setBackground(@DrawableRes background: Int) : FormInputMultiline{
         layInputBox.setBackgroundResource(background)
         return this
     }
 
+    /**
+     * Set custom error
+     */
+    fun setError(errorMessage: String){
+        txtMultiline.textColor(R.color.colorRed)
+        verifyInputError(errorMessage, VISIBLE)
+    }
+
     fun showValidIcon(showIcon: Boolean) : FormInputMultiline {
-        isShowValidIcon=showIcon
+        showValidIcon=showIcon
         return this
     }
 
     fun setTextColor(color:Int):FormInputMultiline{
         mTextColor=color
-        txtMultiline.setTextColor(ContextCompat.getColor(context,mTextColor))
+        txtMultiline.textColor(mTextColor)
         return this
     }
 
@@ -199,33 +190,39 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
     /**
      * Errors
      */
-    private fun verifyInputError(error: String, visible: Int){
-        val errorResult=Utils.showInputError(tvError,validIcon,checkIfShouldShowValidIcon(), error, visible)
-        mErrorMessage=errorResult[0].toString()
-        inputError=errorResult[1].toString().toInt()
+    private fun verifyInputError(stringError: String, visible: Int){
+        mErrorMessage=stringError
+        inputError=tvError.showInputError(validIcon,checkIfShouldShowValidIcon(), stringError, visible)
     }
 
     private fun checkIfShouldShowValidIcon():Boolean{
         return if(getValue().isBlank()){
             false
         }else{
-            isShowValidIcon
+            showValidIcon
         }
     }
 
-    fun isError(parentView: View?): Boolean {
-        return if (inputError == 1) {
+    /**
+     * Check if there is an error.
+     * if there any
+     * * * return true,
+     * * * hide softKeyboard
+     * * * scroll top to the view
+     * * * put view on focus
+     * * * show error message
+     * else return false
+     */
+    fun noError(parentView: View?=null):Boolean{
+        inputError.isTrue {
             verifyInputError(mErrorMessage, VISIBLE)
-            if (parentView != null) {
-                hideKeyboard(context)
-                parentView.scrollTo(0, tvError.top)
-                txtMultiline.requestFocus()
-            }
-            true
-        } else {
+            parentView.hideKeyboard()
+            parentView?.scrollTo(0, txtMultiline.top)
+            txtMultiline.requestFocus()
+        }.isNotTrue {
             verifyInputError("", View.GONE)
-            false
         }
+        return !inputError
     }
 
 
@@ -244,23 +241,23 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
     }
 
     private fun inputBoxOnTextChange(value: String) {
-        mValue=value
-        if (mValue.isEmpty()) {
+        if (value.isEmpty()) {
             if (isMandatory) {
-                verifyInputError(String.format(resources.getString(R.string.cantBeEmpty), mLabel), View.VISIBLE)
+                verifyInputError(resources.getString(R.string.cantBeEmpty, mLabel), View.VISIBLE)
             } else {
                 verifyInputError("", View.GONE)
             }
-
         } else {
             verifyInputError("", View.GONE)
         }
-        countRemainInput()
+        countRemainInput(value)
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun countRemainInput(){
-        val rem = mMaxLength - mValue.length
-        txtLengthDesc.text = "$rem / $mMaxLength Characters Only"
+    /**
+     * Display remain characters to [txtLengthDesc]
+     */
+    private fun countRemainInput(value: String){
+        val rem = mMaxLength - value.length
+        txtLengthDesc.text = resources.getString(R.string.remainCharacters,rem,mMaxLength)
     }
 }

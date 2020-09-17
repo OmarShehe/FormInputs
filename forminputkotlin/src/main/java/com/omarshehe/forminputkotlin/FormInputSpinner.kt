@@ -3,7 +3,6 @@ package com.omarshehe.forminputkotlin
 import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
 import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
-import com.omarshehe.forminputkotlin.utils.textColor
-import com.omarshehe.forminputkotlin.utils.visibleIf
+import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_spinner.view.*
 import java.util.*
 
@@ -23,11 +21,11 @@ class FormInputSpinner : BaseFormInput {
     private var mLabel: String = ""
     private var mHint: String = ""
     private var mErrorMessage :String = ""
-    private var isMandatory: Boolean = false
+    private var isMandatory: Boolean = true
     private var mArrayList :List<String> = emptyArray<String>().toList()
     private var isFirstOpen: Boolean = true
     private var mListener : SpinnerSelectionListener? =null
-    private var isShowValidIcon= true
+    private var showValidIcon= true
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
@@ -57,7 +55,7 @@ class FormInputSpinner : BaseFormInput {
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
             setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
-            setHeight(a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            height = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
             setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
 
             showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
@@ -66,8 +64,6 @@ class FormInputSpinner : BaseFormInput {
 
             val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
 
-
-            validIcon.visibility = GONE
             mErrorMessage = String.format(resources.getString(R.string.isRequired), mLabel)
             val getIntArray = resources.getStringArray(list)
             setAdapter(listOf(*getIntArray))
@@ -115,8 +111,7 @@ class FormInputSpinner : BaseFormInput {
     }
 
     fun setHeight(height: Int) : FormInputSpinner {
-        val lparams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
-        spSpinner.layoutParams=lparams
+        spSpinner.layoutParams=LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
         return this
     }
 
@@ -125,7 +120,7 @@ class FormInputSpinner : BaseFormInput {
         return this
     }
     fun showValidIcon(showIcon: Boolean) : FormInputSpinner {
-        isShowValidIcon=showIcon
+        showValidIcon=showIcon
         return this
     }
 
@@ -187,7 +182,7 @@ class FormInputSpinner : BaseFormInput {
 
 
     private fun validateSpinner(hint: String) {
-        if (getValue()== hint) {
+        if (getValue()== hint && isMandatory) {
             verifyInputError(String.format(resources.getString(R.string.isRequired), mLabel), View.VISIBLE)
         } else {
             verifyInputError("", View.GONE)
@@ -199,21 +194,21 @@ class FormInputSpinner : BaseFormInput {
      */
     private fun verifyInputError(stringError: String, visible: Int){
         mErrorMessage=stringError
-        inputError=tvError.showInputError(validIcon,isShowValidIcon, stringError, visible)
+        inputError=tvError.showInputError(validIcon,showValidIcon, stringError, visible)
         (spSpinner.selectedView as TextView?)?.textColor(if(visible== View.VISIBLE)R.color.colorRed else mTextColor)
     }
 
 
-    fun isError(parentView: View?): Boolean {
-        return if (inputError) {
+    fun noError(parentView: View?=null):Boolean{
+       inputError.isTrue {
             verifyInputError(mErrorMessage, View.VISIBLE)
+            parentView.hideKeyboard()
             parentView?.scrollTo(0, spSpinner.top)
             spSpinner.requestFocus()
-            true
-        } else {
-            verifyInputError("", View.GONE)
-            false
+        }.isNotTrue {
+           verifyInputError("", View.GONE)
         }
+        return !inputError
     }
 
 
@@ -226,16 +221,14 @@ class FormInputSpinner : BaseFormInput {
     private fun initClickListener(){
         spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-
-                when{
-                    !isFirstOpen-> mListener?.onSpinnerItemSelected(parent.selectedItem.toString())
-                  isMandatory && !isFirstOpen-> validateSpinner(mHint)
-                    isFirstOpen-> (view as TextView?)?.textColor(mTextColor)
-                        
+                when(isFirstOpen){
+                    true-> (view as TextView?)?.textColor(mTextColor)
+                    false-> {
+                        mListener?.onSpinnerItemSelected(parent.selectedItem.toString())
+                        validateSpinner(mHint)
+                    }
                 }
-
                 isFirstOpen=false
-
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }

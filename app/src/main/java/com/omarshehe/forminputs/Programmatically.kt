@@ -7,11 +7,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.omarshehe.forminputkotlin.*
-import com.omarshehe.forminputkotlin.BaseFormInput.Companion.INPUT_TYPE_EMAIL
-import com.omarshehe.forminputkotlin.BaseFormInput.Companion.INPUT_TYPE_NUMBER
-import com.omarshehe.forminputkotlin.BaseFormInput.Companion.INPUT_TYPE_PHONE
-import com.omarshehe.forminputkotlin.BaseFormInput.Companion.INPUT_TYPE_TEXT
-import com.omarshehe.forminputkotlin.utils.Density
+import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.activity_programmatical.*
 
 class Programmatically : AppCompatActivity() {
@@ -97,8 +93,8 @@ class Programmatically : AppCompatActivity() {
             setID(7)
             setHint("About you")
             setLabel("About you")
+            setHeight(getDimension(R.dimen.multLine))
             setMandatory(true)
-            setHeight(resources.getDimensionPixelSize(R.dimen.formInputInput_box_height))
             setMaxLength(500)
             setPadding(0,50,0,0)
         }
@@ -124,11 +120,12 @@ class Programmatically : AppCompatActivity() {
         }
 
 
-        val param=LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,Density.dp2px(resources,60f))
+        val param=LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+            Density.dp2px(resources,60f))
         param.gravity=Gravity.CENTER
         val btnSubmit= FormInputButton(this).apply {
             setValue("Send")
-            showProgressOnClick(true)
+            setShowProgress(true)
             cornerRadius=Density.dp2px(resources,60f)
             layoutParams=param
         }

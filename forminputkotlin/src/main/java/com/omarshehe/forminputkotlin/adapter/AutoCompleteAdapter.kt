@@ -9,12 +9,18 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.TextView
 import com.omarshehe.forminputkotlin.R
+import com.omarshehe.forminputkotlin.interfaces.ItemSelectedListener
+import com.omarshehe.forminputkotlin.utils.isNotTrue
+import com.omarshehe.forminputkotlin.utils.isTrue
 import java.util.*
 
-class AutoCompleteAdapter(context: Context, resource: Int,
-                          private val items: ArrayList<String>, private val mListener: ItemSelectedListener)
-    : ArrayAdapter<String>(context, resource, items) {
-    private val itemsAll: ArrayList<String> = items.clone() as ArrayList<String>
+class AutoCompleteAdapter(
+    context: Context,
+    resource: Int,
+    private val items: MutableList<String>,
+    private val mListener: ItemSelectedListener
+) : ArrayAdapter<String>(context, resource, items) {
+    private val itemsAll: MutableList<String> = items.toMutableList()
     private val suggestions: ArrayList<String> = ArrayList()
     private var disableFilter: Boolean = false
 
@@ -35,9 +41,9 @@ class AutoCompleteAdapter(context: Context, resource: Int,
         override fun performFiltering(constraint: CharSequence): FilterResults {
             return run {
                 suggestions.clear()
-                for (item in itemsAll) {
-                    if (item.toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        suggestions.add(item)
+                itemsAll.forEach{
+                    if (it.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        suggestions.add(it)
                     }
                 }
                 val filterResults = FilterResults()
@@ -48,19 +54,18 @@ class AutoCompleteAdapter(context: Context, resource: Int,
         }
 
         override fun publishResults(constraint: CharSequence, results: FilterResults) {
-
-            if (disableFilter) {
+            disableFilter.isTrue{
                 clear()
-                for (item in itemsAll) {
-                    add(item)
+                itemsAll.forEach{
+                    add(it)
                     notifyDataSetChanged()
                 }
-            } else {
-                val filteredList = results.values as ArrayList<String>
+            }.isNotTrue {
+                val filteredList = results.values as MutableList<*>
                 if (results.count > 0) {
                     clear()
-                    for (item in filteredList) {
-                        add(item)
+                    filteredList.forEach { it as String
+                        add(it)
                     }
                     notifyDataSetChanged()
                 }
@@ -84,8 +89,4 @@ class AutoCompleteAdapter(context: Context, resource: Int,
         return convertView
     }
 
-
-    interface ItemSelectedListener {
-        fun onItemSelected(item: String)
-    }
 }

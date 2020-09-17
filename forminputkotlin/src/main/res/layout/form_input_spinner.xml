@@ -22,7 +22,6 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/validIcon"
                 style="@style/formInputImgNoErrorStyle"
-                tools:visibility="visible"
                 />
         </LinearLayout>
 
@@ -37,15 +36,13 @@
                 android:layout_height="wrap_content"
                 android:entries="@array/array"
                 android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:visibility="visible" />
+                android:paddingBottom="10dp" />
 
         </RelativeLayout>
 
         <TextView
             android:id="@+id/tvError"
-            style="@style/formInputTvErrorStyle"
-            tools:visibility="visible" />
+            style="@style/formInputTvErrorStyle" />
 
     </LinearLayout>
 </merge>
