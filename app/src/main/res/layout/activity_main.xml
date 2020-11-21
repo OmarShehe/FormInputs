@@ -5,7 +5,6 @@
     android:id="@+id/mainView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F1F1F1"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -22,11 +21,13 @@
             android:id="@+id/gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_array="@array/array_gender"
             app:form_hint="Select gender"
             app:form_label="Gender"
             app:form_showLabel="false"
-            app:form_textColor="@color/colorGrey" />
+            />
 
 
         <com.omarshehe.forminputkotlin.FormInputAutoComplete
@@ -34,6 +35,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_array="@array/array_country"
             app:form_height="@dimen/formInputInput_box_height"
             app:form_hint="Your country"
@@ -47,6 +50,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_hint="Your portfolio"
             app:form_inputType="url"
             app:form_label="Portfolio" />
@@ -56,6 +61,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_hint="Your full name"
             app:form_inputType="text"
             app:form_label="Full Name" />
@@ -66,6 +73,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_array="@array/array_currency"
             app:form_hint="Enter Price"
             app:form_inputType="number"
@@ -76,6 +85,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_hint="Your phone number"
             app:form_inputType="phoneNumber"
             app:form_isMandatory="false"
@@ -86,6 +97,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_hint="Your ID number"
             app:form_inputType="number"
             app:form_isMandatory="false"
@@ -97,6 +110,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_height="130dp"
             app:form_hint="About you"
             app:form_label="About you"
@@ -108,6 +123,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_hint="Your email address"
             app:form_inputType="email"
             app:form_label="Email" />
@@ -118,6 +135,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:inputType="textAutoCorrect"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_hint="Confirm email address"
             app:form_inputType="email"
             app:form_label="Confirm email" />
@@ -127,6 +146,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_hint="Your password"
             app:form_label="Password"
             app:form_showPassStrength="true"
@@ -137,6 +158,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_hint="Confirm your password"
             app:form_label="Confirm Password"
             app:form_showPassStrength="false" />
@@ -146,6 +169,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_label="Pin"
             app:form_hint="0"/>
 
@@ -154,6 +179,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color"
             app:form_label="Conform Pin"
             app:form_hint="0"
             app:form_inputType="number"/>
@@ -169,7 +196,7 @@
             android:textColor="@color/white"
             app:backgroundTint="@color/colorPrimary"
             app:cornerRadius="35dp"
-            app:form_progressColor="@color/colorPink"
+            app:form_progressColor="@color/colorAccent"
             app:form_showProgress="true"
             app:form_valueOnLoad="Please, wait.." />
     </LinearLayout>

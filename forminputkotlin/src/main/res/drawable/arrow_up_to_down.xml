@@ -12,7 +12,7 @@
             <path
                 android:name="path"
                 android:pathData="M 7.41 8.58 L 12 13.17 L 16.59 8.58 L 18 10 L 12 16 L 6 10 L 7.41 8.58 Z"
-                android:fillColor="#000"/>
+                android:fillColor="@color/formInputAutoCompleteArrowColor"/>
         </vector>
     </aapt:attr>
     <target android:name="path">

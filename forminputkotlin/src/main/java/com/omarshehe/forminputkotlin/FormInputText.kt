@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
 import com.omarshehe.forminputkotlin.interfaces.ViewOnClickListener
 import com.omarshehe.forminputkotlin.utils.*
@@ -58,6 +59,8 @@ class FormInputText : BaseFormInput, TextWatcher  {
        context?.let{
             val a = it.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setHintTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
+            setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
@@ -204,6 +207,16 @@ class FormInputText : BaseFormInput, TextWatcher  {
     fun setTextColor(color:Int):FormInputText{
         mTextColor=color
         txtInputBox.textColor(mTextColor)
+        return this
+    }
+
+    fun setHintTextColor(@ColorRes color: Int):FormInputText{
+        txtInputBox.hintTextColor(color)
+        return this
+    }
+
+    fun setLabelTextColor(@ColorRes color: Int):FormInputText{
+        tvLabel.textColor(color)
         return this
     }
 

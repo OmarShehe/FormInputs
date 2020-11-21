@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.*
 import android.widget.EditText
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_multiline.view.*
@@ -45,6 +46,8 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setHintTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
+            setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
@@ -166,6 +169,16 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
         return this
     }
 
+    fun setHintTextColor(@ColorRes color: Int):FormInputMultiline{
+        txtMultiline.hintTextColor(color)
+        return this
+    }
+
+    fun setLabelTextColor(@ColorRes color: Int):FormInputMultiline{
+        tvLabel.textColor(color)
+        txtLengthDesc.textColor(color)
+        return this
+    }
 
     /**
      * For save Instance State of the view in programmatically access

@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorOrange">#DCB900</color>
     <color name="colorRed">#FA0602</color>
     <color name="colorGreen">#28A645</color>
     <color name="colorBlue">#6799cc</color>
-
-
-
 
 
     <color name="primary_light">#BBDEFB</color>
@@ -30,7 +24,12 @@
 
     <color name="gr1">#A7076B</color>
     <color name="gr2">#650460</color>
-    <color name="formInputAutoCompleteItemColor" >#757575</color>
-    <color name="formInputSpinnerItemColor" >#000000</color>
+
+    <color name="formInputAutoCompleteItemTextColor">#757575</color>
+    <color name="formInputAutoCompleteItemLineColor">#D4D4D4</color>
+    <color name="formInputAutoCompleteArrowColor">#000000</color>
+    <color name="formInputSpinnerItemTextColor">#000000</color>
+    <color name="formInputLockAlertColor">#000</color>
+    <color name="formInputAutoCompleteItemBackgroundColor">@color/colorWhite</color>
 
 </resources>

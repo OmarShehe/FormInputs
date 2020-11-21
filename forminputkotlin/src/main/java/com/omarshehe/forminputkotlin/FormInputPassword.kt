@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
+import androidx.annotation.ColorRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
@@ -53,6 +54,8 @@ class FormInputPassword : BaseFormInput, TextWatcher {
         context?.let {
             val a = it.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setHintTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
+            setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
@@ -146,6 +149,21 @@ class FormInputPassword : BaseFormInput, TextWatcher {
     fun setTextColor(color:Int):FormInputPassword{
         mTextColor=color
         txtInputBox.textColor(mTextColor)
+        return this
+    }
+
+    fun setHintTextColor(@ColorRes color: Int):FormInputPassword{
+        txtInputBox.hintTextColor(color)
+        return this
+    }
+
+    fun setLabelTextColor(@ColorRes color: Int):FormInputPassword{
+        tvLabel.textColor(color)
+        tvHintTitle.textColor(color)
+        tvHintUpperCase.textColor(color)
+        tvHintSpecial.textColor(color)
+        tvHintNumber.textColor(color)
+        tvHintLong.textColor(color)
         return this
     }
 

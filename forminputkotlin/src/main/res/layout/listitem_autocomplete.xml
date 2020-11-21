@@ -4,30 +4,34 @@
     android:id="@+id/layParent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:background="@color/formInputAutoCompleteItemBackgroundColor"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackgroundBorderless"
+    android:orientation="vertical"
     tools:ignore="UnusedAttribute">
 
     <TextView
         android:id="@+id/tvView"
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/roboto_regular"
         android:gravity="center_vertical"
-        android:paddingStart="5dp"
-        android:paddingLeft="5dp"
-        android:paddingEnd="5dp"
-        android:paddingRight="5dp"
+        android:minHeight="40dp"
+        android:paddingStart="@dimen/space_normal"
+        android:paddingLeft="@dimen/space_normal"
+        android:paddingEnd="@dimen/space_normal"
+        android:paddingRight="@dimen/space_normal"
+        android:paddingTop="@dimen/space_tiny"
+        android:paddingBottom="@dimen/space_tiny"
         android:text="@string/app_name"
-        android:textColor="@color/formInputAutoCompleteItemColor"
+        android:textColor="@color/formInputAutoCompleteItemTextColor"
         android:textSize="@dimen/formInputAutoCompleteItemTextSize" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="#D4D4D4" />
+        android:background="@color/formInputAutoCompleteItemLineColor" />
 
 
 </LinearLayout>

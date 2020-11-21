@@ -12,7 +12,9 @@
         <attr name="form_errorView" format="reference"/>
 
         <attr name="form_valueOnLoad" format="string" />
-        <attr name="form_textColor" format="reference" />
+        <attr name="form_textColor" format="color" />
+        <attr name="form_textColorHint" format="color"/>
+        <attr name="form_textColorLabel" format="color"/>
         <attr name="form_progressColor" format="reference" />
         <attr name="form_showProgress" format="boolean" />
         <attr name="form_cornerRadius" format="integer" />

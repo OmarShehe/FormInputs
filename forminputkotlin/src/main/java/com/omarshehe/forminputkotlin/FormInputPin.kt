@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
+import androidx.annotation.ColorRes
 import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_pin.view.*
 
@@ -55,6 +56,8 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setHintTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
+            setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false))
             setLabel( a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint( a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
@@ -181,6 +184,19 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
         }
         return this
     }
+
+    fun setHintTextColor(@ColorRes color: Int):FormInputPin{
+        pinViewList.forEach{
+            it.hintTextColor(color)
+        }
+        return this
+    }
+
+    fun setLabelTextColor(@ColorRes color: Int):FormInputPin{
+        tvLabel.textColor(color)
+        return this
+    }
+
     private fun setRedTextColor(){
         pinViewList.forEach{
             it.textColor(R.color.colorRed)

@@ -10,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
 import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_spinner.view.*
@@ -51,6 +52,7 @@ class FormInputSpinner : BaseFormInput {
         if (context != null) {
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout, 0, 0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
@@ -134,6 +136,11 @@ class FormInputSpinner : BaseFormInput {
     fun setTextColor(color:Int):FormInputSpinner{
         mTextColor=color
         (spSpinner.selectedView as TextView?)?.textColor(mTextColor)
+        return this
+    }
+
+    fun setLabelTextColor(@ColorRes color: Int):FormInputSpinner{
+        tvLabel.textColor(color)
         return this
     }
 

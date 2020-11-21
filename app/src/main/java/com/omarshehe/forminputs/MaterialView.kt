@@ -17,7 +17,7 @@ class MaterialView : AppCompatActivity() {
         btnSubmit.setOnClickListener {
             if(txtFullName.noError(mainView) && txtEmail.noError(mainView) && txtPhoneNumber.noError(mainView)){
                 btnSubmit.showLoading(true)
-                Handler().postDelayed({
+                Handler(mainLooper).postDelayed({
                     btnSubmit.showLoading(false)
                 }, 1000)
             }

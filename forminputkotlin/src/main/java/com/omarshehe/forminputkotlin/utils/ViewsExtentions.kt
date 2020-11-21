@@ -52,6 +52,9 @@ fun View?.hideKeyboard() {
 fun EditText.textColor(@ColorRes color: Int) {
     setTextColor(ContextCompat.getColor(context,color))
 }
+fun EditText.hintTextColor(@ColorRes color: Int){
+    setHintTextColor(ContextCompat.getColor(context,color))
+}
 
 fun TextView.textColor(color: Int) {
     setTextColor(ContextCompat.getColor(context,color))

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="input_text_color">@color/colorWhite</color>
+
+    <color name="formInputLockAlertColor">@color/colorWhite</color>
+    <color name="formInputAutoCompleteItemTextColor">#FFFFFF</color>
+    <color name="formInputAutoCompleteItemLineColor">#6C6C6C</color>
+    <color name="formInputSpinnerItemTextColor">#FFFFFF</color>
+    <color name="formInputAutoCompleteItemBackgroundColor">#4E4E4E</color>
+    <color name="formInputAutoCompleteArrowColor">#FFFFFF</color>
+
+</resources>

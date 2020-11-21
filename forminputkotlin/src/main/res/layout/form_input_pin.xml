@@ -79,7 +79,6 @@
 
         <TextView
             android:id="@+id/tvError"
-            style="@style/formInputTvErrorStyle"
-            tools:visibility="visible" />
+            style="@style/formInputTvErrorStyle" />
     </LinearLayout>
 </merge>

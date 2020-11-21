@@ -1,19 +1,10 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@android:color/transparent</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
     <style name="formInputLabelStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
-        <item name="android:textColor">@color/colorGrey</item>
         <item name="android:textSize">14sp</item>
         <item name="android:text">@string/label</item>
     </style>
@@ -21,7 +12,6 @@
     <style name="HelperTextAppearance" parent="TextAppearance.Design.Error">
         <item name="android:textColor">@color/colorRed</item>
     </style>
-
 
     <style name="formInputPasswordStyle" parent="Widget.AppCompat.EditText">
         <item name="android:background">@color/colorTransparent</item>
@@ -55,7 +45,6 @@
         <item name="android:layout_marginEnd">30dp</item>
         <item name="android:layout_marginRight">30dp</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/black</item>
         <item name="android:textSize">14sp</item>
         <item name="android:visibility">visible</item>
         <item name="android:hint">@string/app_name</item>
@@ -110,7 +99,4 @@
         <item name="android:visibility">gone</item>
         <item name="android:layout_gravity">end</item>
     </style>
-
-
-
 </resources>

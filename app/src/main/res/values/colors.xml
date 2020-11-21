@@ -5,29 +5,22 @@
     <color name="colorAccent">#D81B60</color>
 
 
-    <color name="colorPink">#D786B3</color>
+
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
     <color name="colorGrey">#747373</color>
     <color name="colorLineGray">#F3F3F3</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="colorRed">#F50000</color>
-    <color name="colorLiterGrey">#D5F7F7F7</color>
-    <color name="colorTransparent">#00FFFFFF</color>
 
-    <color name="sub_btn_background">#424a52</color>
+    <color name="input_text_color">@color/colorBlack</color>
 
-    <color name="sub_btn_line">#00c68c</color>
 
-    <color name="sub_btn_ripple">#eff0f2</color>
+    <color name="formInputLockAlertColor">@color/colorBlack</color>
+    <color name="formInputAutoCompleteItemTextColor">#757575</color>
+    <color name="formInputAutoCompleteItemLineColor">#D4D4D4</color>
+    <color name="formInputSpinnerItemTextColor">#000000</color>
+    <color name="formInputAutoCompleteItemBackgroundColor">@color/colorWhite</color>
+    <color name="formInputAutoCompleteArrowColor">#000000</color>
 
-    <color name="sub_btn_tick">#eff0f2</color>
-
-    <color name="white">#ffffff</color>
-
-    <color name="gray">#627676</color>
-
-    <color name="yellow">#eef26c</color>
-
-    <color name="black">#000000</color>
 </resources>

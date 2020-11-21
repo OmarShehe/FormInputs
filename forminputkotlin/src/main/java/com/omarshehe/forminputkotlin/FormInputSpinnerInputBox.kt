@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import androidx.annotation.ColorRes
 import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
 import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.*
@@ -51,6 +52,8 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,0,0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setHintTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
+            setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
@@ -145,6 +148,16 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     fun setTextColor(color:Int):FormInputSpinnerInputBox{
         mTextColor=color
         txtInputBox.textColor(mTextColor)
+        return this
+    }
+
+    fun setHintTextColor(@ColorRes color: Int):FormInputSpinnerInputBox{
+        txtInputBox.hintTextColor(color)
+        return this
+    }
+
+    fun setLabelTextColor(@ColorRes color: Int):FormInputSpinnerInputBox{
+        tvLabel.textColor(color)
         return this
     }
 

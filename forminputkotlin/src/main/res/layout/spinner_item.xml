@@ -9,6 +9,6 @@
     android:fontFamily="@font/roboto_regular"
     android:singleLine="true"
     android:textAlignment="inherit"
-    android:textColor="@color/formInputSpinnerItemColor"
+    android:textColor="@color/formInputSpinnerItemTextColor"
     android:textSize="@dimen/formInputSpinnerItemTextSize"
     tools:text="@string/app_name" />

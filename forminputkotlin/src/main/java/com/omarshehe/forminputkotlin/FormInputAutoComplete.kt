@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.*
 import android.widget.EditText
+import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import com.omarshehe.forminputkotlin.adapter.AutoCompleteAdapter
 import com.omarshehe.forminputkotlin.interfaces.ItemSelectedListener
@@ -61,6 +62,8 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
         if(context!=null){
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setHintTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
+            setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
             setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
@@ -155,6 +158,16 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
 
     fun setOnItemSelectedListener(listener: ItemSelectedListener):FormInputAutoComplete{
         mListener=listener
+        return this
+    }
+
+    fun setHintTextColor(@ColorRes color: Int):FormInputAutoComplete{
+        txtInputBox.hintTextColor(color)
+        return this
+    }
+
+    fun setLabelTextColor(@ColorRes color: Int):FormInputAutoComplete{
+        tvLabel.textColor(color)
         return this
     }
 

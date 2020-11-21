@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FormInputs</string>
+    <string name="dark">Dark</string>
+    <string name="light">Light</string>
 </resources>
