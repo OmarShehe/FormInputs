@@ -20,21 +20,10 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-	        implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:1.0.3'
+	        implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:1.0.4'
 	}
 ```
 
-
-
-## Using Snapshots
-
-If you want to use the features that have not been packaged in an official release yet, you can use a `master-SNAPSHOT` release of the current development version
-
-```
-dependencies {
-     implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:master-SNAPSHOT'
-}
-```
 
 
 
