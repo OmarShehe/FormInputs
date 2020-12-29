@@ -1,6 +1,7 @@
 package com.omarshehe.forminputkotlin
 
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -8,6 +9,8 @@ import android.text.*
 import android.text.method.MovementMethod
 import android.text.method.PasswordTransformationMethod
 import android.util.AttributeSet
+import android.util.Log
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -15,6 +18,8 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
+import com.omarshehe.forminputkotlin.interfaces.ViewOnClickListener
 import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_text.view.*
 
@@ -42,7 +47,8 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
 
-    private var mListener : OnClickListener? =null
+    private var mListener : ViewOnClickListener? =null
+    private var mTextChangeListener : OnTextChangeListener? =null
 
     constructor(context: Context) : super(context){
         initView()
@@ -70,7 +76,6 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
         a.recycle()
 
         initTextInputLayout()
-
         mErrorMessage=formatString()
     }
 
@@ -78,9 +83,9 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
      * Initialize mTextInputLayout, get default label and text color
      */
     private fun initTextInputLayout(){
-        if(mTextInputLayout!=null){
-            tempTextHelper=mTextInputLayout!!.helperText.toString()
-            defaultTextHelperColor=mTextInputLayout!!.helperTextCurrentTextColor
+        mTextInputLayout?.let{
+            tempTextHelper=it.helperText.toString()
+            defaultTextHelperColor=it.helperTextCurrentTextColor
         }
     }
 
@@ -121,7 +126,6 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
             override fun onTrackballEvent(widget: TextView?, text: Spannable?, event: MotionEvent?): Boolean {
                 return false
             }
-
         }
 
         this.setOnClickListener{
@@ -142,9 +146,14 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
 
 
 
-    fun setOnViewClickListener(listener: OnClickListener): FormInputMaterialText {
+    fun setOnViewClickListener(listener: ViewOnClickListener): FormInputMaterialText {
         mListener=listener
         initClickListener()
+        return this
+    }
+
+    fun setOnTextChangeListener(listener: OnTextChangeListener):FormInputMaterialText{
+        mTextChangeListener=listener
         return this
     }
 
@@ -183,7 +192,7 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
                 transformationMethod = PasswordTransformationMethod()
             }
             INPUT_TYPE_MULTILINE ->{
-                isSingleLine = false
+                setScroll()
                 inputType=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
             }
         }
@@ -208,14 +217,30 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility", "RtlHardcoded")
+    private fun setScroll() {
+        isSingleLine = false
+        gravity = Gravity.LEFT or Gravity.TOP
+        scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
+        isVerticalScrollBarEnabled = true
+        overScrollMode = 0
+        setOnTouchListener { v, event ->
+            if(isFocused){
+                v.parent.requestDisallowInterceptTouchEvent(true)
+                if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_UP) {
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+            false
+        }
+    }
+
     /**
      * Get components
      */
     fun getValue(): String {
         return text.toString()
     }
-
-
 
     /**
      * Listener on text change
@@ -224,11 +249,12 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
     }
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
     }
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        val text=s.toString()
+    override fun onTextChanged(char: CharSequence?, start: Int, before: Int, count: Int) {
+        val text=char.toString()
         if (hasFocus()) {
             showIcon(text.isNotEmpty())
         }
+        mTextChangeListener?.onTextChange(text)
         inputBoxOnTextChange(text)
     }
 
@@ -276,6 +302,8 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
             mTextInputLayout?.isHelperTextEnabled=showLabel
             mTextInputLayout?.helperText = error
             mTextInputLayout?.setHelperTextColor(ContextCompat.getColorStateList(context,R.color.colorRed))
+            mTextInputLayout?.error=error
+            mTextInputLayout?.errorIconDrawable=null
             inputError=true
             mErrorMessage=error
         }else{
@@ -315,7 +343,7 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (isClearIconClicked(event)) {
+        if (isClearIconClicked(event) && getValue().isNotBlank()) {
             text = null
             event.action = MotionEvent.ACTION_CANCEL
             showIcon(false)
@@ -332,16 +360,20 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
         }
     }
 
+    /**
+     * Determine if the clearIcon been clicked.
+     * measure the clicked space by [width] of the view minus by the [compoundPaddingRight].
+     * Return true if clicked space is greater than measured space. Else return  false
+     */
     private fun isClearIconClicked(event: MotionEvent): Boolean {
         val touchPointX = event.x.toInt()
         val widthOfView = width
-        return touchPointX >= widthOfView - compoundPaddingRight
+        return if(compoundDrawables[2].isNotNull()){
+            touchPointX >= widthOfView - compoundPaddingRight
+        }else {
+            false
+        }
     }
-
-    interface OnClickListener{
-        fun onClick()
-    }
-
 
     private fun formatString(string:String=resources.getString(R.string.cantBeEmpty),label:String=tempTextHelper):String{
         return String.format(string ,label)

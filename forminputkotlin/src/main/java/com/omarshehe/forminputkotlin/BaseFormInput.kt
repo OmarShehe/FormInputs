@@ -3,7 +3,6 @@ package com.omarshehe.forminputkotlin
 import android.content.Context
 import android.os.Parcelable
 import android.text.InputType
-import android.text.Spanned
 import android.util.AttributeSet
 import android.util.SparseArray
 import android.view.View
@@ -12,10 +11,7 @@ import android.widget.EditText
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.text.HtmlCompat
 import androidx.core.view.children
-import androidx.core.view.isVisible
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.omarshehe.forminputkotlin.utils.*
 
 open class BaseFormInput : RelativeLayout {

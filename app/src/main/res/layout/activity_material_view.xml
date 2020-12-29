@@ -4,23 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F8F8"
     tools:context=".MaterialView"
+    android:background="?colorOnPrimary"
     android:id="@+id/mainView">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/gender"
+            style="@style/textInputLayoutSpinner"
+            android:hint="Select gender"
+            app:helperText="Gender">
+
+            <com.omarshehe.forminputkotlin.FormInputMaterialSpinner
+                android:id="@+id/spGender"
+                style="@style/TextInputStyle"
+                android:focusable="false"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                app:form_array="@array/array_gender" />
+
+        </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/fullNameView"
             style="@style/TextInputLayoutStyle"
             android:hint="Your full name"
             app:helperText="Full Name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+           >
 
             <com.omarshehe.forminputkotlin.FormInputMaterialText
                 android:id="@+id/txtFullName"
@@ -35,9 +49,7 @@
             style="@style/TextInputLayoutStyle"
             android:hint="Your email address"
             app:helperText="Email"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fullNameView">
+           >
 
             <com.omarshehe.forminputkotlin.FormInputMaterialText
                 android:id="@+id/txtEmail"
@@ -52,10 +64,7 @@
             android:id="@+id/phoneNumberView"
             style="@style/TextInputLayoutStyle"
             android:hint="Your phone number"
-            app:helperText="Phone Number"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailView">
+            app:helperText="Phone Number">
 
             <com.omarshehe.forminputkotlin.FormInputMaterialText
                 android:id="@+id/txtPhoneNumber"
@@ -70,9 +79,7 @@
             style="@style/TextInputLayoutStyle"
             android:hint="Your ID number"
             app:helperText="ID Number"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/phoneNumberView">
+            >
 
             <com.omarshehe.forminputkotlin.FormInputMaterialText
                 android:id="@+id/txtId"
@@ -85,19 +92,21 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/about"
             style="@style/TextInputLayoutStyle"
-            android:hint="About you"
             app:counterEnabled="true"
             app:counterMaxLength="10"
             app:helperText="About you"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/phoneNumberView">
+            app:hintEnabled="false"
+            >
 
             <com.omarshehe.forminputkotlin.FormInputMaterialText
                 android:id="@+id/txtAbout"
                 style="@style/TextInputStyle"
                 android:layout_height="120dp"
-                app:form_inputType="multiLine" />
+                android:gravity="top"
+                android:hint="About you"
+                app:form_inputType="multiLine"
+                app:form_isMultiLine="true"
+                app:form_showClearButton="false" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -113,9 +122,6 @@
             app:backgroundTint="@color/colorPrimary"
             app:cornerRadius="35dp"
             app:form_progressColor="@color/colorOrange"
-            app:form_showProgress="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/about" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:form_showProgress="true" />
+    </LinearLayout>
 </ScrollView>

@@ -1,19 +1,20 @@
-    package com.omarshehe.forminputs
+package com.omarshehe.forminputs
 
 import android.os.Bundle
 import android.os.Handler
-import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_material_view.*
 
-class MaterialView : AppCompatActivity() {
+class MaterialView : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_material_view)
 
+        spGender.setTextInputLayout(gender)
         txtFullName.setTextInputLayout(fullNameView)
         txtEmail.setTextInputLayout(emailView)
         txtPhoneNumber.setTextInputLayout(phoneNumberView)
+        txtAbout.setTextInputLayout(about)
         btnSubmit.setOnClickListener {
             if(txtFullName.noError(mainView) && txtEmail.noError(mainView) && txtPhoneNumber.noError(mainView)){
                 btnSubmit.showLoading(true)

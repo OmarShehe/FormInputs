@@ -47,6 +47,29 @@
         <item name="android:layout_marginTop">16dp</item>
     </style>
 
+
+    <style name="textInputLayoutSpinner" parent="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+        <item name="android:colorFocusedHighlight">@color/colorPrimary</item>
+        <item name="android:textColorHint">@color/colorGrey</item>
+        <item name="boxStrokeColor">@color/colorPrimary</item>
+        <item name="helperTextEnabled">true</item>
+        <item name="boxBackgroundColor">@null</item>
+
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxCollapsedPaddingTop">5dp</item>
+        <item name="hintTextAppearance">@style/TextInputLayoutTextAppearance</item>
+
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:typeface">normal</item>
+    </style>
+
+
     <style name="TextInputLayoutTextAppearance" parent="Base.TextAppearance.MaterialComponents.Subtitle2">
         <item name="android:textSize">10sp</item>
     </style>
