@@ -9,7 +9,6 @@ import android.text.*
 import android.text.method.MovementMethod
 import android.text.method.PasswordTransformationMethod
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.MotionEvent

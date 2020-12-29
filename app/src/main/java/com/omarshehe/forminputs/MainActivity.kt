@@ -21,7 +21,7 @@ class MainActivity : BaseActivity() {
 
         pin.setValues("1","2","3","4")
 
-        startActivity(Intent(this, MaterialView::class.java))
+        //startActivity(Intent(this, MaterialView::class.java))
         btnSubmit.setOnClickListener {
             if (gender.noError(mainView) &&
                 country.noError(mainView) &&
