@@ -1,2 +1,2 @@
-include ':app', ':forminputkotlin', ':forminputjava'
+include ':app', ':forminputkotlin'
 rootProject.name='FormInputs'
