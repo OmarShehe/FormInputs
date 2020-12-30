@@ -79,70 +79,14 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
     }
 
     /**
-     * Initialize mTextInputLayout, get default label and text color
-     */
-    private fun initTextInputLayout(){
-        mTextInputLayout?.let{
-            tempTextHelper=it.helperText.toString()
-            defaultTextHelperColor=it.helperTextCurrentTextColor
-        }
-    }
-
-
-    private fun initClickListener(){
-        this.movementMethod=object : MovementMethod {
-            override fun onTouchEvent(widget: TextView?, text: Spannable?, event: MotionEvent?): Boolean {
-                return false
-            }
-
-            override fun canSelectArbitrarily(): Boolean {
-                return false
-            }
-
-            override fun onKeyDown(widget: TextView?, text: Spannable?, keyCode: Int, event: KeyEvent?): Boolean {
-                return false
-            }
-
-            override fun onKeyUp(widget: TextView?, text: Spannable?, keyCode: Int, event: KeyEvent?): Boolean {
-                return false
-            }
-
-            override fun onGenericMotionEvent(widget: TextView?, text: Spannable?, event: MotionEvent?): Boolean {
-                return false
-            }
-
-            override fun onTakeFocus(widget: TextView?, text: Spannable?, direction: Int) {
-                mListener?.onClick()
-            }
-
-            override fun initialize(widget: TextView?, text: Spannable?) {
-            }
-
-            override fun onKeyOther(view: TextView?, text: Spannable?, event: KeyEvent?): Boolean {
-                return false
-            }
-
-            override fun onTrackballEvent(widget: TextView?, text: Spannable?, event: MotionEvent?): Boolean {
-                return false
-            }
-        }
-
-        this.setOnClickListener{
-            mListener?.onClick()
-        }
-    }
-
-    /**
      * Set components
      */
     fun setTextInputLayout(textInputLayout: TextInputLayout){
-        initTextInputLayout()
         mTextInputLayout=textInputLayout
-        tempTextHelper=mTextInputLayout?.helperText.toString()
+        initTextInputLayout()
         mErrorMessage=formatString()
         setMandatory(isMandatory)
     }
-
 
 
     fun setOnViewClickListener(listener: ViewOnClickListener): FormInputMaterialText {
@@ -377,4 +321,57 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
     private fun formatString(string:String=resources.getString(R.string.cantBeEmpty),label:String=tempTextHelper):String{
         return String.format(string ,label)
     }
+
+    private fun initClickListener(){
+        this.movementMethod=object : MovementMethod {
+            override fun onTouchEvent(widget: TextView?, text: Spannable?, event: MotionEvent?): Boolean {
+                return false
+            }
+
+            override fun canSelectArbitrarily(): Boolean {
+                return false
+            }
+
+            override fun onKeyDown(widget: TextView?, text: Spannable?, keyCode: Int, event: KeyEvent?): Boolean {
+                return false
+            }
+
+            override fun onKeyUp(widget: TextView?, text: Spannable?, keyCode: Int, event: KeyEvent?): Boolean {
+                return false
+            }
+
+            override fun onGenericMotionEvent(widget: TextView?, text: Spannable?, event: MotionEvent?): Boolean {
+                return false
+            }
+
+            override fun onTakeFocus(widget: TextView?, text: Spannable?, direction: Int) {
+                mListener?.onClick()
+            }
+
+            override fun initialize(widget: TextView?, text: Spannable?) {
+            }
+
+            override fun onKeyOther(view: TextView?, text: Spannable?, event: KeyEvent?): Boolean {
+                return false
+            }
+
+            override fun onTrackballEvent(widget: TextView?, text: Spannable?, event: MotionEvent?): Boolean {
+                return false
+            }
+        }
+
+        this.setOnClickListener{
+            mListener?.onClick()
+        }
+    }
+
+    /**
+     * Initialize mTextInputLayout, get default label and text color
+     */
+    private fun initTextInputLayout(){
+        mTextInputLayout?.let{
+            tempTextHelper=it.helperText.toString()
+        }
+    }
+
 }

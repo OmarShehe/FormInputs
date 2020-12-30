@@ -53,7 +53,7 @@ class FormInputSpinner : BaseFormInput {
             val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout, 0, 0)
             setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
             setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
-            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+            setMandatory(a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
             setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
             setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
             setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
@@ -188,6 +188,9 @@ class FormInputSpinner : BaseFormInput {
     }
 
 
+    /**
+     * Errors
+     */
     private fun validateSpinner(hint: String) {
         if (getValue()== hint && isMandatory) {
             verifyInputError(String.format(resources.getString(R.string.isRequired), mLabel), View.VISIBLE)
@@ -196,9 +199,6 @@ class FormInputSpinner : BaseFormInput {
         }
     }
 
-    /**
-     * Errors
-     */
     private fun verifyInputError(stringError: String, visible: Int){
         mErrorMessage=stringError
         inputError=tvError.showInputError(validIcon,showValidIcon, stringError, visible)

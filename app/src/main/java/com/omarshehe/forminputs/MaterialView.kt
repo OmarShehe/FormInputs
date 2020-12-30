@@ -14,9 +14,10 @@ class MaterialView : BaseActivity() {
         txtFullName.setTextInputLayout(fullNameView)
         txtEmail.setTextInputLayout(emailView)
         txtPhoneNumber.setTextInputLayout(phoneNumberView)
+        txtId.setTextInputLayout(IdView)
         txtAbout.setTextInputLayout(about)
         btnSubmit.setOnClickListener {
-            if(txtFullName.noError(mainView) && txtEmail.noError(mainView) && txtPhoneNumber.noError(mainView)){
+            if(spGender.noError(mainView) && txtFullName.noError(mainView) && txtEmail.noError(mainView) && txtPhoneNumber.noError(mainView)){
                 btnSubmit.showLoading(true)
                 Handler(mainLooper).postDelayed({
                     btnSubmit.showLoading(false)
