@@ -142,8 +142,13 @@ class FormInputMaterialSpinner : MaterialAutoCompleteTextView {
     /**
      * Get components
      */
+
+    /**
+     * return the selected item
+     * if the selected item is equal to [mHint] return empty, else return the selected item
+     */
     fun getValue(): String {
-        return text.toString()
+        return if(text.toString()==mHint) "" else text.toString()
     }
 
     /**
