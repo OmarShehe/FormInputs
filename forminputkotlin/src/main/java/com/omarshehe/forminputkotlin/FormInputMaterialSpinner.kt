@@ -207,9 +207,14 @@ class FormInputMaterialSpinner : MaterialAutoCompleteTextView {
     }
 
 
+    /**
+     * Invoke [mListener] only if the valid item selected
+     */
     private fun initClickListener(){
         onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            mListener?.onSpinnerItemSelected(adapter.getItem(position).toString())
+            if(getValue().isNotEmpty()){
+                mListener?.onSpinnerItemSelected(adapter.getItem(position).toString())
+            }
             validateSpinner(mHint)
         }
     }
