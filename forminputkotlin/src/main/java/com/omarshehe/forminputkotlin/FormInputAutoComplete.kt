@@ -146,7 +146,7 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
      * Set custom error
      */
     fun setError(errorMessage: String){
-        txtInputBox.textColor(R.color.colorRed)
+        txtInputBox.textColor(R.color.colorOnError)
         verifyInputError(errorMessage, VISIBLE)
     }
 
@@ -334,7 +334,7 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
                     setTextColor(mTextColor)
                     verifyInputError("", View.GONE)
                 }else{
-                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorRed))
+                    txtInputBox.setTextColor(ContextCompat.getColor(context,R.color.colorOnError))
                     verifyInputError(resources.getString(R.string.isRequired, mLabel), View.VISIBLE)
                 }
             }else{

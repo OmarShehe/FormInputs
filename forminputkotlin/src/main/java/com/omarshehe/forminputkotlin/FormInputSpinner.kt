@@ -202,7 +202,7 @@ class FormInputSpinner : BaseFormInput {
     private fun verifyInputError(stringError: String, visible: Int){
         mErrorMessage=stringError
         inputError=tvError.showInputError(validIcon,showValidIcon, stringError, visible)
-        (spSpinner.selectedView as TextView?)?.textColor(if(visible== View.VISIBLE)R.color.colorRed else mTextColor)
+        (spSpinner.selectedView as TextView?)?.textColor(if(visible== View.VISIBLE)R.color.colorOnError else mTextColor)
     }
 
 

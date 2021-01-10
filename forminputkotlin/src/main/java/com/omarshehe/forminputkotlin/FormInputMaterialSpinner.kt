@@ -98,7 +98,7 @@ class FormInputMaterialSpinner : MaterialAutoCompleteTextView {
      * Set custom error
      */
     fun setError(errorMessage: String){
-        textColor(R.color.colorRed)
+        textColor(R.color.colorOnError)
         verifyInputError(errorMessage)
     }
 
@@ -107,6 +107,7 @@ class FormInputMaterialSpinner : MaterialAutoCompleteTextView {
             if (value == mArrayList[index]) {
                 setText(value)
                 performFiltering("", 0)
+                validateSpinner(mHint)
             }
         }
     }
@@ -150,12 +151,13 @@ class FormInputMaterialSpinner : MaterialAutoCompleteTextView {
     fun getValue(): String {
         return if(text.toString()==mHint) "" else text.toString()
     }
+    private val getValueInternal: String get() =  text.toString()
 
     /**
      * Errors
      */
     private fun validateSpinner(hint: String) {
-        if (getValue()== hint && isMandatory) {
+        if (getValueInternal == hint && isMandatory) {
             verifyInputError(String.format(resources.getString(R.string.isRequired), tempTextHelper))
         } else {
             verifyInputError("")
@@ -166,7 +168,7 @@ class FormInputMaterialSpinner : MaterialAutoCompleteTextView {
         if(error.isNotEmpty()){
             mTextInputLayout?.isHelperTextEnabled=showLabel
             mTextInputLayout?.helperText = error
-            mTextInputLayout?.setHelperTextColor(ContextCompat.getColorStateList(context, R.color.colorRed))
+            mTextInputLayout?.setHelperTextColor(ContextCompat.getColorStateList(context, R.color.colorOnError))
             mTextInputLayout?.error=error
             mTextInputLayout?.errorIconDrawable=null
             inputError=true

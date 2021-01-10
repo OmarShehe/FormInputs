@@ -4,7 +4,7 @@ import com.omarshehe.forminputkotlin.R
 
 class  PasswordStrength {
     enum class PassLevel(resId: Int, color: Int) {
-        Weak(0, R.color.colorRed),Fair(2, R.color.colorOrange), Good(3, R.color.colorBlue), Strong(4, R.color.colorGreen);
+        Weak(0, R.color.colorOnError),Fair(2, R.color.colorOrange), Good(3, R.color.colorBlue), Strong(4, R.color.colorGreen);
         private var mResId: Int = resId
         private var mColor: Int = color
 

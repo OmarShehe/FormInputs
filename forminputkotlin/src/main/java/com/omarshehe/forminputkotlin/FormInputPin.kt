@@ -145,7 +145,7 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
      */
     fun setError(errorMessage: String){
         pinViewList.forEach{
-            it.textColor(R.color.colorRed)
+            it.textColor(R.color.colorOnError)
         }
         verifyInputError(errorMessage, VISIBLE)
     }
@@ -199,7 +199,7 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
 
     private fun setRedTextColor(){
         pinViewList.forEach{
-            it.textColor(R.color.colorRed)
+            it.textColor(R.color.colorOnError)
         }
     }
 

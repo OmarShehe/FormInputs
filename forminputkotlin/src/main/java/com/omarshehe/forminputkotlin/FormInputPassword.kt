@@ -137,7 +137,7 @@ class FormInputPassword : BaseFormInput, TextWatcher {
      * Set custom error
      */
     fun setError(errorMessage: String){
-        txtInputBox.textColor(R.color.colorRed)
+        txtInputBox.textColor(R.color.colorOnError)
         verifyInputError(errorMessage, VISIBLE)
     }
 

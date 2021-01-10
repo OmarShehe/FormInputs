@@ -3,7 +3,7 @@
 
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorOrange">#DCB900</color>
-    <color name="colorRed">#FA0602</color>
+    <color name="colorOnError">#FA0602</color>
     <color name="colorGreen">#28A645</color>
     <color name="colorBlue">#6799cc</color>
 

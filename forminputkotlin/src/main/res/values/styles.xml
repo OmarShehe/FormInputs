@@ -10,7 +10,7 @@
     </style>
 
     <style name="HelperTextAppearance" parent="TextAppearance.Design.Error">
-        <item name="android:textColor">@color/colorRed</item>
+        <item name="android:textColor">@color/colorOnError</item>
     </style>
 
     <style name="formInputPasswordStyle" parent="Widget.AppCompat.EditText">
@@ -86,7 +86,7 @@
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingTop">3dp</item>
         <item name="android:paddingRight">10dp</item>
-        <item name="android:textColor">@color/colorRed</item>
+        <item name="android:textColor">@color/colorOnError</item>
         <item name="android:textSize">12sp</item>
         <item name="android:visibility">gone</item>
     </style>

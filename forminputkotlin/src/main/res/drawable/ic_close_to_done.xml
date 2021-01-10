@@ -12,7 +12,7 @@
             <path
                     android:name="path"
                     android:pathData="M 19 6.41 L 17.59 5 L 12 10.59 L 6.41 5 L 5 6.41 L 10.59 12 L 5 17.59 L 6.41 19 L 12 13.41 L 17.59 19 L 19 17.59 L 13.41 12 Z"
-                    android:fillColor="@color/colorRed"/>
+                    android:fillColor="@color/colorOnError"/>
         </vector>
     </aapt:attr>
     <target android:name="path">
@@ -28,7 +28,7 @@
                 <objectAnimator
                         android:propertyName="fillColor"
                         android:duration="300"
-                        android:valueFrom="@color/colorRed"
+                        android:valueFrom="@color/colorOnError"
                         android:valueTo="@color/green"
                         android:valueType="colorType"
                         android:interpolator="@android:interpolator/fast_out_slow_in"/>

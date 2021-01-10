@@ -11,7 +11,7 @@
     <color name="colorGrey">#747373</color>
     <color name="colorLineGray">#F3F3F3</color>
     <color name="transparent">#00FFFFFF</color>
-    <color name="colorRed">#F50000</color>
+    <color name="colorOnError">#F50000</color>
 
     <color name="input_text_color">@color/colorBlack</color>
 

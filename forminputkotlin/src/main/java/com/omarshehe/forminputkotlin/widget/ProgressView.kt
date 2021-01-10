@@ -43,7 +43,7 @@ class ProgressView(context: Context, attrs: AttributeSet) : TextInputLayout(cont
         }
     }
 
-    fun updateProgress(mProgress:Int,color: Int = R.color.colorRed) {
+    fun updateProgress(mProgress:Int,color: Int = R.color.colorOnError) {
         paint.color = ContextCompat.getColor(context, color)
         progress=mProgress
     }

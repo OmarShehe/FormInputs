@@ -18,7 +18,6 @@
             android:id="@+id/gender"
             style="@style/textInputLayoutSpinner"
             android:hint="Select gender"
-            android:completionThreshold="0"
             app:helperText="Gender">
 
             <com.omarshehe.forminputkotlin.FormInputMaterialSpinner
@@ -72,7 +71,8 @@
                 android:id="@+id/txtPhoneNumber"
                 style="@style/TextInputStyle"
                 android:singleLine="true"
-                app:form_inputType="phoneNumber" />
+                app:form_inputType="phoneNumber"
+                app:form_isMandatory="false"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 

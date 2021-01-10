@@ -29,7 +29,7 @@
                         android:propertyName="fillColor"
                         android:duration="300"
                         android:valueFrom="@color/green"
-                        android:valueTo="@color/colorRed"
+                        android:valueTo="@color/colorOnError"
                         android:valueType="colorType"
                         android:interpolator="@android:interpolator/fast_out_slow_in"/>
                 <objectAnimator

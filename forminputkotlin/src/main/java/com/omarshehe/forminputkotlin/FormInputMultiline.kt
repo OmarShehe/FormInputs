@@ -154,7 +154,7 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
      * Set custom error
      */
     fun setError(errorMessage: String){
-        txtMultiline.textColor(R.color.colorRed)
+        txtMultiline.textColor(R.color.colorOnError)
         verifyInputError(errorMessage, VISIBLE)
     }
 

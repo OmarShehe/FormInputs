@@ -14,6 +14,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -41,6 +42,7 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
     private var mTextInputLayout: TextInputLayout? =null
     private var tempTextHelper:String =""
     private var defaultTextHelperColor:Int =R.color.colorGrey
+    private var defaultTextColor=R.color.black
     private var mClearIcon: Drawable?=getDrawable(R.drawable.ic_close)
 
     private var attrs: AttributeSet? =null
@@ -72,6 +74,7 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
         setShowClearButton(a.getBoolean(R.styleable.FormInputLayout_form_showClearButton, true))
         setShowLabel(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
         setMandatory(a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+        setDefaultTextColor(a.getResourceId(R.styleable.FormInputLayout_android_textColor,R.color.black))
         a.recycle()
 
         initTextInputLayout()
@@ -114,7 +117,7 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
      * Set custom error
      */
     fun setError(errorMessage: String){
-        textColor(R.color.colorRed)
+        textColor(R.color.colorOnError)
         verifyInputError(errorMessage)
     }
 
@@ -156,6 +159,11 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
 
     fun setShowClearButton(show:Boolean): FormInputMaterialText {
         showClearButton=show
+        return this
+    }
+
+    fun setDefaultTextColor(@ColorRes color:Int): FormInputMaterialText{
+        defaultTextColor=color
         return this
     }
 
@@ -218,25 +226,52 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
             }
         }else {
             verifyInputError("")
-            if (mInputType == INPUT_TYPE_EMAIL) {
-                if (mPresenter.isValidEmail(value)) {
-                    setTextColor(ContextCompat.getColor(context,R.color.black))
-                    verifyInputError("")
-                } else {
-                    setTextColor(ContextCompat.getColor(context,R.color.colorRed))
-                    verifyInputError(resources.getString(R.string.inValidEmail))
+            when(mInputType){
+                INPUT_TYPE_NUMBER->{
+                    if(mPresenter.isValidNumber(value) ){
+                        textColor(defaultTextColor)
+                        verifyInputError("")
+                    }else{
+                        textColor(R.color.colorOnError)
+                        verifyInputError(resources.getString(R.string.isInvalid,tempTextHelper))
+                    }
+                }
+
+                INPUT_TYPE_EMAIL-> {
+                    if (mPresenter.isValidEmail(value)) {
+                        textColor(defaultTextColor)
+                        verifyInputError("")
+                    } else {
+                        textColor(R.color.colorOnError)
+                        verifyInputError(resources.getString(R.string.inValidEmail))
+                    }
+                }
+
+                INPUT_TYPE_PHONE-> {
+                    if (mPresenter.isValidPhoneNumber(value)) {
+                        textColor(defaultTextColor)
+                        verifyInputError("")
+                    } else {
+                        textColor(R.color.colorOnError)
+                        verifyInputError(resources.getString(R.string.inValidPhoneNumber))
+                    }
+                }
+
+                INPUT_TYPE_URL->{
+                    if (mPresenter.isValidUrl(value)) {
+                        textColor(defaultTextColor)
+                        verifyInputError("")
+                    } else {
+                        textColor(R.color.colorOnError)
+                        verifyInputError(resources.getString(R.string.invalidUrl))
+                    }
                 }
             }
 
-            if (mInputType == INPUT_TYPE_PHONE) {
-                if (mPresenter.isValidPhoneNumber(value)) {
-                    setTextColor(ContextCompat.getColor(context,R.color.black))
-                    verifyInputError("")
-                } else {
-                    setTextColor(ContextCompat.getColor(context,R.color.colorRed))
-                    verifyInputError(resources.getString(R.string.inValidPhoneNumber))
-                }
-            }
+
+
+
+
         }
     }
 
@@ -244,7 +279,7 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
         if(error.isNotEmpty()){
             mTextInputLayout?.isHelperTextEnabled=showLabel
             mTextInputLayout?.helperText = error
-            mTextInputLayout?.setHelperTextColor(ContextCompat.getColorStateList(context,R.color.colorRed))
+            mTextInputLayout?.setHelperTextColor(ContextCompat.getColorStateList(context,R.color.colorOnError))
             mTextInputLayout?.error=error
             mTextInputLayout?.errorIconDrawable=null
             inputError=true

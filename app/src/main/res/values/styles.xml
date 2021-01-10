@@ -24,7 +24,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:colorBackground">@color/colorWhite</item>
         <item name="android:textColorPrimary">@color/colorWhite</item>
-        <item name="colorError">@color/colorRed</item>
+        <item name="colorError">@color/colorOnError</item>
     </style>
 
     <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
@@ -83,7 +83,7 @@
         <item name="android:paddingTop">18dp</item>
         <item name="android:paddingBottom">8dp</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textColor">@color/colorGreen</item>
         <item name="android:textCursorDrawable">@null</item>
         <item name="android:textSize">14sp</item>
     </style>

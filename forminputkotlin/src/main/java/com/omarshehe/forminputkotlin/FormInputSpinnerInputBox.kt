@@ -130,7 +130,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
      * Set custom error
      */
     fun setError(errorMessage: String){
-        txtInputBox.textColor(R.color.colorRed)
+        txtInputBox.textColor(R.color.colorOnError)
         verifyInputError(errorMessage, VISIBLE)
     }
 
@@ -304,7 +304,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
                         setTextColor(mTextColor)
                         verifyInputError("", GONE)
                     }else{
-                        txtInputBox.textColor(R.color.colorRed)
+                        txtInputBox.textColor(R.color.colorOnError)
                         verifyInputError(String.format(resources.getString(R.string.isInvalid), mLabel), VISIBLE)
                     }
                 }
@@ -314,7 +314,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
                         setTextColor(mTextColor)
                         verifyInputError("", GONE)
                     } else {
-                        txtInputBox.textColor(R.color.colorRed)
+                        txtInputBox.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.inValidEmail), VISIBLE)
                     }
                 }
@@ -324,7 +324,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
                         setTextColor(mTextColor)
                         verifyInputError("", GONE)
                     } else {
-                        txtInputBox.textColor(R.color.colorRed)
+                        txtInputBox.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.inValidPhoneNumber), VISIBLE)
                     }
                 }
@@ -334,7 +334,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
                         setTextColor(mTextColor)
                         verifyInputError("", GONE)
                     } else {
-                        txtInputBox.textColor(R.color.colorRed)
+                        txtInputBox.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.invalidUrl), VISIBLE)
                     }
                 }
