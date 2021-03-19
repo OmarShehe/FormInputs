@@ -37,7 +37,7 @@ class Programmatically : AppCompatActivity() {
             setLabel("Country")
             setHint("Select your country")
             setMandatory(true)
-            setAdapter(ArrayList(listOf(*countryList)))
+            setAdapter(countryList.toList())
             showValidIcon(true)
             setPadding(0,50,0,0)
         }
@@ -59,7 +59,7 @@ class Programmatically : AppCompatActivity() {
             setID(4)
             setHint("Your price")
             setLabel("Price")
-            setSpinner(listOf(*currencyArray))
+            setSpinner(currencyArray.toList())
             setMandatory(true)
             setPadding(0,50,0,0)
         }
@@ -93,7 +93,7 @@ class Programmatically : AppCompatActivity() {
             setID(7)
             setHint("About you")
             setLabel("About you")
-            setHeight(getDimension(R.dimen.multLine))
+            setInputViewHeight(getDimension(R.dimen.multLine))
             setMandatory(true)
             setMaxLength(500)
             setPadding(0,50,0,0)

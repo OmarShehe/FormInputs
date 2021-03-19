@@ -9,7 +9,7 @@ class SavedState : View.BaseSavedState {
     var childrenStates: SparseArray<Parcelable>? = null
     constructor(superState: Parcelable?) : super(superState)
     constructor(source: Parcel) : super(source) {
-        childrenStates = source.readSparseArray<Parcelable>(javaClass.classLoader)
+        childrenStates = source.readSparseArray(javaClass.classLoader)
     }
     override fun writeToParcel(out: Parcel, flags: Int) {
         super.writeToParcel(out, flags)
@@ -17,7 +17,7 @@ class SavedState : View.BaseSavedState {
     }
     companion object { @JvmField
         internal val CREATOR = object : Parcelable.Creator<SavedState> {
-            override fun createFromParcel(source: Parcel): SavedState? = SavedState(source)
+            override fun createFromParcel(source: Parcel): SavedState = SavedState(source)
             override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
         }
     }

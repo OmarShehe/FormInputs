@@ -8,13 +8,13 @@ import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.children
 import com.omarshehe.forminputkotlin.utils.*
 
-open class BaseFormInput : RelativeLayout {
+open class BaseFormInput : LinearLayoutCompat {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs,defStyleAttr)

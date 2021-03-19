@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Theme.AppCompat.DayNight"
-        android:orientation="vertical">
-
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="androidx.appcompat.widget.LinearLayoutCompat"
+    tools:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/labelView"
@@ -28,9 +24,9 @@
 
         <RelativeLayout
             android:id="@+id/layInputBox"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/formInputInput_box_height"
-            android:background="@drawable/bg_txt_square">
+            style="@style/formInputLytInputBox"
+            android:theme="@style/Theme.AppCompat.DayNight"
+            android:layout_height="@dimen/formInputInput_box_height">
 
             <Spinner
                 android:id="@+id/spSpinner"
@@ -68,5 +64,5 @@
             style="@style/formInputTvErrorStyle" />
 
 
-    </LinearLayout>
+
 </merge>

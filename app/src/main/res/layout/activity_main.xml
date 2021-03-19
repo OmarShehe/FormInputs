@@ -7,16 +7,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:focusableInTouchMode="true"
         android:orientation="vertical"
         android:padding="10dp">
-
-
         <com.omarshehe.forminputkotlin.FormInputSpinner
             android:id="@+id/gender"
             android:layout_width="match_parent"
@@ -166,17 +162,17 @@
 
         <com.omarshehe.forminputkotlin.FormInputPin
             android:id="@+id/pin"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:form_textColor="@color/input_text_color"
-            app:form_textColorLabel="@color/input_text_color"
+            app:form_hint="0"
             app:form_label="Pin"
-            app:form_hint="0"/>
+            app:form_textColor="@color/input_text_color"
+            app:form_textColorLabel="@color/input_text_color" />
 
         <com.omarshehe.forminputkotlin.FormInputPin
             android:id="@+id/confirmPin"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:form_textColor="@color/input_text_color"

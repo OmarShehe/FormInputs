@@ -74,7 +74,6 @@ fun AppCompatImageView.showDoneIcon(visibility: Boolean) {
     if(this.isVisible!=visibility){
         this.visibleIf(visibility)
         val animCheckIcon: AnimatedVectorDrawableCompat? = AnimatedVectorDrawableCompat.create(context, R.drawable.check_anim)
-
         if (animCheckIcon == this.drawable) return
         this.setImageDrawable(animCheckIcon)
         animCheckIcon?.start()

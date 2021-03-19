@@ -6,15 +6,15 @@ import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
-import android.widget.LinearLayout
 import androidx.annotation.ColorRes
+import androidx.core.content.withStyledAttributes
+import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
 import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_pin.view.*
 
-class FormInputPin:  BaseFormInput,TextWatcher  {
+class FormInputPin: BaseFormInput,TextWatcher  {
     private lateinit var mPresenter: FormInputContract.Presenter
 
     private var inputError:Boolean = true
@@ -28,6 +28,8 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
     private var mPinValue : String = ""
     private var mValidPin : String = ""
     private var pinViewList= emptyList<EditText>()
+
+    private var mTextChangeListener : OnTextChangeListener? =null
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
@@ -46,37 +48,29 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
     }
 
     private fun initView() {
-        LayoutInflater.from(context).inflate(R.layout.form_input_pin, this, true)
+        inflate(context, R.layout.form_input_pin, this)
         mPresenter = FormInputPresenterImpl()
-
         pinViewList= listOf(txtPinOne,txtPinTwo,txtPinThree,txtPinFour)
-        /**
-         * Get Attributes
-         */
-        if(context!=null){
-            val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
-            setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
-            setHintTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
-            setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
-            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, false))
-            setLabel( a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
-            setHint( a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
-            height = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
-            setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
+        orientation= VERTICAL
+        context.withStyledAttributes(attrs, R.styleable.FormInputLayout, styleAttr, 0) {
+            setTextColor(getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setHintTextColor(getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
+            setLabelTextColor(getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
+            setMandatory( getBoolean(R.styleable.FormInputLayout_form_isMandatory, false))
+            setLabel( getString(R.styleable.FormInputLayout_form_label).orEmpty())
+            setHint( getString(R.styleable.FormInputLayout_form_hint).orEmpty())
+            setInputViewHeight(getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            setBackground(getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
 
-            showValidIcon( a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
-            setInputType( a.getInt(R.styleable.FormInputLayout_form_inputType, 3))
-            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
+            showValidIcon( getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
+            setInputType( getInt(R.styleable.FormInputLayout_form_inputType, 3))
+            setLabelVisibility(getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
-            initEvents()
-            a.recycle()
         }
-
-
-
+        initEvents()
     }
-    
+
     private fun initEvents(){
         txtPinOne.addTextChangedListener(this)
         txtPinTwo.addTextChangedListener(this)
@@ -122,8 +116,10 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
         return this
     }
 
-    fun setHeight(height: Int) : FormInputPin {
-        viewPins.layoutParams= LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height)
+    fun setInputViewHeight(mHeight: Int) : FormInputPin {
+        pinViewList.forEach {
+            it.height=mHeight
+        }
         return this
     }
 
@@ -166,7 +162,7 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
                 }
             }
             else -> {
-                 pinViewList.forEach{
+                pinViewList.forEach{
                     it.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
                 }
             }
@@ -175,7 +171,10 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
         return this
     }
 
-
+    fun setOnTextChangeListener(listener: OnTextChangeListener):FormInputPin{
+        mTextChangeListener=listener
+        return this
+    }
 
     fun setTextColor(color:Int):FormInputPin{
         mTextColor=color
@@ -236,12 +235,12 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
         }
     }
 
-    fun noError(parentView: View?=null):Boolean{
+    fun noError(parentView: View?=null, focus : Boolean = true):Boolean{
         inputError.isTrue {
             verifyInputError(mErrorMessage, VISIBLE)
             parentView.hideKeyboard()
             parentView?.scrollTo(0, tvError.top)
-            txtPinOne.requestFocus()
+            focus.isTrue {txtPinOne.requestFocus()}
         }.isNotTrue {
             verifyInputError("", View.GONE)
         }
@@ -252,16 +251,12 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
     /**
      * Listener on text change
      * */
-    override fun afterTextChanged(s: Editable?) {
-    }
+    override fun afterTextChanged(s: Editable?) {}
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+    override fun onTextChanged(value: CharSequence, i: Int, i1: Int, i2: Int) { performOnTextChange(value.toString()) }
 
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-    }
-    override fun onTextChanged(s: CharSequence, i: Int, i1: Int, i2: Int) {
-        inputBoxOnTextChange(s.toString())
-    }
-
-    private fun inputBoxOnTextChange(value:String) {
+    private fun performOnTextChange(value: String) {
+        mTextChangeListener?.onTextChange(value)
         if(value.isNotEmpty()){
             val editText = (context as Activity).currentFocus as EditText?
             editText?.focusSearch(View.FOCUS_RIGHT)?.requestFocus()
@@ -298,7 +293,7 @@ class FormInputPin:  BaseFormInput,TextWatcher  {
     }
 
     private fun pinViewIsNotEmpty(): Boolean {
-       pinViewList.forEach{
+        pinViewList.forEach{
             if(it.text.isNullOrEmpty()){
                 return false
             }

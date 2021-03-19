@@ -21,7 +21,6 @@ import com.google.android.material.textfield.TextInputLayout
 import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
 import com.omarshehe.forminputkotlin.interfaces.ViewOnClickListener
 import com.omarshehe.forminputkotlin.utils.*
-import kotlinx.android.synthetic.main.form_input_text.view.*
 
 
 /**
@@ -302,12 +301,12 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
      * * * show error message
      * else return false
      */
-    fun noError(parentView: View?=null):Boolean{
+    fun noError(parentView: View? = null, focus : Boolean = true):Boolean{
         inputError.isTrue {
             verifyInputError(mErrorMessage)
             parentView.hideKeyboard()
             parentView?.scrollTo(0, this.top)
-            requestFocus()
+            focus.isTrue {requestFocus()}
         }.isNotTrue {
             verifyInputError("")
         }

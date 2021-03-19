@@ -29,6 +29,9 @@
 
         <attr name="form_showPassStrength" format="boolean"/>
         <attr name="form_passLength" format="integer"/>
+        <attr name="form_passIncludeUpperCase" format="boolean" />
+        <attr name="form_passIncludeSpecialChar" format="boolean" />
+        <attr name="form_passIncludeNumber" format="boolean" />
 
         <attr name="form_showTips" format="boolean"/>
         <attr name="form_enforceRules" format="boolean"/>

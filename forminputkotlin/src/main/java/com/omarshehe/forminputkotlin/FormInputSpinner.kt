@@ -3,14 +3,10 @@ package com.omarshehe.forminputkotlin
 import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import androidx.annotation.ColorRes
+import androidx.core.content.withStyledAttributes
 import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
 import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_spinner.view.*
@@ -38,46 +34,41 @@ class FormInputSpinner : BaseFormInput {
         this.attrs=attrs
         initView()
     }
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs,defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs, defStyleAttr) {
         this.attrs = attrs
         styleAttr=defStyleAttr
         initView()
     }
 
     private fun initView() {
-        LayoutInflater.from(context).inflate(R.layout.form_input_spinner, this, true)
-        /**
-         * Get Attributes
-         */
-        if (context != null) {
-            val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout, 0, 0)
-            setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
-            setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
-            setMandatory(a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
-            setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
-            setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
-            setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
-            height = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
-            setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
+        inflate(context, R.layout.form_input_spinner, this)
+        orientation= VERTICAL
+        context.withStyledAttributes(attrs, R.styleable.FormInputLayout, styleAttr, 0) {
+            setTextColor(getResourceId(R.styleable.FormInputLayout_form_textColor, R.color.black))
+            setLabelTextColor(getResourceId(R.styleable.FormInputLayout_form_textColorLabel, R.color.black))
+            setMandatory(getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+            setLabel(getString(R.styleable.FormInputLayout_form_label).orEmpty())
+            setHint(getString(R.styleable.FormInputLayout_form_hint).orEmpty())
+            setValue(getString(R.styleable.FormInputLayout_form_value).orEmpty())
+            setSpinnerHeight(getDimension(R.styleable.FormInputLayout_form_height, resources.getDimension(R.dimen.formInputInput_box_height)).toInt())
+            setBackground(getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
 
-            showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
-            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
-
-
-            val list = a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)
+            showValidIcon(getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
+            setLabelVisibility(getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
             mErrorMessage = String.format(resources.getString(R.string.isRequired), mLabel)
-            val getIntArray = resources.getStringArray(list)
-            setAdapter(listOf(*getIntArray))
-            a.recycle()
+
+            val itemList =resources.getStringArray(getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)).toList()
+            setAdapter(itemList)
         }
+
     }
 
     /**
      * Set components
      */
-    fun setLabel(text:String): FormInputSpinner{
-        mLabel=tvLabel.setLabel(text,isMandatory)
+    fun setLabel(text: String): FormInputSpinner{
+        mLabel=tvLabel.setLabel(text, isMandatory)
         return this
     }
 
@@ -88,11 +79,11 @@ class FormInputSpinner : BaseFormInput {
     fun setMandatory(mandatory: Boolean) : FormInputSpinner {
         isMandatory =mandatory
         if(!mandatory){ inputError=false }
-        mLabel=tvLabel.setLabel(mLabel,isMandatory)
+        mLabel=tvLabel.setLabel(mLabel, isMandatory)
         return this
     }
 
-    fun setLabelVisibility(show:Boolean): FormInputSpinner {
+    fun setLabelVisibility(show: Boolean): FormInputSpinner {
         tvLabel.visibleIf(show)
         return this
     }
@@ -112,8 +103,8 @@ class FormInputSpinner : BaseFormInput {
         }
     }
 
-    fun setHeight(height: Int) : FormInputSpinner {
-        spSpinner.layoutParams=LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+    fun setSpinnerHeight(height: Int) : FormInputSpinner {
+        spSpinner.layoutParams=FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, height)
         return this
     }
 
@@ -133,7 +124,7 @@ class FormInputSpinner : BaseFormInput {
         verifyInputError(errorMessage, VISIBLE)
     }
 
-    fun setTextColor(color:Int):FormInputSpinner{
+    fun setTextColor(color: Int):FormInputSpinner{
         mTextColor=color
         (spSpinner.selectedView as TextView?)?.textColor(mTextColor)
         return this
@@ -147,7 +138,7 @@ class FormInputSpinner : BaseFormInput {
     /**
      * For save Instance State of the view in programmatically access
      */
-    fun setID(id:Int):FormInputSpinner{
+    fun setID(id: Int):FormInputSpinner{
         this.id=id
         return this
     }
@@ -187,6 +178,12 @@ class FormInputSpinner : BaseFormInput {
         return this
     }
 
+    //////////////////////////////////////////
+    fun setAdapter(adapter: BaseAdapter):FormInputSpinner {
+        spSpinner.adapter = adapter
+        return this
+    }
+
 
     /**
      * Errors
@@ -201,19 +198,19 @@ class FormInputSpinner : BaseFormInput {
 
     private fun verifyInputError(stringError: String, visible: Int){
         mErrorMessage=stringError
-        inputError=tvError.showInputError(validIcon,showValidIcon, stringError, visible)
-        (spSpinner.selectedView as TextView?)?.textColor(if(visible== View.VISIBLE)R.color.colorOnError else mTextColor)
+        inputError=tvError.showInputError(validIcon, showValidIcon, stringError, visible)
+        (spSpinner.selectedView as TextView?)?.textColor(if (visible == View.VISIBLE) R.color.colorOnError else mTextColor)
     }
 
 
-    fun noError(parentView: View?=null):Boolean{
-       inputError.isTrue {
+    fun noError(parentView: View? = null, focus : Boolean = true):Boolean{
+        inputError.isTrue {
             verifyInputError(mErrorMessage, View.VISIBLE)
             parentView.hideKeyboard()
             parentView?.scrollTo(0, spSpinner.top)
-            spSpinner.requestFocus()
+            focus.isTrue {spSpinner.requestFocus()}
         }.isNotTrue {
-           verifyInputError("", View.GONE)
+            verifyInputError("", View.GONE)
         }
         return !inputError
     }
@@ -229,8 +226,8 @@ class FormInputSpinner : BaseFormInput {
         spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 when(isFirstOpen){
-                    true-> (view as TextView?)?.textColor(mTextColor)
-                    false-> {
+                    true -> (view as TextView?)?.textColor(mTextColor)
+                    false -> {
                         mListener?.onSpinnerItemSelected(parent.selectedItem.toString())
                         validateSpinner(mHint)
                     }

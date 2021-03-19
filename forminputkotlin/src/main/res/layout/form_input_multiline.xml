@@ -1,70 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="androidx.appcompat.widget.LinearLayoutCompat"
+    tools:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/labelView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-
-
-        <LinearLayout
-            android:id="@+id/labelView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="end">
-
-            <TextView
-                android:id="@+id/tvLabel"
-                style="@style/formInputLabelStyle" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/validIcon"
-                style="@style/formInputImgNoErrorStyle"
-                />
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/layInputBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_txt_square">
-
-            <EditText
-                android:id="@+id/txtMultiline"
-                style="@style/formInputTxtInputBoxStyle"
-                android:layout_marginRight="0dp"
-                android:layout_marginEnd="0dp"
-                android:paddingRight="10dp"
-                android:paddingEnd="10dp"
-                android:background="@color/colorTransparent"
-                android:fontFamily="@font/roboto_regular"
-                android:hint="@string/app_name"
-                android:importantForAutofill="auto"
-                android:inputType="textMultiLine|textCapSentences"
-          />
-
-            <TextView
-                android:id="@+id/txtLengthDesc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/txtMultiline"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/roboto_light"
-                android:singleLine="true"
-                android:text="@string/charactersOnly"
-                android:textSize="12sp" />
-
-        </RelativeLayout>
+        android:gravity="end">
 
         <TextView
-            android:id="@+id/tvError"
-            style="@style/formInputTvErrorStyle" />
+            android:id="@+id/tvLabel"
+            style="@style/formInputLabelStyle" />
 
-
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/validIcon"
+            style="@style/formInputImgNoErrorStyle" />
     </LinearLayout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/layInputBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_txt_square"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/txtMultiline"
+            style="@style/formInputTxtInputBoxStyle"
+            android:layout_marginRight="0dp"
+            android:layout_marginEnd="0dp"
+            android:paddingRight="10dp"
+            android:paddingEnd="10dp"
+            android:background="@color/colorTransparent"
+            android:fontFamily="@font/roboto_regular"
+            android:hint="@string/app_name"
+            android:importantForAutofill="auto"
+            android:inputType="textMultiLine|textCapSentences" />
+
+        <TextView
+            android:id="@+id/txtLengthDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|end"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/roboto_light"
+            android:singleLine="true"
+            android:text="@string/charactersOnly"
+            android:textSize="12sp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <TextView
+        android:id="@+id/tvError"
+        style="@style/formInputTvErrorStyle" />
+
 </merge>

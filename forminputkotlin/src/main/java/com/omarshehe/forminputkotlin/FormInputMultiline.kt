@@ -6,10 +6,14 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.view.*
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
 import android.widget.EditText
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.core.content.withStyledAttributes
+import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
 import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_multiline.view.*
 
@@ -25,6 +29,8 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
 
+    private var mTextChangeListener : OnTextChangeListener? =null
+
     constructor(context: Context) : super(context){
         initView()
     }
@@ -39,33 +45,29 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
     }
 
     private fun initView(){
-        LayoutInflater.from(context).inflate(R.layout.form_input_multiline, this, true)
-        /**
-         * Get Attributes
-         */
-        if(context!=null){
-            val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
-            setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
-            setHintTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
-            setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
-            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
-            setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
-            setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
-            setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
-            height = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
-            setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
+        inflate(context, R.layout.form_input_multiline, this)
+        orientation= VERTICAL
+        context.withStyledAttributes(attrs, R.styleable.FormInputLayout, styleAttr, 0) {
+            setTextColor(getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setHintTextColor(getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
+            setLabelTextColor(getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
+            setMandatory( getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+            setLabel(getString(R.styleable.FormInputLayout_form_label).orEmpty())
+            setHint(getString(R.styleable.FormInputLayout_form_hint).orEmpty())
+            setValue(getString(R.styleable.FormInputLayout_form_value).orEmpty())
+            setInputViewHeight(getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            setBackground(getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
 
-            showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
-            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
+            showValidIcon(getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
+            setLabelVisibility(getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
-            setMaxLines(a.getInt(R.styleable.FormInputLayout_form_maxLines, 5))
-            setMaxLength( a.getInt(R.styleable.FormInputLayout_form_maxLength, 300))
+            setMaxLines(getInt(R.styleable.FormInputLayout_form_maxLines, 5))
+            setMaxLength( getInt(R.styleable.FormInputLayout_form_maxLength, 300))
 
-            setScroll()
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
-            txtMultiline.addTextChangedListener(this)
-            a.recycle()
         }
+        setScroll()
+        txtMultiline.addTextChangedListener(this)
     }
 
     /**
@@ -103,8 +105,8 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
         return this
     }
 
-    fun setHeight(height: Int) : FormInputMultiline {
-        txtMultiline.layoutParams =  LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+    fun setInputViewHeight(height: Int) : FormInputMultiline {
+        txtMultiline.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, height)
         return this
     }
 
@@ -127,16 +129,14 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
         txtMultiline.scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
         txtMultiline.isVerticalScrollBarEnabled = true
         txtMultiline.overScrollMode = 0
-        txtMultiline.setOnTouchListener { v, event ->
+        txtMultiline.setOnTouchListener { view, event ->
             if(txtMultiline.isFocused){
-                v.parent.requestDisallowInterceptTouchEvent(true)
+                view.parent.requestDisallowInterceptTouchEvent(true)
                 if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_UP) {
-                    v.parent.requestDisallowInterceptTouchEvent(false)
+                    view.parent.requestDisallowInterceptTouchEvent(false)
                 }
-
             }
             false
-
         }
     }
 
@@ -160,6 +160,11 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
 
     fun showValidIcon(showIcon: Boolean) : FormInputMultiline {
         showValidIcon=showIcon
+        return this
+    }
+
+    fun setOnTextChangeListener(listener: OnTextChangeListener):FormInputMultiline{
+        mTextChangeListener=listener
         return this
     }
 
@@ -226,12 +231,12 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
      * * * show error message
      * else return false
      */
-    fun noError(parentView: View?=null):Boolean{
+    fun noError(parentView: View?=null,focus:Boolean=true):Boolean{
         inputError.isTrue {
             verifyInputError(mErrorMessage, VISIBLE)
             parentView.hideKeyboard()
             parentView?.scrollTo(0, txtMultiline.top)
-            txtMultiline.requestFocus()
+            focus.isTrue {txtMultiline.requestFocus() }
         }.isNotTrue {
             verifyInputError("", View.GONE)
         }
@@ -242,18 +247,12 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
     /**
      * Listener on text change
      * */
-    override fun afterTextChanged(s: Editable?) {
-    }
+    override fun afterTextChanged(s: Editable?) {}
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+    override fun onTextChanged(value: CharSequence?, start: Int, before: Int, count: Int) { performOnTextChange(value.toString())}
 
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-    }
-
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        inputBoxOnTextChange(s.toString())
-
-    }
-
-    private fun inputBoxOnTextChange(value: String) {
+    private fun performOnTextChange(value: String) {
+        mTextChangeListener?.onTextChange(value)
         if (value.isEmpty()) {
             if (isMandatory) {
                 verifyInputError(resources.getString(R.string.cantBeEmpty, mLabel), View.VISIBLE)

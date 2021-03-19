@@ -9,15 +9,19 @@ import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.view.*
+import android.view.ActionMode
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import androidx.core.content.withStyledAttributes
 import com.omarshehe.forminputkotlin.adapter.AutoCompleteAdapter
 import com.omarshehe.forminputkotlin.interfaces.ItemSelectedListener
+import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
 import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_autocomplete.view.*
-import java.util.*
 import kotlin.properties.Delegates
 
 class FormInputAutoComplete : BaseFormInput, TextWatcher {
@@ -37,6 +41,7 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
     private var styleAttr: Int = 0
 
     private var mListener : ItemSelectedListener? =null
+    private var mTextChangeListener : OnTextChangeListener? =null
 
     constructor(context: Context) : super(context){
         initView()
@@ -54,40 +59,33 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
 
     @SuppressLint("NewApi")
     private fun initView(){
-        LayoutInflater.from(context).inflate(R.layout.form_input_autocomplete, this, true)
+        inflate(context, R.layout.form_input_autocomplete, this)
         mPresenter = FormInputPresenterImpl()
-        /**
-         * Get Attributes
-         */
-        if(context!=null){
-            val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
-            setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
-            setHintTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
-            setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
-            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
-            setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
-            setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
-            setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
-            height = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
-            setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
-            showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
-            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
+        orientation= VERTICAL
+        context.withStyledAttributes(attrs, R.styleable.FormInputLayout, styleAttr, 0) {
+            setTextColor(getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setHintTextColor(getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
+            setLabelTextColor(getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
+            setMandatory( getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+            setLabel(getString(R.styleable.FormInputLayout_form_label).orEmpty())
+            setHint(getString(R.styleable.FormInputLayout_form_hint).orEmpty())
+            setValue(getString(R.styleable.FormInputLayout_form_value).orEmpty())
+            setInputViewHeight(getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            setBackground(getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
+            showValidIcon(getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
+            setLabelVisibility(getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
 
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
-            txtInputBox.addTextChangedListener(this)
 
-            txtInputBox.setOnClickListener { txtInputBox.showDropDown() }
-            disableAutoCompleteTextSelection()
-
-            val autoCompleteArray = resources.getStringArray(a.getResourceId(R.styleable.FormInputLayout_form_array, R.array.array))
-            val autoCompleteListArray = ArrayList(listOf(*autoCompleteArray))
-            setAdapter(autoCompleteListArray)
-
-            iconDropDown.setOnClickListener{ showDropDown();arrowIconState=true }
-            txtInputBox.setOnDismissListener{ arrowIconState=false }
-
-            a.recycle()
+            val itemList = resources.getStringArray(getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)).toList()
+            setAdapter(itemList)
         }
+
+        disableAutoCompleteTextSelection()
+        txtInputBox.setOnClickListener { txtInputBox.showDropDown() }
+        txtInputBox.addTextChangedListener(this)
+        iconDropDown.setOnClickListener{ showDropDown();arrowIconState=true }
+        txtInputBox.setOnDismissListener{ arrowIconState=false }
     }
     private var arrowIconState: Boolean by Delegates.observable(false) { _, old, new ->
         if (new != old) iconDropDown.changeIconState(new)
@@ -132,7 +130,7 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
         return this
     }
 
-    fun setHeight(height: Int) : FormInputAutoComplete {
+    fun setInputViewHeight(height: Int) : FormInputAutoComplete {
         txtInputBox.height=height
         return this
     }
@@ -158,6 +156,11 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
 
     fun setOnItemSelectedListener(listener: ItemSelectedListener):FormInputAutoComplete{
         mListener=listener
+        return this
+    }
+
+    fun setOnTextChangeListener(listener: OnTextChangeListener):FormInputAutoComplete{
+        mTextChangeListener=listener
         return this
     }
 
@@ -222,12 +225,12 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
      * * * show error message
      * else return false
      */
-    fun noError(parentView: View?=null):Boolean{
+    fun noError(parentView: View?=null, focus : Boolean = true):Boolean{
         inputError.isTrue {
             verifyInputError(mErrorMessage, VISIBLE)
             parentView.hideKeyboard()
             parentView?.scrollTo(0, tvError.top)
-            txtInputBox.requestFocus()
+            focus.isTrue {txtInputBox.requestFocus()}
         }.isNotTrue {
             verifyInputError("", View.GONE)
         }
@@ -239,13 +242,22 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
      * Auto Complete
      *
      */
-    fun setAdapter(items: ArrayList<String>): FormInputAutoComplete {
+    fun setAdapter(items: List<String>): FormInputAutoComplete {
         mArrayList=items
         txtInputBox.setShowAlways(true)
         mAdapterAutocomplete = AutoCompleteAdapter(context, R.id.tvView, items, itemSelectListener)
         txtInputBox.setAdapter(mAdapterAutocomplete)
         return this
     }
+
+    //////////////////////////////////////////
+    fun setAdapter(adapter: AutoCompleteAdapter):FormInputAutoComplete {
+        mArrayList=adapter.itemsAll
+        txtInputBox.setShowAlways(true)
+        txtInputBox.setAdapter(adapter)
+        return this
+    }
+
 
     private val itemSelectListener=object :ItemSelectedListener {
         override fun onItemSelected(item: String) {
@@ -310,17 +322,15 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
     /**
      * Listener on text change
      * */
-    override fun afterTextChanged(s: Editable?) {
-    }
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-    }
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        isFirstOpen.isNotTrue {
-            inputBoxOnTextChange(s.toString())
-        }
+    override fun afterTextChanged(s: Editable?) {}
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+    override fun onTextChanged(value: CharSequence?, start: Int, before: Int, count: Int) {
+        isFirstOpen.isNotTrue { performOnTextChange(value.toString()) }
         isFirstOpen=false
     }
-    private fun inputBoxOnTextChange(value: String) {
+
+    private fun performOnTextChange(value: String) {
+        mTextChangeListener?.onTextChange(value)
         arrowIconState = txtInputBox.isPopupShowing
         if (value.isEmpty()) {
             if (isMandatory) {

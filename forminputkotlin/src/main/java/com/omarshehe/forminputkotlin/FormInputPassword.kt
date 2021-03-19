@@ -5,14 +5,14 @@ import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
-import android.widget.LinearLayout
 import androidx.annotation.ColorRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
+import androidx.core.content.withStyledAttributes
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
+import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
 import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_password.view.*
 import kotlin.properties.Delegates
@@ -31,6 +31,8 @@ class FormInputPassword : BaseFormInput, TextWatcher {
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
 
+    private var mTextChangeListener : OnTextChangeListener? =null
+
     constructor(activity: Activity) : super(activity){
         initView()
     }
@@ -46,34 +48,28 @@ class FormInputPassword : BaseFormInput, TextWatcher {
 
 
     private fun initView(){
-        LayoutInflater.from(context).inflate(R.layout.form_input_password,this,true)
+        inflate(context, R.layout.form_input_password, this)
+        orientation= VERTICAL
+        context.withStyledAttributes(attrs, R.styleable.FormInputLayout, styleAttr, 0) {
+            setTextColor(getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
+            setHintTextColor(getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
+            setLabelTextColor(getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
+            setMandatory( getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+            setLabel(getString(R.styleable.FormInputLayout_form_label).orEmpty())
+            setHint(getString(R.styleable.FormInputLayout_form_hint).orEmpty())
+            setValue(getString(R.styleable.FormInputLayout_form_value).orEmpty())
+            setInputViewHeight(getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt())
+            setBackground(getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
 
-        /**
-         * Get Attributes
-         */
-        context?.let {
-            val a = it.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout,styleAttr,0)
-            setTextColor( a.getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
-            setHintTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorHint,R.color.hint_text_color))
-            setLabelTextColor(a.getResourceId(R.styleable.FormInputLayout_form_textColorLabel,R.color.black))
-            setMandatory( a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
-            setLabel(a.getString(R.styleable.FormInputLayout_form_label).orEmpty())
-            setHint(a.getString(R.styleable.FormInputLayout_form_hint).orEmpty())
-            setValue(a.getString(R.styleable.FormInputLayout_form_value).orEmpty())
-            height = a.getDimension(R.styleable.FormInputLayout_form_height,resources.getDimension( R.dimen.formInputInput_box_height)).toInt()
-            setBackground(a.getResourceId(R.styleable.FormInputLayout_form_background, R.drawable.bg_txt_square))
+            showValidIcon(getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
+            setLabelVisibility(getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
+            showPassStrength(getBoolean(R.styleable.FormInputLayout_form_showPassStrength, true))
 
-            showValidIcon(a.getBoolean(R.styleable.FormInputLayout_form_showValidIcon, true))
-            setLabelVisibility(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
-            showPassStrength(a.getBoolean(R.styleable.FormInputLayout_form_showPassStrength, true))
-
-            setPassLength(a.getInt(R.styleable.FormInputLayout_form_passLength,mPassLength))
+            setPassLength(getInt(R.styleable.FormInputLayout_form_passLength,mPassLength))
 
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
-            txtInputBox.addTextChangedListener(this)
-            a.recycle()
-
         }
+        txtInputBox.addTextChangedListener(this)
     }
 
     fun setPassLength(passLength:Int) {
@@ -110,8 +106,8 @@ class FormInputPassword : BaseFormInput, TextWatcher {
         return this
     }
 
-    fun setHeight(height: Int) : FormInputPassword {
-        passView.layoutParams=LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height)
+    fun setInputViewHeight(height: Int) : FormInputPassword {
+        passView.layoutParams=LayoutParams(LayoutParams.MATCH_PARENT, height)
         return this
     }
 
@@ -130,6 +126,11 @@ class FormInputPassword : BaseFormInput, TextWatcher {
 
     fun setViewToConfirm(passwordView:FormInputPassword):FormInputPassword{
         confirmPassword=passwordView
+        return this
+    }
+
+    fun setOnTextChangeListener(listener: OnTextChangeListener):FormInputPassword{
+        mTextChangeListener=listener
         return this
     }
 
@@ -281,12 +282,12 @@ class FormInputPassword : BaseFormInput, TextWatcher {
         }
     }
 
-    fun noError(parentView: View?=null):Boolean{
+    fun noError(parentView: View?=null, focus : Boolean = true):Boolean{
         inputError.isTrue {
             verifyInputError(mErrorMessage, VISIBLE)
             parentView.hideKeyboard()
             parentView?.scrollTo(0, tvError.top)
-            txtInputBox.requestFocus()
+            focus.isTrue {txtInputBox.requestFocus()}
         }.isNotTrue {
             verifyInputError("", View.GONE)
         }
@@ -297,14 +298,12 @@ class FormInputPassword : BaseFormInput, TextWatcher {
     /**
      * Listener on text change
      */
-    override fun afterTextChanged(s: Editable?) {
-    }
+    override fun afterTextChanged(s: Editable?) {}
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+    override fun onTextChanged(value: CharSequence?, start: Int, before: Int, count: Int) { performOnTextChange(value.toString())}
 
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-    }
-
-    override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
-        val value=text.toString()
+    private fun performOnTextChange(value: String) {
+        mTextChangeListener?.onTextChange(value)
         if(isShowPassStrength) {
             updatePasswordStrengthView(value)
         }else if(confirmPassword.isNotNull()){

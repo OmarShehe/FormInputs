@@ -17,10 +17,10 @@ import java.util.*
 class AutoCompleteAdapter(
     context: Context,
     resource: Int,
-    private val items: MutableList<String>,
+    private val items: List<String>,
     private val mListener: ItemSelectedListener
 ) : ArrayAdapter<String>(context, resource, items) {
-    private val itemsAll: MutableList<String> = items.toMutableList()
+    val itemsAll: MutableList<String> = items.toMutableList()
     private val suggestions: ArrayList<String> = ArrayList()
     private var disableFilter: Boolean = false
 

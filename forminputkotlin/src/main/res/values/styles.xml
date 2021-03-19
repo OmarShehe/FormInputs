@@ -6,6 +6,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:typeface">normal</item>
         <item name="android:text">@string/label</item>
     </style>
 
@@ -37,6 +38,7 @@
         <item name="android:layout_height">@dimen/formInputInput_box_height</item>
         <item name="android:background">@color/colorTransparent</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:typeface">normal</item>
         <item name="android:maxLines">1</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingStart">10dp</item>
@@ -82,6 +84,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:text">@string/app_name</item>
         <item name="android:fontFamily">@font/roboto_light</item>
+        <item name="android:typeface">normal</item>
         <item name="android:gravity">end</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingTop">3dp</item>

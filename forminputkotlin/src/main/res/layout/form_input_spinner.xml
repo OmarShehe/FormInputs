@@ -1,48 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="androidx.appcompat.widget.LinearLayoutCompat"
+    tools:orientation="vertical">
+
     <LinearLayout
+        android:id="@+id/labelView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.AppCompat.DayNight"
-        android:orientation="vertical">
+        android:gravity="end">
+        <TextView
+            android:id="@+id/tvLabel"
+            style="@style/formInputLabelStyle"
+            tools:visibility="visible" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/validIcon"
+            style="@style/formInputImgNoErrorStyle" />
+    </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/labelView"
+    <FrameLayout
+        android:id="@+id/layInputBox"
+        style="@style/formInputLytInputBox"
+        android:theme="@style/Theme.AppCompat.DayNight">
+        <Spinner
+            android:id="@+id/spSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end">
+            android:entries="@array/array"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp" />
+    </FrameLayout>
 
-            <TextView
-                android:id="@+id/tvLabel"
-                style="@style/formInputLabelStyle"
-                tools:visibility="visible" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/validIcon"
-                style="@style/formInputImgNoErrorStyle"
-                />
-        </LinearLayout>
-
-
-        <RelativeLayout
-            android:id="@+id/layInputBox"
-            style="@style/formInputLytInputBox">
-
-            <Spinner
-                android:id="@+id/spSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/array"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/tvError"
-            style="@style/formInputTvErrorStyle" />
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/tvError"
+        style="@style/formInputTvErrorStyle" />
 </merge>
