@@ -20,7 +20,7 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-	        implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:1.0.4'
+	        implementation 'com.github.OmarShehe.FormInputs:forminputkotlin:1.0.5'
 	}
 ```
 
