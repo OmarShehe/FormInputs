@@ -13,6 +13,8 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
@@ -82,7 +84,7 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
         }
 
         disableAutoCompleteTextSelection()
-        txtInputBox.setOnClickListener { txtInputBox.showDropDown() }
+        txtInputBox.setOnClickListener { showDropDown();arrowIconState=true }
         txtInputBox.addTextChangedListener(this)
         iconDropDown.setOnClickListener{ showDropDown();arrowIconState=true }
         txtInputBox.setOnDismissListener{ arrowIconState=false }
@@ -218,19 +220,22 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
     /**
      * Check if there is an error.
      * if there any
-     * * * return true,
-     * * * hide softKeyboard
-     * * * scroll top to the view
-     * * * put view on focus
-     * * * show error message
+     * * return true,
+     * * hide softKeyboard
+     * * scroll top to the view
+     * * put view on focus
+     * * show error message
      * else return false
+     * set [showError] to false if you want to get only the return value
      */
-    fun noError(parentView: View?=null, focus : Boolean = true):Boolean{
+    fun noError(parentView: View? = null, showError:Boolean=true):Boolean{
         inputError.isTrue {
-            verifyInputError(mErrorMessage, VISIBLE)
-            parentView.hideKeyboard()
-            parentView?.scrollTo(0, tvError.top)
-            focus.isTrue {txtInputBox.requestFocus()}
+            showError.isTrue {
+                verifyInputError(mErrorMessage, VISIBLE)
+                parentView.hideKeyboard()
+                parentView?.scrollTo(0, tvError.top)
+                txtInputBox.requestFocus()
+            }
         }.isNotTrue {
             verifyInputError("", View.GONE)
         }
@@ -250,14 +255,23 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
         return this
     }
 
-    //////////////////////////////////////////
-    fun setAdapter(adapter: AutoCompleteAdapter):FormInputAutoComplete {
-        mArrayList=adapter.itemsAll
+    /**
+     * pass [adapter] and [items]
+     * [items] will be used when [setValue] is called
+     */
+    fun setAdapter(adapter: ArrayAdapter<Any>,items: List<String>):FormInputAutoComplete {
+        mArrayList=items
         txtInputBox.setShowAlways(true)
         txtInputBox.setAdapter(adapter)
+        initClickListener()
         return this
     }
 
+    private fun initClickListener(){
+        txtInputBox.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
+            mListener?.onItemSelected(parent.getItemAtPosition(position).toString())
+        }
+    }
 
     private val itemSelectListener=object :ItemSelectedListener {
         override fun onItemSelected(item: String) {
@@ -330,7 +344,6 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
     }
 
     private fun performOnTextChange(value: String) {
-        mTextChangeListener?.onTextChange(value)
         arrowIconState = txtInputBox.isPopupShowing
         if (value.isEmpty()) {
             if (isMandatory) {
@@ -352,6 +365,6 @@ class FormInputAutoComplete : BaseFormInput, TextWatcher {
                 verifyInputError("", View.GONE)
             }
         }
+        mTextChangeListener?.onTextChange(value)
     }
-
 }

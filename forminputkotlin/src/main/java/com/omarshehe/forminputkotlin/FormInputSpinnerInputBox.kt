@@ -10,11 +10,10 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.ColorRes
 import androidx.core.content.withStyledAttributes
+import com.omarshehe.forminputkotlin.interfaces.ItemSelectedListener
 import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
-import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
 import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.*
-import java.util.*
 
 class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     private lateinit var mPresenter: FormInputContract.Presenter
@@ -27,7 +26,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     private var mInputType:Int = 1
     private var mArrayList :List<String> = emptyArray<String>().toList()
     private var isFirstOpen: Boolean = true
-    private var mListener : SpinnerSelectionListener? =null
+    private var mListener : ItemSelectedListener? =null
     private var mTextChangeListener : OnTextChangeListener? =null
 
     private var showValidIcon = true
@@ -103,7 +102,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
         return this
     }
 
-    fun setValue(spinnerValue: String,inputBoxValue: String ) : FormInputSpinnerInputBox{
+    fun setValue(spinnerValue: String,inputBoxValue: String) : FormInputSpinnerInputBox{
         txtInputBox.setText(inputBoxValue)
         setSpinnerValue(spinnerValue)
         return this
@@ -200,35 +199,36 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
         return this
     }
 
-    fun setSpinner(items: ArrayList<String>,listener: SpinnerSelectionListener) : FormInputSpinnerInputBox {
+    /**
+     * pass [adapter] and [items]
+     * [items] will be used when [setValue] is called
+     */
+    fun setAdapter(adapter: BaseAdapter,items: List<String>):FormInputSpinnerInputBox {
         mArrayList=items
-        mListener=listener
-        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_item, items)
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        initClickListener()
-        spSpinner.adapter = spinnerArrayAdapter
-        return this
-    }
-
-    //////////////////////////////////////////
-    fun setAdapter(adapter: BaseAdapter):FormInputSpinnerInputBox {
         spSpinner.adapter = adapter
         return this
     }
 
 
-
-    private fun validateSpinner(hint: String) {
-        if (getValue()[0] == hint) {
-            verifyInputError(String.format(resources.getString(R.string.isRequired), mLabel), VISIBLE)
-        } else {
-            if(txtInputBox.text.toString() != ""){
-                verifyInputError("", GONE)
-            }
-
-        }
+    fun setOnSpinnerItemSelected(listener: ItemSelectedListener):FormInputSpinnerInputBox{
+        mListener=listener
+        return this
     }
 
+    private fun initClickListener(){
+        spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                isFirstOpen.isTrue{
+                    (view as TextView?)?.textColor(mTextColor)
+                }.isNotTrue{
+                    (view as TextView?)?.textColor(mTextColor)
+                    mListener?.onItemSelected(parent.selectedItem.toString())
+                }
+                isFirstOpen=false
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+    }
 
 
     /**
@@ -257,13 +257,16 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
      * * * put view on focus
      * * * show error message
      * else return false
+     * set [showError] to false if you want to get only the return value
      */
-    fun noError(parentView: View?=null, focus : Boolean = true):Boolean{
+    fun noError(parentView: View? = null, showError:Boolean=true):Boolean{
         inputError.isTrue {
-            verifyInputError(mErrorMessage, VISIBLE)
-            parentView.hideKeyboard()
-            parentView?.scrollTo(0, tvError.top)
-            focus.isTrue {txtInputBox.requestFocus()}
+            showError.isTrue {
+                verifyInputError(mErrorMessage, VISIBLE)
+                parentView.hideKeyboard()
+                parentView?.scrollTo(0, tvError.top)
+                txtInputBox.requestFocus()
+            }
         }.isNotTrue {
             verifyInputError("", View.GONE)
         }
@@ -279,7 +282,6 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     override fun onTextChanged(value: CharSequence?, start: Int, before: Int, count: Int) { performOnTextChange(value.toString()) }
 
     private fun performOnTextChange(value: String) {
-        mTextChangeListener?.onTextChange(value)
         iconCancel.visibleIf(value.isNotEmpty())
 
         /**
@@ -342,21 +344,6 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
             }
 
         }
+        mTextChangeListener?.onTextChange(value)
     }
-
-    private fun initClickListener(){
-        spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-               isFirstOpen.isTrue{
-                    (view as TextView?)?.textColor(mTextColor)
-                }.isNotTrue{
-                    (view as TextView?)?.textColor(mTextColor)
-                    mListener?.onSpinnerItemSelected(parent.selectedItem.toString())
-                }
-                isFirstOpen=false
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
-    }
-
 }

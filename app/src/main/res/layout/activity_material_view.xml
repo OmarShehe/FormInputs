@@ -40,7 +40,6 @@
             <com.omarshehe.forminputkotlin.FormInputMaterialText
                 android:id="@+id/txtFullName"
                 style="@style/TextInputStyle"
-                android:singleLine="true"
                 app:form_inputType="text" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -55,7 +54,6 @@
             <com.omarshehe.forminputkotlin.FormInputMaterialText
                 android:id="@+id/txtEmail"
                 style="@style/TextInputStyle"
-                android:singleLine="true"
                 app:form_inputType="email" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -70,7 +68,6 @@
             <com.omarshehe.forminputkotlin.FormInputMaterialText
                 android:id="@+id/txtPhoneNumber"
                 style="@style/TextInputStyle"
-                android:singleLine="true"
                 app:form_inputType="phoneNumber"
                 app:form_isMandatory="false"/>
 
@@ -86,7 +83,6 @@
             <com.omarshehe.forminputkotlin.FormInputMaterialText
                 android:id="@+id/txtId"
                 style="@style/TextInputStyle"
-                android:singleLine="true"
                 app:form_inputType="number" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -120,8 +116,6 @@
             android:layout_marginTop="16dp"
             android:text="@string/Submit"
             android:textAllCaps="false"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/colorPrimary"
             app:cornerRadius="35dp"
             app:form_progressColor="@color/colorOrange"
             app:form_showProgress="true" />

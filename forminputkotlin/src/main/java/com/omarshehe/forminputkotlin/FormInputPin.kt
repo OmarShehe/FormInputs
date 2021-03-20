@@ -235,12 +235,25 @@ class FormInputPin: BaseFormInput,TextWatcher  {
         }
     }
 
-    fun noError(parentView: View?=null, focus : Boolean = true):Boolean{
+    /**
+     * Check if there is an error.
+     * if there any
+     * * return true,
+     * * hide softKeyboard
+     * * scroll top to the view
+     * * put view on focus
+     * * show error message
+     * else return false
+     * set [showError] to false if you want to get only the return value
+     */
+    fun noError(parentView: View? = null, showError:Boolean=true):Boolean{
         inputError.isTrue {
-            verifyInputError(mErrorMessage, VISIBLE)
-            parentView.hideKeyboard()
-            parentView?.scrollTo(0, tvError.top)
-            focus.isTrue {txtPinOne.requestFocus()}
+            showError.isTrue {
+                verifyInputError(mErrorMessage, VISIBLE)
+                parentView.hideKeyboard()
+                parentView?.scrollTo(0, tvError.top)
+                txtPinOne.requestFocus()
+            }
         }.isNotTrue {
             verifyInputError("", View.GONE)
         }
@@ -256,7 +269,6 @@ class FormInputPin: BaseFormInput,TextWatcher  {
     override fun onTextChanged(value: CharSequence, i: Int, i1: Int, i2: Int) { performOnTextChange(value.toString()) }
 
     private fun performOnTextChange(value: String) {
-        mTextChangeListener?.onTextChange(value)
         if(value.isNotEmpty()){
             val editText = (context as Activity).currentFocus as EditText?
             editText?.focusSearch(View.FOCUS_RIGHT)?.requestFocus()
@@ -289,7 +301,7 @@ class FormInputPin: BaseFormInput,TextWatcher  {
                 verifyInputError(resources.getString(R.string.isRequired,mLabel), View.VISIBLE)
             }
         }
-
+        mTextChangeListener?.onTextChange(value)
     }
 
     private fun pinViewIsNotEmpty(): Boolean {

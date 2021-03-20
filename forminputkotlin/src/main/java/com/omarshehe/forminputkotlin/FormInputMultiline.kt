@@ -224,19 +224,22 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
     /**
      * Check if there is an error.
      * if there any
-     * * * return true,
-     * * * hide softKeyboard
-     * * * scroll top to the view
-     * * * put view on focus
-     * * * show error message
+     * * return true,
+     * * hide softKeyboard
+     * * scroll top to the view
+     * * put view on focus
+     * * show error message
      * else return false
+     * set [showError] to false if you want to get only the return value
      */
-    fun noError(parentView: View?=null,focus:Boolean=true):Boolean{
+    fun noError(parentView: View? = null, showError:Boolean=true):Boolean{
         inputError.isTrue {
-            verifyInputError(mErrorMessage, VISIBLE)
-            parentView.hideKeyboard()
-            parentView?.scrollTo(0, txtMultiline.top)
-            focus.isTrue {txtMultiline.requestFocus() }
+            showError.isTrue {
+                verifyInputError(mErrorMessage, VISIBLE)
+                parentView.hideKeyboard()
+                parentView?.scrollTo(0, txtMultiline.top)
+                txtMultiline.requestFocus()
+            }
         }.isNotTrue {
             verifyInputError("", View.GONE)
         }
@@ -252,7 +255,6 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
     override fun onTextChanged(value: CharSequence?, start: Int, before: Int, count: Int) { performOnTextChange(value.toString())}
 
     private fun performOnTextChange(value: String) {
-        mTextChangeListener?.onTextChange(value)
         if (value.isEmpty()) {
             if (isMandatory) {
                 verifyInputError(resources.getString(R.string.cantBeEmpty, mLabel), View.VISIBLE)
@@ -263,6 +265,7 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
             verifyInputError("", View.GONE)
         }
         countRemainInput(value)
+        mTextChangeListener?.onTextChange(value)
     }
 
     /**

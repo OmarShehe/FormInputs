@@ -117,7 +117,7 @@ class FormInputPassword : BaseFormInput, TextWatcher {
         layPassStrength.visibleIf(isShowStrength)
         return this
     }
-    
+
 
     fun setBackground(background: Int) : FormInputPassword{
         passView.setBackgroundResource(background)
@@ -281,13 +281,25 @@ class FormInputPassword : BaseFormInput, TextWatcher {
             showValidIcon
         }
     }
-
-    fun noError(parentView: View?=null, focus : Boolean = true):Boolean{
+    /**
+     * Check if there is an error.
+     * if there any
+     * * return true,
+     * * hide softKeyboard
+     * * scroll top to the view
+     * * put view on focus
+     * * show error message
+     * else return false
+     * set [showError] to false if you want to get only the return value
+     */
+    fun noError(parentView: View? = null, showError:Boolean=true):Boolean{
         inputError.isTrue {
-            verifyInputError(mErrorMessage, VISIBLE)
-            parentView.hideKeyboard()
-            parentView?.scrollTo(0, tvError.top)
-            focus.isTrue {txtInputBox.requestFocus()}
+            showError.isTrue {
+                verifyInputError(mErrorMessage, VISIBLE)
+                parentView.hideKeyboard()
+                parentView?.scrollTo(0, tvError.top)
+                txtInputBox.requestFocus()
+            }
         }.isNotTrue {
             verifyInputError("", View.GONE)
         }
@@ -303,7 +315,6 @@ class FormInputPassword : BaseFormInput, TextWatcher {
     override fun onTextChanged(value: CharSequence?, start: Int, before: Int, count: Int) { performOnTextChange(value.toString())}
 
     private fun performOnTextChange(value: String) {
-        mTextChangeListener?.onTextChange(value)
         if(isShowPassStrength) {
             updatePasswordStrengthView(value)
         }else if(confirmPassword.isNotNull()){
@@ -317,6 +328,7 @@ class FormInputPassword : BaseFormInput, TextWatcher {
         }else{
             checkValueNotEmpty(value)
         }
+        mTextChangeListener?.onTextChange(value)
     }
 
     private fun checkValueNotEmpty(value:String):Boolean{

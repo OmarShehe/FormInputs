@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputLayout
-import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
+import com.omarshehe.forminputkotlin.interfaces.ItemSelectedListener
 import com.omarshehe.forminputkotlin.utils.*
 
 
@@ -25,7 +25,7 @@ class FormInputMaterialSpinner : MaterialAutoCompleteTextView {
     private var defaultTextHelperColor:Int =R.color.colorGrey
 
     private var mArrayList :List<String> = emptyList()
-    private var mListener : SpinnerSelectionListener? =null
+    private var mListener : ItemSelectedListener? =null
 
     private var attrs: AttributeSet? =null
     private var styleAttr: Int = 0
@@ -75,7 +75,7 @@ class FormInputMaterialSpinner : MaterialAutoCompleteTextView {
         setMandatory(isMandatory)
     }
 
-    fun setOnSpinnerItemSelected(listener: SpinnerSelectionListener): FormInputMaterialSpinner {
+    fun setOnSpinnerItemSelected(listener: ItemSelectedListener): FormInputMaterialSpinner {
         mListener=listener
         return this
     }
@@ -139,6 +139,15 @@ class FormInputMaterialSpinner : MaterialAutoCompleteTextView {
         return this
     }
 
+    /**
+     * pass [adapter] and [items]
+     * [items] will be used when [setValue] is called
+     */
+    fun setAdapter(adapter: ArrayAdapter<Any>, items: List<String>):FormInputMaterialSpinner {
+        mArrayList=items
+        setAdapter(adapter)
+        return this
+    }
 
     /**
      * Get components
@@ -185,18 +194,21 @@ class FormInputMaterialSpinner : MaterialAutoCompleteTextView {
     /**
      * Check if there is an error.
      * if there any
-     * * * return true,
-     * * * hide softKeyboard
-     * * * scroll top to the view
-     * * * put view on focus
-     * * * show error message
+     * * return true,
+     * * hide softKeyboard
+     * * scroll top to the view
+     * * put view on focus
+     * * show error message
      * else return false
+     * set [showError] to false if you want to get only the return value
      */
-    fun noError(parentView: View? = null):Boolean{
+    fun noError(parentView: View? = null, showError:Boolean=true):Boolean{
         inputError.isTrue {
-            verifyInputError(mErrorMessage)
-            parentView.hideKeyboard()
-            parentView?.scrollTo(0, this.top)
+            showError.isTrue {
+                verifyInputError(mErrorMessage)
+                parentView.hideKeyboard()
+                parentView?.scrollTo(0, this.top)
+            }
         }.isNotTrue {
             verifyInputError("")
         }
@@ -214,8 +226,8 @@ class FormInputMaterialSpinner : MaterialAutoCompleteTextView {
      */
     private fun initClickListener(){
         onItemClickListener = AdapterView.OnItemClickListener { _, _, _, _ ->
-            mListener?.onSpinnerItemSelected(getValue())
             validateSpinner(mHint)
+            mListener?.onItemSelected(getValue())
         }
     }
 

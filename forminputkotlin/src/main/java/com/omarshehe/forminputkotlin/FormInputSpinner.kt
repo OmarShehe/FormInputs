@@ -7,10 +7,9 @@ import android.view.View
 import android.widget.*
 import androidx.annotation.ColorRes
 import androidx.core.content.withStyledAttributes
-import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
+import com.omarshehe.forminputkotlin.interfaces.ItemSelectedListener
 import com.omarshehe.forminputkotlin.utils.*
 import kotlinx.android.synthetic.main.form_input_spinner.view.*
-import java.util.*
 
 class FormInputSpinner : BaseFormInput {
     private var inputError:Boolean = true
@@ -21,7 +20,7 @@ class FormInputSpinner : BaseFormInput {
     private var isMandatory: Boolean = true
     private var mArrayList :List<String> = emptyArray<String>().toList()
     private var isFirstOpen: Boolean = true
-    private var mListener : SpinnerSelectionListener? =null
+    private var mListener : ItemSelectedListener? =null
     private var showValidIcon= true
 
     private var attrs: AttributeSet? =null
@@ -169,21 +168,36 @@ class FormInputSpinner : BaseFormInput {
         return this
     }
 
-    fun setAdapter(items: ArrayList<String>, listener: SpinnerSelectionListener) :FormInputSpinner {
+    /**
+     * pass [adapter] and [items]
+     * [items] will be used when [setValue] is called
+     */
+    fun setAdapter(adapter: BaseAdapter,items: List<String>):FormInputSpinner {
         mArrayList=items
-        val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_item, items)
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        initClickListener()
-        spSpinner.adapter = spinnerArrayAdapter
-        return this
-    }
-
-    //////////////////////////////////////////
-    fun setAdapter(adapter: BaseAdapter):FormInputSpinner {
         spSpinner.adapter = adapter
         return this
     }
 
+    fun setOnSpinnerItemSelected(listener: ItemSelectedListener):FormInputSpinner{
+        mListener=listener
+        return this
+    }
+
+    private fun initClickListener(){
+        spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                when(isFirstOpen){
+                    true -> (view as TextView?)?.textColor(mTextColor)
+                    false -> {
+                        validateSpinner(mHint)
+                        mListener?.onItemSelected(parent.selectedItem.toString())
+                    }
+                }
+                isFirstOpen=false
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+    }
 
     /**
      * Errors
@@ -203,38 +217,28 @@ class FormInputSpinner : BaseFormInput {
     }
 
 
-    fun noError(parentView: View? = null, focus : Boolean = true):Boolean{
+    /**
+     * Check if there is an error.
+     * if there any
+     * * return true,
+     * * hide softKeyboard
+     * * scroll top to the view
+     * * put view on focus
+     * * show error message
+     * else return false
+     * set [showError] to false if you want to get only the return value
+     */
+    fun noError(parentView: View? = null, showError:Boolean=true):Boolean{
         inputError.isTrue {
-            verifyInputError(mErrorMessage, View.VISIBLE)
-            parentView.hideKeyboard()
-            parentView?.scrollTo(0, spSpinner.top)
-            focus.isTrue {spSpinner.requestFocus()}
+            showError.isTrue {
+                verifyInputError(mErrorMessage, View.VISIBLE)
+                parentView.hideKeyboard()
+                parentView?.scrollTo(0, spSpinner.top)
+                spSpinner.requestFocus()
+            }
         }.isNotTrue {
             verifyInputError("", View.GONE)
         }
         return !inputError
-    }
-
-
-    fun setOnSpinnerItemSelected(listener: SpinnerSelectionListener):FormInputSpinner{
-        mListener=listener
-        initClickListener()
-        return this
-    }
-
-    private fun initClickListener(){
-        spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                when(isFirstOpen){
-                    true -> (view as TextView?)?.textColor(mTextColor)
-                    false -> {
-                        mListener?.onSpinnerItemSelected(parent.selectedItem.toString())
-                        validateSpinner(mHint)
-                    }
-                }
-                isFirstOpen=false
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
     }
 }

@@ -199,18 +199,16 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
     }
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
     }
-    override fun onTextChanged(char: CharSequence?, start: Int, before: Int, count: Int) {
-        val text=char.toString()
+    override fun onTextChanged(value: CharSequence?, start: Int, before: Int, count: Int) {
         if (hasFocus()) {
-            showIcon(text.isNotEmpty())
+            showIcon(value.isNullOrBlank())
         }
-        mTextChangeListener?.onTextChange(text)
-        inputBoxOnTextChange(text)
+        performOnTextChange(value.toString())
     }
 
 
 
-    private fun inputBoxOnTextChange(value: String) {
+    private fun performOnTextChange(value: String) {
         if(viewToConfirm!=null){
             if(value.isNotEmpty() && viewToConfirm?.text.toString()==value){
                 verifyInputError("")
@@ -266,12 +264,8 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
                     }
                 }
             }
-
-
-
-
-
         }
+        mTextChangeListener?.onTextChange(value)
     }
 
     private fun verifyInputError(error: String) {
@@ -294,19 +288,22 @@ class FormInputMaterialText : TextInputEditText, TextWatcher {
     /**
      * Check if there is an error.
      * if there any
-     * * * return true,
-     * * * hide softKeyboard
-     * * * scroll top to the view
-     * * * put view on focus
-     * * * show error message
+     * * return true,
+     * * hide softKeyboard
+     * * scroll top to the view
+     * * put view on focus
+     * * show error message
      * else return false
+     * set [showError] to false if you want to get only the return value
      */
-    fun noError(parentView: View? = null, focus : Boolean = true):Boolean{
+    fun noError(parentView: View? = null, showError:Boolean=true):Boolean{
         inputError.isTrue {
-            verifyInputError(mErrorMessage)
-            parentView.hideKeyboard()
-            parentView?.scrollTo(0, this.top)
-            focus.isTrue {requestFocus()}
+            showError.isTrue {
+                verifyInputError(mErrorMessage)
+                parentView.hideKeyboard()
+                parentView?.scrollTo(0, this.top)
+                requestFocus()
+            }
         }.isNotTrue {
             verifyInputError("")
         }

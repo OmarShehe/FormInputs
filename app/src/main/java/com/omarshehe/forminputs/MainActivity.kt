@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
+import com.omarshehe.forminputkotlin.interfaces.ItemSelectedListener
 import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
-import com.omarshehe.forminputkotlin.interfaces.SpinnerSelectionListener
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
@@ -23,21 +23,7 @@ class MainActivity : BaseActivity() {
 
         //startActivity(Intent(this, MaterialView::class.java))
         btnSubmit.setOnClickListener {
-            if (gender.noError(mainView) &&
-                country.noError(mainView) &&
-                txtUrl.noError(mainView) &&
-                fullName.noError(mainView) &&
-                price.noError(mainView)  &&
-                phoneNumber.noError(mainView)  &&
-                ID.noError(mainView)  &&
-                about.noError(mainView) &&
-                email.noError(mainView) &&
-                confirmEmail.noError(mainView) &&
-                password.noError(mainView) &&
-                confirmPassword.noError(mainView) &&
-                pin.noError(mainView) &&
-                confirmPin.noError(mainView)) {
-
+            if (isAllFieldAreValid()) {
                 btnSubmit.showLoading(true)
                 Handler(mainLooper).postDelayed({
                     btnSubmit.showLoading(false)
@@ -46,8 +32,8 @@ class MainActivity : BaseActivity() {
             }
         }
 
-        gender.setOnSpinnerItemSelected(object :SpinnerSelectionListener{
-            override fun onSpinnerItemSelected(item: String) {
+        gender.setOnSpinnerItemSelected(object :ItemSelectedListener{
+            override fun onItemSelected(item: String) {
                 Toast.makeText(baseContext,item,Toast.LENGTH_LONG).show()
             }
         })
@@ -56,8 +42,27 @@ class MainActivity : BaseActivity() {
             override fun onTextChange(value: String) {
                 Toast.makeText(baseContext,value,Toast.LENGTH_LONG).show()
             }
-
         })
 
+    }
+
+    /**
+     * Check errors
+     */
+    private fun isAllFieldAreValid():Boolean{
+        return gender.noError(mainView)
+                && country.noError(mainView)
+                && txtUrl.noError(mainView)
+                && fullName.noError(mainView)
+                && price.noError(mainView)
+                && phoneNumber.noError(mainView)
+                && ID.noError(mainView)
+                && about.noError(mainView)
+                && email.noError(mainView)
+                && confirmEmail.noError(mainView)
+                && password.noError(mainView)
+                && confirmPassword.noError(mainView)
+                && pin.noError(mainView)
+                && confirmPin.noError(mainView)
     }
 }
