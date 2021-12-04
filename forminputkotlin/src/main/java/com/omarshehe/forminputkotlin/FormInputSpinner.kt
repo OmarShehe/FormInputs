@@ -3,15 +3,17 @@ package com.omarshehe.forminputkotlin
 import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.annotation.ColorRes
 import androidx.core.content.withStyledAttributes
+import com.omarshehe.forminputkotlin.databinding.FormInputSpinnerBinding
 import com.omarshehe.forminputkotlin.interfaces.ItemSelectedListener
 import com.omarshehe.forminputkotlin.utils.*
-import kotlinx.android.synthetic.main.form_input_spinner.view.*
 
 class FormInputSpinner : BaseFormInput {
+    private lateinit var binding:FormInputSpinnerBinding
     private var inputError:Boolean = true
     private var mTextColor=R.color.black
     private var mLabel: String = ""
@@ -40,7 +42,7 @@ class FormInputSpinner : BaseFormInput {
     }
 
     private fun initView() {
-        inflate(context, R.layout.form_input_spinner, this)
+        binding=FormInputSpinnerBinding.inflate(LayoutInflater.from(context),this)
         orientation= VERTICAL
         context.withStyledAttributes(attrs, R.styleable.FormInputLayout, styleAttr, 0) {
             setTextColor(getResourceId(R.styleable.FormInputLayout_form_textColor, R.color.black))
@@ -67,7 +69,7 @@ class FormInputSpinner : BaseFormInput {
      * Set components
      */
     fun setLabel(text: String): FormInputSpinner{
-        mLabel=tvLabel.setLabel(text, isMandatory)
+        mLabel=binding.tvLabel.setLabel(text, isMandatory)
         return this
     }
 
@@ -78,12 +80,12 @@ class FormInputSpinner : BaseFormInput {
     fun setMandatory(mandatory: Boolean) : FormInputSpinner {
         isMandatory =mandatory
         if(!mandatory){ inputError=false }
-        mLabel=tvLabel.setLabel(mLabel, isMandatory)
+        mLabel=binding.tvLabel.setLabel(mLabel, isMandatory)
         return this
     }
 
     fun setLabelVisibility(show: Boolean): FormInputSpinner {
-        tvLabel.visibleIf(show)
+        binding.tvLabel.visibleIf(show)
         return this
     }
 
@@ -96,19 +98,19 @@ class FormInputSpinner : BaseFormInput {
     fun setValue(value: String) {
         for (index in mArrayList.indices) {
             if (value == mArrayList[index]) {
-                spSpinner.setSelection(index)
+                binding.spSpinner.setSelection(index)
                 validateSpinner(mHint)
             }
         }
     }
 
     fun setSpinnerHeight(height: Int) : FormInputSpinner {
-        spSpinner.layoutParams=FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, height)
+        binding.spSpinner.layoutParams=FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, height)
         return this
     }
 
     fun setBackground(background: Int): FormInputSpinner {
-        layInputBox.setBackgroundResource(background)
+        binding.layInputBox.setBackgroundResource(background)
         return this
     }
     fun showValidIcon(showIcon: Boolean) : FormInputSpinner {
@@ -125,12 +127,12 @@ class FormInputSpinner : BaseFormInput {
 
     fun setTextColor(color: Int):FormInputSpinner{
         mTextColor=color
-        (spSpinner.selectedView as TextView?)?.textColor(mTextColor)
+        (binding.spSpinner.selectedView as TextView?)?.textColor(mTextColor)
         return this
     }
 
     fun setLabelTextColor(@ColorRes color: Int):FormInputSpinner{
-        tvLabel.textColor(color)
+        binding.tvLabel.textColor(color)
         return this
     }
 
@@ -147,11 +149,11 @@ class FormInputSpinner : BaseFormInput {
      * Get components
      */
     fun getValue(): String {
-        return spSpinner.selectedItem.toString()
+        return binding.spSpinner.selectedItem.toString()
     }
 
     fun getSpinner(): Spinner {
-        return spSpinner
+        return binding.spSpinner
     }
 
 
@@ -163,7 +165,7 @@ class FormInputSpinner : BaseFormInput {
         mArrayList=items
         val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_item, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spSpinner.adapter = spinnerArrayAdapter
+        binding.spSpinner.adapter = spinnerArrayAdapter
         initClickListener()
         return this
     }
@@ -174,7 +176,7 @@ class FormInputSpinner : BaseFormInput {
      */
     fun setAdapter(adapter: BaseAdapter,items: List<String>):FormInputSpinner {
         mArrayList=items
-        spSpinner.adapter = adapter
+        binding.spSpinner.adapter = adapter
         return this
     }
 
@@ -184,7 +186,7 @@ class FormInputSpinner : BaseFormInput {
     }
 
     private fun initClickListener(){
-        spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 when(isFirstOpen){
                     true -> (view as TextView?)?.textColor(mTextColor)
@@ -212,8 +214,8 @@ class FormInputSpinner : BaseFormInput {
 
     private fun verifyInputError(stringError: String, visible: Int){
         mErrorMessage=stringError
-        inputError=tvError.showInputError(validIcon, showValidIcon, stringError, visible)
-        (spSpinner.selectedView as TextView?)?.textColor(if (visible == View.VISIBLE) R.color.colorOnError else mTextColor)
+        inputError=binding.tvError.showInputError(binding.validIcon, showValidIcon, stringError, visible)
+        (binding.spSpinner.selectedView as TextView?)?.textColor(if (visible == View.VISIBLE) R.color.colorOnError else mTextColor)
     }
 
 
@@ -233,8 +235,8 @@ class FormInputSpinner : BaseFormInput {
             showError.isTrue {
                 verifyInputError(mErrorMessage, View.VISIBLE)
                 parentView.hideKeyboard()
-                parentView?.scrollTo(0, spSpinner.top)
-                spSpinner.requestFocus()
+                parentView?.scrollTo(0, binding.spSpinner.top)
+                binding.spSpinner.requestFocus()
             }
         }.isNotTrue {
             verifyInputError("", View.GONE)

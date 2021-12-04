@@ -15,7 +15,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
-import com.google.android.material.textfield.TextInputEditText
+import androidx.core.content.withStyledAttributes
 import com.google.android.material.textfield.TextInputLayout
 import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
 import com.omarshehe.forminputkotlin.interfaces.ViewOnClickListener
@@ -25,59 +25,47 @@ import com.omarshehe.forminputkotlin.utils.*
  * Created by omars on 10/16/2019.
  * Author omars
  */
+class FormInputMaterialTextLayout: TextInputLayout, TextWatcher {
 
-@Deprecated("Please use FormInputMaterialTextLayout", replaceWith = ReplaceWith("FormInputMaterialTextLayout"))
-class FormInputMaterialText: TextInputEditText, TextWatcher {
-
-    private lateinit var mPresenter: FormInputContract.Presenter
-
+    private var mPresenter: FormInputContract.Presenter = FormInputPresenterImpl()
     private var inputError: Boolean = true
     private var mErrorMessage: String = ""
     private var isMandatory: Boolean = true
     private var mInputType: Int = 1
-    private var viewToConfirm: FormInputMaterialText? = null
+    private var viewToConfirm: FormInputMaterialTextLayout? = null
     private var showClearButton: Boolean = true
     private var showLabel: Boolean = true
-
-    private var mTextInputLayout: TextInputLayout? = null
     private var tempTextHelper: String = ""
     private var defaultTextHelperColor: Int = R.color.colorGrey
     private var defaultTextColor = R.color.black
     private var mClearIcon: Drawable? = getDrawable(R.drawable.ic_close)
-
-    private var attrs: AttributeSet? = null
-    private var styleAttr: Int = 0
-
     private var mListener: ViewOnClickListener? = null
     private var mTextChangeListener: OnTextChangeListener? = null
 
+    val text: String
+        get() = editText?.text?.toString().orEmpty()
+
     constructor(context: Context): super(context) {
-        initView()
+        initView(null, 0)
     }
 
     constructor(context: Context, attrs: AttributeSet): super(context, attrs) {
-        this.attrs = attrs
-        initView()
+        initView(attrs, 0)
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs, defStyleAttr) {
-        this.attrs = attrs
-        styleAttr = defStyleAttr
-        initView()
+        initView(attrs,defStyleAttr)
     }
 
-    private fun initView() {
-        mPresenter = FormInputPresenterImpl()
+    private fun initView(attrs: AttributeSet?, styleAttr: Int) {
         mClearIcon?.callback = this
-
-        val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FormInputLayout, styleAttr, 0)
-        setViewInputType(a.getInt(R.styleable.FormInputLayout_form_inputType, 1))
-        setShowClearButton(a.getBoolean(R.styleable.FormInputLayout_form_showClearButton, true))
-        setShowLabel(a.getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
-        setMandatory(a.getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
-        setDefaultTextColor(a.getResourceId(R.styleable.FormInputLayout_android_textColor, R.color.black))
-        a.recycle()
-
+        context.withStyledAttributes(attrs, R.styleable.FormInputLayout, styleAttr, 0) {
+            setViewInputType(getInt(R.styleable.FormInputLayout_form_inputType, 1))
+            setShowClearButton(getBoolean(R.styleable.FormInputLayout_form_showClearButton, true))
+            setShowLabel(getBoolean(R.styleable.FormInputLayout_form_showLabel, true))
+            setMandatory(getBoolean(R.styleable.FormInputLayout_form_isMandatory, true))
+            setDefaultTextColor(getResourceId(R.styleable.FormInputLayout_android_textColor, R.color.black))
+        }
         initTextInputLayout()
         mErrorMessage = formatString()
     }
@@ -85,33 +73,26 @@ class FormInputMaterialText: TextInputEditText, TextWatcher {
     /**
      * Set components
      */
-    fun setTextInputLayout(textInputLayout: TextInputLayout) {
-        mTextInputLayout = textInputLayout
-        initTextInputLayout()
-        mErrorMessage = formatString()
-        setMandatory(isMandatory)
-    }
-
-    fun setOnViewClickListener(listener: ViewOnClickListener): FormInputMaterialText {
+    fun setOnViewClickListener(listener: ViewOnClickListener): FormInputMaterialTextLayout {
         mListener = listener
         initClickListener()
         return this
     }
 
-    fun setOnTextChangeListener(listener: OnTextChangeListener): FormInputMaterialText {
+    fun setOnTextChangeListener(listener: OnTextChangeListener): FormInputMaterialTextLayout {
         mTextChangeListener = listener
         return this
     }
 
-    fun setMandatory(mandatory: Boolean): FormInputMaterialText {
+    fun setMandatory(mandatory: Boolean): FormInputMaterialTextLayout {
         isMandatory = mandatory
         if (!mandatory) {
             inputError = false
         }
         val stringMandatory = if (isMandatory) "*" else ""
-        mTextInputLayout?.helperText = context.getString(R.string.label, tempTextHelper, stringMandatory).toHtml()
-        mTextInputLayout?.setHelperTextColor(ContextCompat.getColorStateList(context, defaultTextHelperColor))
-        mTextInputLayout?.isHelperTextEnabled = showLabel
+        helperText = context.getString(R.string.label, tempTextHelper, stringMandatory).toHtml()
+        setHelperTextColor(ContextCompat.getColorStateList(context, defaultTextHelperColor))
+        isHelperTextEnabled = showLabel
         return this
     }
 
@@ -119,59 +100,54 @@ class FormInputMaterialText: TextInputEditText, TextWatcher {
      * Set custom error
      */
     fun setError(errorMessage: String) {
-        textColor(R.color.colorOnError)
+        editText?.textColor(R.color.colorOnError)
         verifyInputError(errorMessage)
     }
 
-    fun setViewToConfirm(view: FormInputMaterialText): FormInputMaterialText {
+    fun setViewToConfirm(view: FormInputMaterialTextLayout): FormInputMaterialTextLayout {
         viewToConfirm = view
         return this
     }
 
-    fun setViewInputType(type: Int): FormInputMaterialText {
+    fun setViewInputType(type: Int): FormInputMaterialTextLayout {
         mInputType = type
-        when (mInputType) {
-            INPUT_TYPE_TEXT -> inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-            INPUT_TYPE_PHONE -> inputType = InputType.TYPE_CLASS_PHONE
-            INPUT_TYPE_NUMBER -> inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
-            INPUT_TYPE_EMAIL -> inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-            INPUT_TYPE_PASSWORD -> {
-                inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
-                transformationMethod = PasswordTransformationMethod()
-            }
-            INPUT_TYPE_MULTILINE -> {
-                setScroll()
-                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+        editText?.apply {
+            when (mInputType) {
+                INPUT_TYPE_TEXT -> inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+                INPUT_TYPE_PHONE -> inputType = InputType.TYPE_CLASS_PHONE
+                INPUT_TYPE_NUMBER -> inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
+                INPUT_TYPE_EMAIL -> inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+                INPUT_TYPE_PASSWORD -> {
+                    inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    transformationMethod = PasswordTransformationMethod()
+                }
+                INPUT_TYPE_MULTILINE -> {
+                    setScroll()
+                    inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                }
             }
         }
-
         return this
     }
 
-    fun setValue(value: String): FormInputMaterialText {
-        setText(value)
-        return this
-    }
-
-    fun setShowLabel(show: Boolean): FormInputMaterialText {
+    fun setShowLabel(show: Boolean): FormInputMaterialTextLayout {
         showLabel = show
         return this
     }
 
-    fun setShowClearButton(show: Boolean): FormInputMaterialText {
+    fun setShowClearButton(show: Boolean): FormInputMaterialTextLayout {
         showClearButton = show
         return this
     }
 
-    fun setDefaultTextColor(@ColorRes color: Int): FormInputMaterialText {
+    fun setDefaultTextColor(@ColorRes color: Int): FormInputMaterialTextLayout {
         defaultTextColor = color
         return this
     }
 
-
     @SuppressLint("ClickableViewAccessibility", "RtlHardcoded")
     private fun setScroll() {
-        isSingleLine = false
+        editText?.isSingleLine = false
         gravity = Gravity.LEFT or Gravity.TOP
         scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
         isVerticalScrollBarEnabled = true
@@ -185,13 +161,6 @@ class FormInputMaterialText: TextInputEditText, TextWatcher {
             }
             false
         }
-    }
-
-    /**
-     * Get components
-     */
-    fun getValue(): String {
-        return text.toString()
     }
 
     /**
@@ -228,40 +197,37 @@ class FormInputMaterialText: TextInputEditText, TextWatcher {
             when (mInputType) {
                 INPUT_TYPE_NUMBER -> {
                     if (mPresenter.isValidNumber(value)) {
-                        textColor(defaultTextColor)
+                        editText?.textColor(defaultTextColor)
                         verifyInputError("")
                     } else {
-                        textColor(R.color.colorOnError)
+                        editText?.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.isInvalid, tempTextHelper))
                     }
                 }
-
                 INPUT_TYPE_EMAIL -> {
                     if (mPresenter.isValidEmail(value)) {
-                        textColor(defaultTextColor)
+                        editText?.textColor(defaultTextColor)
                         verifyInputError("")
                     } else {
-                        textColor(R.color.colorOnError)
+                        editText?.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.inValidEmail))
                     }
                 }
-
                 INPUT_TYPE_PHONE -> {
                     if (mPresenter.isValidPhoneNumber(value)) {
-                        textColor(defaultTextColor)
+                        editText?.textColor(defaultTextColor)
                         verifyInputError("")
                     } else {
-                        textColor(R.color.colorOnError)
+                        editText?.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.inValidPhoneNumber))
                     }
                 }
-
                 INPUT_TYPE_URL -> {
                     if (mPresenter.isValidUrl(value)) {
-                        textColor(defaultTextColor)
+                        editText?.textColor(defaultTextColor)
                         verifyInputError("")
                     } else {
-                        textColor(R.color.colorOnError)
+                        editText?.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.invalidUrl))
                     }
                 }
@@ -270,15 +236,15 @@ class FormInputMaterialText: TextInputEditText, TextWatcher {
         mTextChangeListener?.onTextChange(value)
     }
 
-    private fun verifyInputError(error: String) {
-        if (error.isNotEmpty()) {
-            mTextInputLayout?.isHelperTextEnabled = showLabel
-            mTextInputLayout?.helperText = error
-            mTextInputLayout?.setHelperTextColor(ContextCompat.getColorStateList(context, R.color.colorOnError))
-            mTextInputLayout?.error = error
-            mTextInputLayout?.errorIconDrawable = null
+    private fun verifyInputError(mError: String) {
+        if (mError.isNotEmpty()) {
+            isHelperTextEnabled = showLabel
+            helperText = mError
+            setHelperTextColor(ContextCompat.getColorStateList(context, R.color.colorOnError))
+            error = mError
+            errorIconDrawable = null
             inputError = true
-            mErrorMessage = error
+            mErrorMessage = mError
         } else {
             inputError = false
             mErrorMessage = ""
@@ -317,8 +283,8 @@ class FormInputMaterialText: TextInputEditText, TextWatcher {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (isClearIconClicked(event) && getValue().isNotBlank()) {
-            text = null
+        if (isClearIconClicked(event) && text.isNotBlank()) {
+            editText?.text = null
             event.action = MotionEvent.ACTION_CANCEL
             showIcon(false)
             return false
@@ -328,9 +294,9 @@ class FormInputMaterialText: TextInputEditText, TextWatcher {
 
     private fun showIcon(show: Boolean, icon: Drawable? = mClearIcon) {
         if (showClearButton && show) {
-            setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null)
+            editText?.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null)
         } else {
-            setCompoundDrawables(null, null, null, null)
+            editText?.setCompoundDrawables(null, null, null, null)
         }
     }
 
@@ -342,8 +308,8 @@ class FormInputMaterialText: TextInputEditText, TextWatcher {
     private fun isClearIconClicked(event: MotionEvent): Boolean {
         val touchPointX = event.x.toInt()
         val widthOfView = width
-        return if (compoundDrawables[2].isNotNull()) {
-            touchPointX >= widthOfView - compoundPaddingRight
+        return if (editText?.compoundDrawables!![2].isNotNull()) {
+            touchPointX >= widthOfView - editText!!.compoundPaddingRight
         } else {
             false
         }
@@ -354,7 +320,7 @@ class FormInputMaterialText: TextInputEditText, TextWatcher {
     }
 
     private fun initClickListener() {
-        this.movementMethod = object: MovementMethod {
+        editText?.movementMethod = object: MovementMethod {
             override fun onTouchEvent(widget: TextView?, text: Spannable?, event: MotionEvent?): Boolean {
                 return false
             }
@@ -400,8 +366,6 @@ class FormInputMaterialText: TextInputEditText, TextWatcher {
      * Initialize mTextInputLayout, get default label and text color
      */
     private fun initTextInputLayout() {
-        mTextInputLayout?.let {
-            tempTextHelper = it.helperText.toString()
-        }
+        tempTextHelper = helperText.toString()
     }
 }

@@ -6,16 +6,18 @@ import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import androidx.annotation.ColorRes
 import androidx.core.content.withStyledAttributes
+import com.omarshehe.forminputkotlin.databinding.FormInputPinBinding
 import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
 import com.omarshehe.forminputkotlin.utils.*
-import kotlinx.android.synthetic.main.form_input_pin.view.*
 
 class FormInputPin: BaseFormInput,TextWatcher  {
     private lateinit var mPresenter: FormInputContract.Presenter
+    private lateinit var binding: FormInputPinBinding
 
     private var inputError:Boolean = true
     private var mTextColor=R.color.black
@@ -48,9 +50,9 @@ class FormInputPin: BaseFormInput,TextWatcher  {
     }
 
     private fun initView() {
-        inflate(context, R.layout.form_input_pin, this)
+        binding=FormInputPinBinding.inflate(LayoutInflater.from(context),this)
         mPresenter = FormInputPresenterImpl()
-        pinViewList= listOf(txtPinOne,txtPinTwo,txtPinThree,txtPinFour)
+        pinViewList= listOf(binding.txtPinOne,binding.txtPinTwo,binding.txtPinThree,binding.txtPinFour)
         orientation= VERTICAL
         context.withStyledAttributes(attrs, R.styleable.FormInputLayout, styleAttr, 0) {
             setTextColor(getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
@@ -72,10 +74,10 @@ class FormInputPin: BaseFormInput,TextWatcher  {
     }
 
     private fun initEvents(){
-        txtPinOne.addTextChangedListener(this)
-        txtPinTwo.addTextChangedListener(this)
-        txtPinThree.addTextChangedListener(this)
-        txtPinFour.addTextChangedListener(this)
+        binding.txtPinOne.addTextChangedListener(this)
+        binding.txtPinTwo.addTextChangedListener(this)
+        binding.txtPinThree.addTextChangedListener(this)
+        binding.txtPinFour.addTextChangedListener(this)
     }
 
 
@@ -84,18 +86,18 @@ class FormInputPin: BaseFormInput,TextWatcher  {
      */
 
     fun setLabel(text:String): FormInputPin{
-        mLabel=tvLabel.setLabel(text,isMandatory)
+        mLabel=binding.tvLabel.setLabel(text,isMandatory)
         return this
     }
 
     fun setMandatory(mandatory: Boolean) : FormInputPin {
         isMandatory =mandatory
         mandatory.isNotTrue{ inputError=false }
-        mLabel=tvLabel.setLabel(mLabel,isMandatory)
+        mLabel=binding.tvLabel.setLabel(mLabel,isMandatory)
         return this
     }
     fun setLabelVisibility(show:Boolean): FormInputPin {
-        tvLabel.visibleIf(show)
+        binding.tvLabel.visibleIf(show)
         return this
     }
 
@@ -192,7 +194,7 @@ class FormInputPin: BaseFormInput,TextWatcher  {
     }
 
     fun setLabelTextColor(@ColorRes color: Int):FormInputPin{
-        tvLabel.textColor(color)
+        binding.tvLabel.textColor(color)
         return this
     }
 
@@ -215,7 +217,7 @@ class FormInputPin: BaseFormInput,TextWatcher  {
      * Get components
      */
     fun getValue(): String {
-        return mPresenter.appendPin(txtPinOne.text.toString(), txtPinTwo.text.toString(), txtPinThree.text.toString(), txtPinFour.text.toString())
+        return mPresenter.appendPin(binding.txtPinOne.text.toString(), binding.txtPinTwo.text.toString(), binding.txtPinThree.text.toString(), binding.txtPinFour.text.toString())
     }
 
 
@@ -224,7 +226,7 @@ class FormInputPin: BaseFormInput,TextWatcher  {
      */
     private fun verifyInputError(stringError: String, visible: Int){
         mErrorMessage=stringError
-        inputError=tvError.showInputError(validIcon,checkIfShouldShowValidIcon(), stringError, visible)
+        inputError=binding.tvError.showInputError(binding.validIcon,checkIfShouldShowValidIcon(), stringError, visible)
     }
 
     private fun checkIfShouldShowValidIcon():Boolean{
@@ -251,8 +253,8 @@ class FormInputPin: BaseFormInput,TextWatcher  {
             showError.isTrue {
                 verifyInputError(mErrorMessage, VISIBLE)
                 parentView.hideKeyboard()
-                parentView?.scrollTo(0, tvError.top)
-                txtPinOne.requestFocus()
+                parentView?.scrollTo(0, binding.tvError.top)
+                binding.txtPinOne.requestFocus()
             }
         }.isNotTrue {
             verifyInputError("", View.GONE)
@@ -273,7 +275,7 @@ class FormInputPin: BaseFormInput,TextWatcher  {
             val editText = (context as Activity).currentFocus as EditText?
             editText?.focusSearch(View.FOCUS_RIGHT)?.requestFocus()
         }
-        mPinValue=mPresenter.appendPin(txtPinOne.text.toString(), txtPinTwo.text.toString(), txtPinThree.text.toString(), txtPinFour.text.toString())
+        mPinValue=mPresenter.appendPin(binding.txtPinOne.text.toString(), binding.txtPinTwo.text.toString(), binding.txtPinThree.text.toString(), binding.txtPinFour.text.toString())
         if(viewToConfirm.isNotNull()){
             if(pinViewIsNotEmpty() && viewToConfirm?.getValue()==mPinValue){
                 setTextColor(mTextColor)

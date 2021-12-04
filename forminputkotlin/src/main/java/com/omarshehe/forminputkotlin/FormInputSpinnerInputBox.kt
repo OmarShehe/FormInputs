@@ -5,18 +5,20 @@ import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.ColorRes
 import androidx.core.content.withStyledAttributes
+import com.omarshehe.forminputkotlin.databinding.FormInputSpinnerInputboxBinding
 import com.omarshehe.forminputkotlin.interfaces.ItemSelectedListener
 import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
 import com.omarshehe.forminputkotlin.utils.*
-import kotlinx.android.synthetic.main.form_input_spinner_inputbox.view.*
 
 class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     private lateinit var mPresenter: FormInputContract.Presenter
+    private lateinit var binding:FormInputSpinnerInputboxBinding
 
     private var inputError:Boolean = true
     private var mTextColor=R.color.black
@@ -47,7 +49,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
         initView()
     }
     private fun initView(){
-        inflate(context, R.layout.form_input_spinner_inputbox, this)
+        binding= FormInputSpinnerInputboxBinding.inflate(LayoutInflater.from(context),this)
         mPresenter = FormInputPresenterImpl()
         orientation= VERTICAL
         context.withStyledAttributes(attrs, R.styleable.FormInputLayout, styleAttr, 0) {
@@ -67,43 +69,43 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
 
             val itemList = resources.getStringArray(getResourceId(R.styleable.FormInputLayout_form_array, R.array.array)).toList()
             setSpinner(itemList)
-            setValue(spSpinner.selectedItem.toString(),getString(R.styleable.FormInputLayout_form_value).orEmpty())
+            setValue(binding.spSpinner.selectedItem.toString(),getString(R.styleable.FormInputLayout_form_value).orEmpty())
         }
-        txtInputBox.addTextChangedListener(this)
-        iconCancel.setOnClickListener { txtInputBox.setText("") }
+        binding.txtInputBox.addTextChangedListener(this)
+        binding.iconCancel.setOnClickListener { binding.txtInputBox.setText("") }
     }
 
     /**
      * Set components
      */
     fun setLabel(text:String): FormInputSpinnerInputBox{
-        mLabel=tvLabel.setLabel(text,isMandatory)
+        mLabel=binding.tvLabel.setLabel(text,isMandatory)
         return this
     }
 
     fun setMandatory(mandatory: Boolean) : FormInputSpinnerInputBox {
         isMandatory =mandatory
         if(!mandatory){ inputError=false }
-        mLabel=tvLabel.setLabel(mLabel,isMandatory)
+        mLabel=binding.tvLabel.setLabel(mLabel,isMandatory)
         return this
     }
     fun setLabelVisibility(show:Boolean): FormInputSpinnerInputBox {
-        tvLabel.visibleIf(show)
+        binding.tvLabel.visibleIf(show)
         return this
     }
 
     fun setHint(hint: String) : FormInputSpinnerInputBox {
-        txtInputBox.hint = hint
+        binding.txtInputBox.hint = hint
         return this
     }
 
     fun setSpinnerHeight(height: Int) : FormInputSpinnerInputBox {
-        layInputBox.layoutParams=LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+        binding.layInputBox.layoutParams=LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
         return this
     }
 
     fun setValue(spinnerValue: String,inputBoxValue: String) : FormInputSpinnerInputBox{
-        txtInputBox.setText(inputBoxValue)
+        binding.txtInputBox.setText(inputBoxValue)
         setSpinnerValue(spinnerValue)
         return this
     }
@@ -111,14 +113,14 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     private fun setSpinnerValue(value: String) : FormInputSpinnerInputBox  {
         for (index in mArrayList.indices) {
             if (value == mArrayList[index]) {
-                spSpinner.setSelection(index)
+                binding.spSpinner.setSelection(index)
             }
         }
         return this
     }
 
     fun setBackground(background: Int) : FormInputSpinnerInputBox  {
-        layInputBox.setBackgroundResource(background)
+        binding.layInputBox.setBackgroundResource(background)
         return this
     }
 
@@ -126,7 +128,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
      * Set custom error
      */
     fun setError(errorMessage: String){
-        txtInputBox.textColor(R.color.colorOnError)
+        binding.txtInputBox.textColor(R.color.colorOnError)
         verifyInputError(errorMessage, VISIBLE)
     }
 
@@ -137,7 +139,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
 
     fun setInputType(inputType: Int) : FormInputSpinnerInputBox {
         mInputType = inputType
-        txtInputBox.setInputTypes(mInputType)
+        binding.txtInputBox.setInputTypes(mInputType)
         return this
     }
 
@@ -148,17 +150,17 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
 
     fun setTextColor(color:Int):FormInputSpinnerInputBox{
         mTextColor=color
-        txtInputBox.textColor(mTextColor)
+        binding.txtInputBox.textColor(mTextColor)
         return this
     }
 
     fun setHintTextColor(@ColorRes color: Int):FormInputSpinnerInputBox{
-        txtInputBox.hintTextColor(color)
+        binding.txtInputBox.hintTextColor(color)
         return this
     }
 
     fun setLabelTextColor(@ColorRes color: Int):FormInputSpinnerInputBox{
-        tvLabel.textColor(color)
+        binding.tvLabel.textColor(color)
         return this
     }
 
@@ -176,14 +178,14 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
      * Get components
      */
     fun getValue(): Array<String> {
-        return arrayOf(spSpinner.selectedItem.toString(), txtInputBox.text.toString())
+        return arrayOf(binding.spSpinner.selectedItem.toString(), binding.txtInputBox.text.toString())
     }
 
     fun getSpinner():Spinner{
-        return spSpinner
+        return binding.spSpinner
     }
     fun getInputBox():EditText{
-        return txtInputBox
+        return binding.txtInputBox
     }
 
 
@@ -194,7 +196,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
         mArrayList=items
         val spinnerArrayAdapter = ArrayAdapter(context, R.layout.spinner_item, items)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spSpinner.adapter = spinnerArrayAdapter
+        binding.spSpinner.adapter = spinnerArrayAdapter
         initClickListener()
         return this
     }
@@ -205,7 +207,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
      */
     fun setAdapter(adapter: BaseAdapter,items: List<String>):FormInputSpinnerInputBox {
         mArrayList=items
-        spSpinner.adapter = adapter
+        binding.spSpinner.adapter = adapter
         return this
     }
 
@@ -216,7 +218,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     }
 
     private fun initClickListener(){
-        spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 isFirstOpen.isTrue{
                     (view as TextView?)?.textColor(mTextColor)
@@ -236,7 +238,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
      */
     private fun verifyInputError(stringError: String, visible: Int){
         mErrorMessage=stringError
-        inputError=tvError.showInputError(validIcon,checkIfShouldShowValidIcon(),stringError,visible)
+        inputError=binding.tvError.showInputError(binding.validIcon,checkIfShouldShowValidIcon(),stringError,visible)
     }
 
     private fun checkIfShouldShowValidIcon():Boolean{
@@ -264,8 +266,8 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
             showError.isTrue {
                 verifyInputError(mErrorMessage, VISIBLE)
                 parentView.hideKeyboard()
-                parentView?.scrollTo(0, tvError.top)
-                txtInputBox.requestFocus()
+                parentView?.scrollTo(0, binding.tvError.top)
+                binding.txtInputBox.requestFocus()
             }
         }.isNotTrue {
             verifyInputError("", View.GONE)
@@ -282,7 +284,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
     override fun onTextChanged(value: CharSequence?, start: Int, before: Int, count: Int) { performOnTextChange(value.toString()) }
 
     private fun performOnTextChange(value: String) {
-        iconCancel.visibleIf(value.isNotEmpty())
+        binding.iconCancel.visibleIf(value.isNotEmpty())
 
         /**
          *  If the [value] is empty, show input error only if [isMandatory] is true
@@ -307,7 +309,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
                         setTextColor(mTextColor)
                         verifyInputError("", GONE)
                     }else{
-                        txtInputBox.textColor(R.color.colorOnError)
+                        binding.txtInputBox.textColor(R.color.colorOnError)
                         verifyInputError(String.format(resources.getString(R.string.isInvalid), mLabel), VISIBLE)
                     }
                 }
@@ -317,7 +319,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
                         setTextColor(mTextColor)
                         verifyInputError("", GONE)
                     } else {
-                        txtInputBox.textColor(R.color.colorOnError)
+                        binding.txtInputBox.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.inValidEmail), VISIBLE)
                     }
                 }
@@ -327,7 +329,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
                         setTextColor(mTextColor)
                         verifyInputError("", GONE)
                     } else {
-                        txtInputBox.textColor(R.color.colorOnError)
+                        binding.txtInputBox.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.inValidPhoneNumber), VISIBLE)
                     }
                 }
@@ -337,7 +339,7 @@ class FormInputSpinnerInputBox  : BaseFormInput, TextWatcher {
                         setTextColor(mTextColor)
                         verifyInputError("", GONE)
                     } else {
-                        txtInputBox.textColor(R.color.colorOnError)
+                        binding.txtInputBox.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.invalidUrl), VISIBLE)
                     }
                 }

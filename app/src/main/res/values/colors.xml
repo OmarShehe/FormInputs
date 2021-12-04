@@ -4,8 +4,6 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-
-
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
     <color name="colorGrey">#747373</color>
@@ -15,12 +13,10 @@
 
     <color name="input_text_color">@color/colorBlack</color>
 
-
     <color name="formInputLockAlertColor">@color/colorBlack</color>
     <color name="formInputAutoCompleteItemTextColor">#757575</color>
     <color name="formInputAutoCompleteItemLineColor">#D4D4D4</color>
     <color name="formInputSpinnerItemTextColor">#000000</color>
     <color name="formInputAutoCompleteItemBackgroundColor">@color/colorWhite</color>
     <color name="formInputAutoCompleteArrowColor">#000000</color>
-
 </resources>

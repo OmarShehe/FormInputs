@@ -2,11 +2,11 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MaterialView"
     android:background="?colorOnPrimary"
-    android:id="@+id/mainView">
+    tools:context=".MaterialView">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -23,90 +23,82 @@
             <com.omarshehe.forminputkotlin.FormInputMaterialSpinner
                 android:id="@+id/spGender"
                 style="@style/TextInputStyle"
+                android:completionThreshold="0"
                 android:focusable="false"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:completionThreshold="0"
                 app:form_array="@array/array_gender" />
 
         </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
+
+        <com.omarshehe.forminputkotlin.FormInputMaterialTextLayout
             android:id="@+id/fullNameView"
             style="@style/TextInputLayoutStyle"
             android:hint="Your full name"
-            app:helperText="Full Name"
-           >
+            app:form_inputType="text"
+            app:helperText="Full Name">
 
-            <com.omarshehe.forminputkotlin.FormInputMaterialText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txtFullName"
-                style="@style/TextInputStyle"
-                app:form_inputType="text" />
+                style="@style/TextInputStyle" />
+        </com.omarshehe.forminputkotlin.FormInputMaterialTextLayout>
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
+        <com.omarshehe.forminputkotlin.FormInputMaterialTextLayout
             android:id="@+id/emailView"
             style="@style/TextInputLayoutStyle"
             android:hint="Your email address"
-            app:helperText="Email"
-           >
+            app:form_inputType="email"
+            app:helperText="Email">
 
-            <com.omarshehe.forminputkotlin.FormInputMaterialText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txtEmail"
-                style="@style/TextInputStyle"
-                app:form_inputType="email" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+                style="@style/TextInputStyle" />
+        </com.omarshehe.forminputkotlin.FormInputMaterialTextLayout>
 
 
-        <com.google.android.material.textfield.TextInputLayout
+        <com.omarshehe.forminputkotlin.FormInputMaterialTextLayout
             android:id="@+id/phoneNumberView"
             style="@style/TextInputLayoutStyle"
             android:hint="Your phone number"
+            app:form_inputType="phoneNumber"
+            app:form_isMandatory="false"
             app:helperText="Phone Number">
 
-            <com.omarshehe.forminputkotlin.FormInputMaterialText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txtPhoneNumber"
-                style="@style/TextInputStyle"
-                app:form_inputType="phoneNumber"
-                app:form_isMandatory="false"/>
+                style="@style/TextInputStyle" />
+        </com.omarshehe.forminputkotlin.FormInputMaterialTextLayout>
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
+        <com.omarshehe.forminputkotlin.FormInputMaterialTextLayout
             android:id="@+id/IdView"
             style="@style/TextInputLayoutStyle"
             android:hint="Your ID number"
-            app:helperText="ID Number"
-            >
+            app:form_inputType="number"
+            app:helperText="ID Number">
 
-            <com.omarshehe.forminputkotlin.FormInputMaterialText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txtId"
-                style="@style/TextInputStyle"
-                app:form_inputType="number" />
+                style="@style/TextInputStyle" />
+        </com.omarshehe.forminputkotlin.FormInputMaterialTextLayout>
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
+        <com.omarshehe.forminputkotlin.FormInputMaterialTextLayout
             android:id="@+id/about"
             style="@style/TextInputLayoutStyle"
             app:counterEnabled="true"
             app:counterMaxLength="10"
+            app:form_inputType="multiLine"
+            app:form_isMultiLine="true"
+            app:form_showClearButton="false"
             app:helperText="About you"
-            app:hintEnabled="false"
-            >
+            app:hintEnabled="false">
 
-            <com.omarshehe.forminputkotlin.FormInputMaterialText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txtAbout"
                 style="@style/TextInputStyle"
                 android:layout_height="120dp"
                 android:gravity="top"
-                android:hint="About you"
-                app:form_inputType="multiLine"
-                app:form_isMultiLine="true"
-                app:form_showClearButton="false" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="About you" />
+        </com.omarshehe.forminputkotlin.FormInputMaterialTextLayout>
 
         <com.omarshehe.forminputkotlin.FormInputButton
             android:id="@+id/btnSubmit"

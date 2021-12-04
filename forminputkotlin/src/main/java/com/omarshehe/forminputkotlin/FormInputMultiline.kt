@@ -7,17 +7,19 @@ import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.withStyledAttributes
+import com.omarshehe.forminputkotlin.databinding.FormInputMultilineBinding
 import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
 import com.omarshehe.forminputkotlin.utils.*
-import kotlinx.android.synthetic.main.form_input_multiline.view.*
 
 class FormInputMultiline  :BaseFormInput, TextWatcher {
+    private lateinit var binding:FormInputMultilineBinding
     private var inputError:Boolean = true
     private var mTextColor=R.color.black
     private var mLabel: String = ""
@@ -45,7 +47,7 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
     }
 
     private fun initView(){
-        inflate(context, R.layout.form_input_multiline, this)
+        binding= FormInputMultilineBinding.inflate(LayoutInflater.from(context),this)
         orientation= VERTICAL
         context.withStyledAttributes(attrs, R.styleable.FormInputLayout, styleAttr, 0) {
             setTextColor(getResourceId(R.styleable.FormInputLayout_form_textColor,R.color.black))
@@ -67,14 +69,14 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
             mErrorMessage= String.format(resources.getString(R.string.cantBeEmpty), mLabel)
         }
         setScroll()
-        txtMultiline.addTextChangedListener(this)
+        binding.txtMultiline.addTextChangedListener(this)
     }
 
     /**
      * Set components
      */
     fun setLabel(text:String): FormInputMultiline{
-        mLabel=tvLabel.setLabel(text,isMandatory)
+        mLabel=binding.tvLabel.setLabel(text,isMandatory)
         return this
     }
 
@@ -85,28 +87,28 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
     fun setMandatory(mandatory: Boolean) : FormInputMultiline {
         isMandatory =mandatory
         mandatory.isNotTrue{ inputError=false }
-        mLabel=tvLabel.setLabel(mLabel,isMandatory)
+        mLabel=binding.tvLabel.setLabel(mLabel,isMandatory)
         return this
     }
 
     fun setLabelVisibility(show:Boolean): FormInputMultiline {
-        tvLabel.visibleIf(show)
+        binding.tvLabel.visibleIf(show)
         return this
     }
 
 
     fun setHint(hint: String) : FormInputMultiline {
-        txtMultiline.hint = hint
+        binding.txtMultiline.hint = hint
         return this
     }
 
     fun setValue(value: String) : FormInputMultiline{
-        txtMultiline.setText(value)
+        binding.txtMultiline.setText(value)
         return this
     }
 
     fun setInputViewHeight(height: Int) : FormInputMultiline {
-        txtMultiline.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, height)
+        binding.txtMultiline.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, height)
         return this
     }
 
@@ -114,7 +116,7 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
         mMaxLength = maxLength
         val filterArray = arrayOfNulls<InputFilter>(1)
         filterArray[0] = InputFilter.LengthFilter(mMaxLength)
-        txtMultiline.filters = filterArray
+        binding.txtMultiline.filters = filterArray
         countRemainInput(getValue())
         return this
     }
@@ -123,14 +125,16 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
 
     @SuppressLint("ClickableViewAccessibility", "RtlHardcoded")
     private fun setScroll() {
-        txtMultiline.isSingleLine = false
-        txtMultiline.gravity = Gravity.LEFT or Gravity.TOP
-        txtMultiline.setPadding(getDimension(R.dimen.space_normal), getDimension(R.dimen.space_normal), getDimension(R.dimen.space_normal), getDimension(R.dimen.space_tiny))
-        txtMultiline.scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
-        txtMultiline.isVerticalScrollBarEnabled = true
-        txtMultiline.overScrollMode = 0
-        txtMultiline.setOnTouchListener { view, event ->
-            if(txtMultiline.isFocused){
+        binding.txtMultiline.apply {
+            isSingleLine = false
+            gravity = Gravity.LEFT or Gravity.TOP
+            setPadding(getDimension(R.dimen.space_normal), getDimension(R.dimen.space_normal), getDimension(R.dimen.space_normal), getDimension(R.dimen.space_tiny))
+            scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
+            isVerticalScrollBarEnabled = true
+            overScrollMode = 0
+        }
+        binding.txtMultiline.setOnTouchListener { view, event ->
+            if(binding.txtMultiline.isFocused){
                 view.parent.requestDisallowInterceptTouchEvent(true)
                 if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_UP) {
                     view.parent.requestDisallowInterceptTouchEvent(false)
@@ -141,12 +145,12 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
     }
 
     fun setMaxLines(maxLines: Int) : FormInputMultiline{
-        txtMultiline.maxLines = maxLines
+        binding.txtMultiline.maxLines = maxLines
         return this
     }
 
     fun setBackground(@DrawableRes background: Int) : FormInputMultiline{
-        layInputBox.setBackgroundResource(background)
+        binding.layInputBox.setBackgroundResource(background)
         return this
     }
 
@@ -154,7 +158,7 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
      * Set custom error
      */
     fun setError(errorMessage: String){
-        txtMultiline.textColor(R.color.colorOnError)
+        binding.txtMultiline.textColor(R.color.colorOnError)
         verifyInputError(errorMessage, VISIBLE)
     }
 
@@ -170,18 +174,18 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
 
     fun setTextColor(color:Int):FormInputMultiline{
         mTextColor=color
-        txtMultiline.textColor(mTextColor)
+        binding.txtMultiline.textColor(mTextColor)
         return this
     }
 
     fun setHintTextColor(@ColorRes color: Int):FormInputMultiline{
-        txtMultiline.hintTextColor(color)
+        binding.txtMultiline.hintTextColor(color)
         return this
     }
 
     fun setLabelTextColor(@ColorRes color: Int):FormInputMultiline{
-        tvLabel.textColor(color)
-        txtLengthDesc.textColor(color)
+        binding.tvLabel.textColor(color)
+        binding.txtLengthDesc.textColor(color)
         return this
     }
 
@@ -198,11 +202,11 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
      * Get components
      */
     fun getValue(): String {
-        return txtMultiline.text.toString()
+        return binding.txtMultiline.text.toString()
     }
 
     fun getInputBox() : EditText{
-        return txtMultiline
+        return binding.txtMultiline
     }
 
     /**
@@ -210,7 +214,7 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
      */
     private fun verifyInputError(stringError: String, visible: Int){
         mErrorMessage=stringError
-        inputError=tvError.showInputError(validIcon,checkIfShouldShowValidIcon(), stringError, visible)
+        inputError=binding.tvError.showInputError(binding.validIcon,checkIfShouldShowValidIcon(), stringError, visible)
     }
 
     private fun checkIfShouldShowValidIcon():Boolean{
@@ -237,8 +241,8 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
             showError.isTrue {
                 verifyInputError(mErrorMessage, VISIBLE)
                 parentView.hideKeyboard()
-                parentView?.scrollTo(0, txtMultiline.top)
-                txtMultiline.requestFocus()
+                parentView?.scrollTo(0, binding.txtMultiline.top)
+                binding.txtMultiline.requestFocus()
             }
         }.isNotTrue {
             verifyInputError("", View.GONE)
@@ -273,6 +277,6 @@ class FormInputMultiline  :BaseFormInput, TextWatcher {
      */
     private fun countRemainInput(value: String){
         val rem = mMaxLength - value.length
-        txtLengthDesc.text = resources.getString(R.string.remainCharacters,rem,mMaxLength)
+        binding.txtLengthDesc.text = resources.getString(R.string.remainCharacters,rem,mMaxLength)
     }
 }

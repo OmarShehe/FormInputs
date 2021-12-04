@@ -35,12 +35,11 @@
             <ImageView
                 android:id="@+id/iconCancel"
                 style="@style/formInputIconCancelStyle"
-                app:srcCompat="@drawable/ic_close" />
-
+                app:srcCompat="@drawable/ic_close"
+                android:contentDescription="@string/clear" />
         </FrameLayout>
 
         <TextView
             android:id="@+id/tvError"
             style="@style/formInputTvErrorStyle" />
-
 </merge>

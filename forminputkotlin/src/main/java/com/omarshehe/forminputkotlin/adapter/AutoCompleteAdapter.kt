@@ -20,14 +20,15 @@ class AutoCompleteAdapter(
     private val items: List<String>,
     private val mListener: ItemSelectedListener
 ) : ArrayAdapter<String>(context, resource, items) {
+
     private val itemsAll: MutableList<String> = items.toMutableList()
     private val suggestions: ArrayList<String> = ArrayList()
     private var disableFilter: Boolean = false
 
-
     fun disableFilter(disableFilter: Boolean) {
         this.disableFilter = disableFilter
     }
+
     override fun getFilter(): Filter {
         return nameFilter
     }
@@ -70,23 +71,20 @@ class AutoCompleteAdapter(
                     notifyDataSetChanged()
                 }
             }
-
-
         }
     }
-
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
-        if (convertView == null) {
+        var view = convertView
+        if (view == null) {
             val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            convertView = inflater.inflate(R.layout.listitem_autocomplete, parent, false)
+            view = inflater.inflate(R.layout.listitem_autocomplete, parent, false)
         }
         val item = items[position]
-        val lblName = convertView!!.findViewById<View>(R.id.tvView) as TextView
-        lblName.text = item
-        convertView.findViewById<View>(R.id.layParent).setOnClickListener { mListener.onItemSelected(item) }
-        return convertView
+        view!!.run {
+            findViewById<TextView>(R.id.tvView).text = item
+            findViewById<View>(R.id.layParent).setOnClickListener { mListener.onItemSelected(item) }
+        }
+        return view
     }
-
 }

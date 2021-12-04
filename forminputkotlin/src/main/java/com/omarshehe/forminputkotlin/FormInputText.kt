@@ -7,20 +7,22 @@ import android.text.TextWatcher
 import android.text.method.MovementMethod
 import android.util.AttributeSet
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.core.content.withStyledAttributes
+import com.omarshehe.forminputkotlin.databinding.FormInputTextBinding
 import com.omarshehe.forminputkotlin.interfaces.OnTextChangeListener
 import com.omarshehe.forminputkotlin.interfaces.ViewOnClickListener
 import com.omarshehe.forminputkotlin.utils.*
-import kotlinx.android.synthetic.main.form_input_text.view.*
-
 
 class FormInputText : BaseFormInput, TextWatcher  {
     private lateinit var mPresenter: FormInputContract.Presenter
+
+    private lateinit var binding:FormInputTextBinding
 
     private var inputError:Boolean = true
     private var mTextColor=R.color.black
@@ -51,7 +53,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
     }
 
     private fun initView(){
-        inflate(context, R.layout.form_input_text, this)
+        binding= FormInputTextBinding.inflate(LayoutInflater.from(context),this)
         mPresenter = FormInputPresenterImpl()
         orientation= VERTICAL
         context.withStyledAttributes(attrs, R.styleable.FormInputLayout, styleAttr, 0) {
@@ -71,8 +73,8 @@ class FormInputText : BaseFormInput, TextWatcher  {
 
             mErrorMessage = String.format(resources.getString(R.string.cantBeEmpty), mLabel)
         }
-        iconCancel.setOnClickListener { txtInputBox.setText("") }
-        txtInputBox.addTextChangedListener(this)
+        binding.iconCancel.setOnClickListener { binding.txtInputBox.setText("") }
+        binding.txtInputBox.addTextChangedListener(this)
     }
 
 
@@ -96,9 +98,9 @@ class FormInputText : BaseFormInput, TextWatcher  {
 
             override fun onTrackballEvent(widget: TextView?, text: Spannable?, event: MotionEvent?): Boolean { return false }
 
-        }.also { txtInputBox.movementMethod = it }
+        }.also { binding.txtInputBox.movementMethod = it }
 
-        txtInputBox.setOnClickListener{
+        binding.txtInputBox.setOnClickListener{
             mListener?.onClick()
         }
     }
@@ -107,7 +109,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
      */
 
     fun setLabel(text: String): FormInputText{
-        mLabel=tvLabel.setLabel(text, isMandatory)
+        mLabel=binding.tvLabel.setLabel(text, isMandatory)
         return this
     }
 
@@ -118,32 +120,32 @@ class FormInputText : BaseFormInput, TextWatcher  {
     fun setMandatory(mandatory: Boolean) : FormInputText {
         isMandatory =mandatory
         mandatory.isNotTrue{ inputError=false }
-        mLabel=tvLabel.setLabel(mLabel, isMandatory)
+        mLabel=binding.tvLabel.setLabel(mLabel, isMandatory)
         return this
     }
 
     fun setLabelVisibility(show: Boolean): FormInputText {
-        tvLabel.visibleIf(show)
+        binding.tvLabel.visibleIf(show)
         return this
     }
 
     fun setHint(hint: String) :FormInputText {
-        txtInputBox.hint = hint
+        binding.txtInputBox.hint = hint
         return this
     }
 
     fun setValue(value: String) :FormInputText {
-        txtInputBox.setText(value)
+        binding.txtInputBox.setText(value)
         return this
     }
 
     fun setInputViewHeight(height: Int) : FormInputText {
-        txtInputBox.height=height
+        binding.txtInputBox.height=height
         return this
     }
 
     fun setBackground(background: Int) : FormInputText  {
-        layInputBox.setBackgroundResource(background)
+        binding.layInputBox.setBackgroundResource(background)
         return this
     }
 
@@ -157,7 +159,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
      * Set custom error
      */
     fun setError(errorMessage: String){
-        txtInputBox.textColor(R.color.colorOnError)
+        binding.txtInputBox.textColor(R.color.colorOnError)
         verifyInputError(errorMessage, VISIBLE)
     }
 
@@ -168,7 +170,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
 
     fun setInputType(inputType: Int) : FormInputText  {
         mInputType = inputType
-        txtInputBox.setInputTypes(mInputType)
+        binding.txtInputBox.setInputTypes(mInputType)
         return this
     }
 
@@ -185,17 +187,17 @@ class FormInputText : BaseFormInput, TextWatcher  {
 
     fun setTextColor(color: Int):FormInputText{
         mTextColor=color
-        txtInputBox.textColor(mTextColor)
+        binding.txtInputBox.textColor(mTextColor)
         return this
     }
 
     fun setHintTextColor(@ColorRes color: Int):FormInputText{
-        txtInputBox.hintTextColor(color)
+        binding.txtInputBox.hintTextColor(color)
         return this
     }
 
     fun setLabelTextColor(@ColorRes color: Int):FormInputText{
-        tvLabel.textColor(color)
+        binding.tvLabel.textColor(color)
         return this
     }
 
@@ -212,20 +214,19 @@ class FormInputText : BaseFormInput, TextWatcher  {
      * Get components
      */
     fun getValue(): String {
-        return txtInputBox.text.toString()
+        return binding.txtInputBox.text.toString()
     }
 
     fun getInputBox() : EditText{
-        return txtInputBox
+        return binding.txtInputBox
     }
-
 
     /**
      * Errors
      */
     private fun verifyInputError(stringError: String, visible: Int){
         mErrorMessage=stringError
-        inputError=tvError.showInputError(validIcon, checkIfShouldShowValidIcon(), stringError, visible)
+        inputError=binding.tvError.showInputError(binding.validIcon, checkIfShouldShowValidIcon(), stringError, visible)
     }
 
     private fun checkIfShouldShowValidIcon():Boolean{
@@ -252,8 +253,8 @@ class FormInputText : BaseFormInput, TextWatcher  {
             showError.isTrue {
                 verifyInputError(mErrorMessage, VISIBLE)
                 parentView.hideKeyboard()
-                parentView?.scrollTo(0, tvError.top)
-                txtInputBox.requestFocus()
+                parentView?.scrollTo(0, binding.tvError.top)
+                binding.txtInputBox.requestFocus()
             }
         }.isNotTrue {
             verifyInputError("", View.GONE)
@@ -269,7 +270,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
     override fun onTextChanged(value: CharSequence?, start: Int, before: Int, count: Int) { performOnTextChange(value.toString()) }
 
     private fun performOnTextChange(value: String) {
-        iconCancel.visibleIf(value.isNotEmpty())
+        binding.iconCancel.visibleIf(value.isNotEmpty())
 
         /**
          *  Compare this view textValue to [viewToConfirm] textValue if [viewToConfirm] is not equal to null
@@ -279,7 +280,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
                 setTextColor(mTextColor)
                 verifyInputError("", GONE)
             }else{
-                txtInputBox.textColor(R.color.colorOnError)
+                binding.txtInputBox.textColor(R.color.colorOnError)
                 verifyInputError(String.format(resources.getString(R.string.doNotMatch), mLabel), VISIBLE)
             }
 
@@ -306,7 +307,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
                         setTextColor(mTextColor)
                         verifyInputError("", GONE)
                     } else {
-                        txtInputBox.textColor(R.color.colorOnError)
+                        binding.txtInputBox.textColor(R.color.colorOnError)
                         verifyInputError(String.format(resources.getString(R.string.isInvalid), mLabel), VISIBLE)
                     }
                 }
@@ -316,7 +317,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
                         setTextColor(mTextColor)
                         verifyInputError("", View.GONE)
                     } else {
-                        txtInputBox.textColor(R.color.colorOnError)
+                        binding.txtInputBox.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.inValidEmail), View.VISIBLE)
                     }
                 }
@@ -326,7 +327,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
                         setTextColor(mTextColor)
                         verifyInputError("", View.GONE)
                     } else {
-                        txtInputBox.textColor(R.color.colorOnError)
+                        binding.txtInputBox.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.inValidPhoneNumber), View.VISIBLE)
                     }
                 }
@@ -336,7 +337,7 @@ class FormInputText : BaseFormInput, TextWatcher  {
                         setTextColor(mTextColor)
                         verifyInputError("", View.GONE)
                     } else {
-                        txtInputBox.textColor(R.color.colorOnError)
+                        binding.txtInputBox.textColor(R.color.colorOnError)
                         verifyInputError(resources.getString(R.string.invalidUrl), View.VISIBLE)
                     }
                 }

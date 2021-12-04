@@ -23,7 +23,7 @@ class MainActivity : BaseActivity() {
 
         //startActivity(Intent(this, MaterialView::class.java))
         btnSubmit.setOnClickListener {
-            if (isAllFieldAreValid()) {
+            if (areAllFieldsValid()) {
                 btnSubmit.showLoading(true)
                 Handler(mainLooper).postDelayed({
                     btnSubmit.showLoading(false)
@@ -43,13 +43,12 @@ class MainActivity : BaseActivity() {
                 Toast.makeText(baseContext,value,Toast.LENGTH_LONG).show()
             }
         })
-
     }
 
     /**
      * Check errors
      */
-    private fun isAllFieldAreValid():Boolean{
+    private fun areAllFieldsValid():Boolean{
         return gender.noError(mainView)
                 && country.noError(mainView)
                 && txtUrl.noError(mainView)
