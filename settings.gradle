@@ -1,2 +1,2 @@
 include ':app', ':forminputkotlin'
-rootProject.name='FormInputs'
+rootProject.name = 'FormInputs'
