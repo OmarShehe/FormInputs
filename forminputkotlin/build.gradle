@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'maven-publish'
 android {
     compileSdkVersion 31
     defaultConfig {
@@ -40,4 +41,17 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.alkathirikhalid'
+                artifactId = 'connection'
+                version = 'v1.0.9'
+            }
+        }
+    }
 }
