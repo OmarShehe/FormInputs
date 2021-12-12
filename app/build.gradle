@@ -5,14 +5,16 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 31
+
     defaultConfig {
         applicationId "com.omarshehe.forminputs"
         minSdkVersion 17
         targetSdkVersion 31
         versionCode 1
-        versionName "1.0.3"
+        versionName "1.0.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -20,8 +22,17 @@ android {
         }
     }
 
-    buildFeatures{
-        dataBinding=true
+    buildFeatures {
+        dataBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 }
 
