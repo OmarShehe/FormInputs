@@ -12,27 +12,22 @@ android {
         consumerProguardFiles 'consumer-rules.pro'
         android.defaultConfig.vectorDrawables.useSupportLibrary = true
     }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
     buildFeatures {
         viewBinding true
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
-
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
-
     lintOptions {
         abortOnError false
     }
@@ -56,14 +51,8 @@ afterEvaluate {
         publications {
             release(MavenPublication) {
                 from components.release
-                groupId = 'com.omarshehe.forminputs'
-                artifactId = 'alpha'
-                version = '1.0.6'
-            }
-            debug(MavenPublication) {
-                from components.debug
-                groupId = 'com.omarshehe.forminputs'
-                artifactId = 'alpha-debug'
+                groupId = 'com.omarshehe'
+                artifactId = 'forminputs'
                 version = '1.0.6'
             }
         }

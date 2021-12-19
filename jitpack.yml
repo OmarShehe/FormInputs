@@ -1,4 +1,4 @@
 jdk:
   - openjdk11
 install:
-  - ./gradlew build :forminputkotlin:publishToMavenLocal
+  - ./gradlew build publishToMavenLocal
