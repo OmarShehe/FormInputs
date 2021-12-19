@@ -3,7 +3,8 @@
 ![alt text](https://raw.githubusercontent.com/OmarShehe/FormInputs/master/forminputs.gif)
 
 
-[![](https://jitpack.io/v/OmarShehe/FormInputs.svg)](https://jitpack.io/#OmarShehe/FormInputs)    [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-FormInputs-green.svg?style=flat )]( https://android-arsenal.com/details/1/7888 )
+[![](https://jitpack.io/v/OmarShehe/FormInputs.svg)](https://jitpack.io/#OmarShehe/FormInputs)    [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-FormInputs-green.svg?style=flat )]( https://android-arsenal.com/details/1/7888 ) 
+[![](https://jitci.com/gh/OmarShehe/FormInputs/svg)](https://jitci.com/gh/OmarShehe/FormInputs)
 
 
 
