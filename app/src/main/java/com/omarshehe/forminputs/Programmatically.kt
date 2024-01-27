@@ -1,26 +1,36 @@
 package com.omarshehe.forminputs
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.omarshehe.forminputkotlin.*
-import com.omarshehe.forminputkotlin.utils.*
-import kotlinx.android.synthetic.main.activity_programmatical.*
+import com.omarshehe.forminputkotlin.FormInputAutoComplete
+import com.omarshehe.forminputkotlin.FormInputButton
+import com.omarshehe.forminputkotlin.FormInputMultiline
+import com.omarshehe.forminputkotlin.FormInputPassword
+import com.omarshehe.forminputkotlin.FormInputSpinner
+import com.omarshehe.forminputkotlin.FormInputSpinnerInputBox
+import com.omarshehe.forminputkotlin.FormInputText
+import com.omarshehe.forminputkotlin.utils.Density
+import com.omarshehe.forminputkotlin.utils.INPUT_TYPE_EMAIL
+import com.omarshehe.forminputkotlin.utils.INPUT_TYPE_NUMBER
+import com.omarshehe.forminputkotlin.utils.INPUT_TYPE_PHONE
+import com.omarshehe.forminputkotlin.utils.INPUT_TYPE_TEXT
+import com.omarshehe.forminputkotlin.utils.getDimension
+import com.omarshehe.forminputs.databinding.ActivityProgrammaticalBinding
 
 class Programmatically : AppCompatActivity() {
-    
+
+    private val binding: ActivityProgrammaticalBinding by lazy {
+        ActivityProgrammaticalBinding.inflate(layoutInflater)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_programmatical)
 
-
-
-
-
-       val getGenderArray = resources.getStringArray(R.array.array_gender)
+        val getGenderArray = resources.getStringArray(R.array.array_gender)
         val spGender = FormInputSpinner(this).apply {
             setID(1)
             setLabel("Gender")
@@ -30,7 +40,6 @@ class Programmatically : AppCompatActivity() {
             showValidIcon(true)
         }
 
-
         val countryList = resources.getStringArray(R.array.array_country)
         val country = FormInputAutoComplete(this).apply {
             setID(2)
@@ -39,9 +48,8 @@ class Programmatically : AppCompatActivity() {
             setMandatory(true)
             setAdapter(countryList.toList())
             showValidIcon(true)
-            setPadding(0,50,0,0)
+            setPadding(0, 50, 0, 0)
         }
-
 
         val fullName = FormInputText(applicationContext)
         fullName.setInputType(INPUT_TYPE_TEXT).apply {
@@ -49,9 +57,8 @@ class Programmatically : AppCompatActivity() {
             setHint("Your full name")
             setLabel("Full Name")
             setMandatory(true)
-            setPadding(0,50,0,0)
+            setPadding(0, 50, 0, 0)
         }
-
 
         val currencyArray = resources.getStringArray(R.array.array_currency)
         val price = FormInputSpinnerInputBox(this).apply {
@@ -61,13 +68,8 @@ class Programmatically : AppCompatActivity() {
             setLabel("Price")
             setSpinner(currencyArray.toList())
             setMandatory(true)
-            setPadding(0,50,0,0)
+            setPadding(0, 50, 0, 0)
         }
-
-
-
-
-
 
         val phoneNumber = FormInputText(applicationContext)
         phoneNumber.setInputType(INPUT_TYPE_PHONE).apply {
@@ -75,9 +77,8 @@ class Programmatically : AppCompatActivity() {
             setHint("Your phone number")
             setLabel("Phone Number")
             setMandatory(true)
-            setPadding(0,50,0,0)
+            setPadding(0, 50, 0, 0)
         }
-
 
         val idNumber = FormInputText(applicationContext)
         idNumber.setInputType(INPUT_TYPE_NUMBER).apply {
@@ -85,9 +86,8 @@ class Programmatically : AppCompatActivity() {
             setHint("Your ID number")
             setLabel("ID Number")
             setMandatory(true)
-            setPadding(0,50,0,0)
+            setPadding(0, 50, 0, 0)
         }
-
 
         val about = FormInputMultiline(applicationContext).apply {
             setID(7)
@@ -96,9 +96,8 @@ class Programmatically : AppCompatActivity() {
             setInputViewHeight(getDimension(R.dimen.multLine))
             setMandatory(true)
             setMaxLength(500)
-            setPadding(0,50,0,0)
+            setPadding(0, 50, 0, 0)
         }
-
 
         val email = FormInputText(applicationContext)
         email.setInputType(INPUT_TYPE_EMAIL).apply {
@@ -106,9 +105,8 @@ class Programmatically : AppCompatActivity() {
             setHint("Your email address")
             setLabel("Email")
             setMandatory(true)
-           setPadding(0,50,0,0)
+            setPadding(0, 50, 0, 0)
         }
-
 
         val password = FormInputPassword(this).apply {
             setID(9)
@@ -116,26 +114,23 @@ class Programmatically : AppCompatActivity() {
             setLabel("Password")
             setMandatory(true)
             showPassStrength(true)
-            setPadding(0,50,0,0)
+            setPadding(0, 50, 0, 0)
         }
 
 
-        val param=LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-            Density.dp2px(resources,60f))
-        param.gravity=Gravity.CENTER
-        val btnSubmit= FormInputButton(this).apply {
+        val param = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            Density.dp2px(resources, 60f)
+        )
+        param.gravity = Gravity.CENTER
+        val btnSubmit = FormInputButton(this).apply {
             setValue("Send")
             setShowProgress(true)
-            cornerRadius=Density.dp2px(resources,60f)
-            layoutParams=param
+            cornerRadius = Density.dp2px(resources, 60f)
+            layoutParams = param
         }
 
-
-
-
-
-
-        mainView.apply {
+        binding.mainView.apply {
             addView(spGender)
             addView(country)
             addView(fullName)
@@ -148,15 +143,13 @@ class Programmatically : AppCompatActivity() {
             addView(btnSubmit)
         }
 
-
-        btnSubmit.setOnClickListener{
+        btnSubmit.setOnClickListener {
             btnSubmit.showLoading(true)
-            Handler().postDelayed({
-                Toast.makeText(applicationContext,"Submit",Toast.LENGTH_LONG).show()
+            btnSubmit.postDelayed({
+                Toast.makeText(applicationContext, "Submit", Toast.LENGTH_LONG).show()
                 btnSubmit.showLoading(false)
-            },1000)
+            }, 1000)
 
         }
-
     }
 }

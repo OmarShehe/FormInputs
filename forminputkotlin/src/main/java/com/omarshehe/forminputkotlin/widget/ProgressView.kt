@@ -57,13 +57,13 @@ class ProgressView(context: Context, attrs: AttributeSet) : TextInputLayout(cont
         if (xLastPosition.isNaN()) xLastPosition = xStart
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         if (!locOnDraw) {
             xEnd = xStart + (progress * progressWeight)
             animateValue()
-        } else canvas?.drawLine(xStart, yPosition, xEnd, yPosition, paint)
+        } else canvas.drawLine(xStart, yPosition, xEnd, yPosition, paint)
     }
 
     private fun animateValue() {
