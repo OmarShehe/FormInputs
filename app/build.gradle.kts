@@ -1,20 +1,19 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android")
     kotlin("android")
     id("kotlin-kapt")
 }
 
 android {
-    namespace = "com.omarshehe.forminputs"
-    compileSdk = 34
+    namespace = AppConfig.applicationId
+    compileSdk = Versions.sdk
 
     defaultConfig {
         applicationId = "com.omarshehe.forminputs"
-        minSdk = 17
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.5"
+        minSdk = Versions.minSdk
+        targetSdk = Versions.sdk
+        versionCode = Versions.versionCode
+        versionName = Versions.versionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

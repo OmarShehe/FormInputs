@@ -1,18 +1,16 @@
 plugins {
     id("com.android.library")
-    id("kotlin-android")
     kotlin("android")
-    id("kotlin-kapt")
     id("maven-publish")
 }
 
 android {
     namespace = "com.omarshehe.forminputkotlin"
-    compileSdk = 34
+    compileSdk = Versions.sdk
 
     defaultConfig {
-        minSdk = 17
-        lint.targetSdk = 34
+        minSdk = Versions.minSdk
+        testOptions.targetSdk = Versions.sdk
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
         android.defaultConfig.vectorDrawables.useSupportLibrary = true
@@ -21,7 +19,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -52,9 +53,9 @@ afterEvaluate {
         publications {
             register("release", MavenPublication::class) {
                 from(components["release"])
-                groupId = "com.omarshehe"
-                artifactId = "forminputs"
-                version = "1.0.6"
+                groupId = AppConfig.groupId
+                artifactId = AppConfig.artifactIdKotlin
+                version = Versions.versionName
             }
         }
     }
