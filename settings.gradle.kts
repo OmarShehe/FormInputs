@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "FormInputs"
 include (":app")
 include (":forminputkotlin")
+include(":forminput-compose")
