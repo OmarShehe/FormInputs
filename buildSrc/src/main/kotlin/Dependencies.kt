@@ -1,5 +1,5 @@
 object AppConfig {
-    const val applicationId = "com.github.OmarShehe.forminputs"
+    const val applicationId = "com.omarshehe.forminputs"
     const val groupId = "com.github.OmarShehe"
     const val artifactIdKotlin = "forminput-kotlin"
     const val artifactIdCompose = "forminput-compose"
