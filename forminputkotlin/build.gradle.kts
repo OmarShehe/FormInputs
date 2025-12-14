@@ -1,19 +1,18 @@
 plugins {
-    id("com.android.library")
-    kotlin("android")
-    id("maven-publish")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.maven.publish)
 }
 
 android {
     namespace = "com.omarshehe.forminputkotlin"
-    compileSdk = Versions.sdk
+    compileSdk = libs.versions.sdk.get().toInt()
 
     defaultConfig {
-        minSdk = Versions.minSdk
-        testOptions.targetSdk = Versions.sdk
+        minSdk = libs.versions.minSdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-        android.defaultConfig.vectorDrawables.useSupportLibrary = true
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -41,11 +40,11 @@ android {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.core:core-ktx:1.12.0")
-    api("com.google.android.material:material:1.11.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.core.ktx)
+    api(libs.material)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.swiperefreshlayout)
 }
 
 afterEvaluate {
@@ -53,9 +52,9 @@ afterEvaluate {
         publications {
             register("release", MavenPublication::class) {
                 from(components["release"])
-                groupId = AppConfig.groupId
-                artifactId = AppConfig.artifactIdKotlin
-                version = Versions.versionName
+                groupId = libs.versions.groupId.get()
+                artifactId = libs.versions.artifactIdKotlin.get()
+                version = libs.versions.versionName.get()
             }
         }
     }

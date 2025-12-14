@@ -1,16 +1,16 @@
 plugins {
-    id("com.android.library")
-    kotlin("android")
-    id("maven-publish")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.maven.publish)
 }
 
 android {
     namespace = "com.omarshehe.forminput.compose"
-    compileSdk = Versions.sdk
+    compileSdk = libs.versions.sdk.get().toInt()
 
     defaultConfig {
-        minSdk = Versions.minSdk
-        testOptions.targetSdk = Versions.sdk
+        minSdk = libs.versions.minSdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -18,7 +18,9 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -36,7 +38,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.kotlinCompiler
+        kotlinCompilerExtensionVersion = libs.versions.kotlin.get()
     }
 
     packaging {
@@ -47,19 +49,18 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.material.icons.extended)
 
-    implementation(platform("androidx.compose:compose-bom:2023.10.01"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
 
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.10.01"))
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    debugImplementation(libs.androidx.compose.ui.tooling)
 }
 
 afterEvaluate {
@@ -67,9 +68,9 @@ afterEvaluate {
         publications {
             register("release", MavenPublication::class) {
                 from(components["release"])
-                groupId = AppConfig.groupId
-                artifactId = AppConfig.artifactIdCompose
-                version = Versions.versionName
+                groupId = libs.versions.groupId.get()
+                artifactId = libs.versions.artifactIdCompose.get()
+                version = libs.versions.versionName.get()
             }
         }
     }

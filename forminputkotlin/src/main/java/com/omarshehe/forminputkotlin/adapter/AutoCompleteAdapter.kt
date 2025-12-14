@@ -43,7 +43,7 @@ class AutoCompleteAdapter(
             return run {
                 suggestions.clear()
                 itemsAll.forEach{
-                    if (it.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                    if (it.lowercase().contains(constraint.toString().lowercase())) {
                         suggestions.add(it)
                     }
                 }
