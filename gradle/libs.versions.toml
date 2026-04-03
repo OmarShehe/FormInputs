@@ -1,6 +1,6 @@
 [versions]
-gradlePlugin = "8.13.2"
-kotlin = "2.2.21"
+gradlePlugin = "9.1.0"
+kotlin = "2.3.20"
 coreKtx = "1.17.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.1"
@@ -40,6 +40,7 @@ androidx-material-icons-extended = { group = "androidx.compose.material", name =
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "gradlePlugin" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 maven-publish = { id = "maven-publish" }
+legacy-kapt = { id = "com.android.legacy-kapt", version.ref = "gradlePlugin" }

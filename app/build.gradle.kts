@@ -1,8 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")
 }
 
 android {
@@ -30,16 +28,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
-
     buildFeatures {
         viewBinding = true
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlin.get()
     }
     packaging {
         resources {
