@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Swahili wording is unreviewed by a native speaker; corrections welcome. -->
     <string name="ok">Sawa</string>
     <string name="cancel">Ghairi</string>
     <string name="next">Endelea</string>
@@ -7,28 +8,17 @@
     <string name="select_date">Chagua tarehe</string>
     <string name="select_time">Chagua saa</string>
     <string name="select_date_time">Chagua tarehe na saa</string>
-    <string name="no_file_selected">Hakuna faili iliyochaguliwa</string>
     <string name="click_to_upload">Bofya kupakia faili</string>
     <string name="unknown_file">Faili isiyojulikana</string>
     <string name="select_file">Chagua faili</string>
-    <string name="image_selected">Picha imechaguliwa</string>
     <string name="delete">Futa</string>
     <string name="calculating">Inahesabu...</string>
-    <string name="selected">Imechaguliwa</string>
-    <string name="error_required">Sehemu hii inahitajika</string>
-    <string name="error_invalid_number">Tafadhali weka namba sahihi</string>
-    <string name="error_invalid_date">Tafadhali weka tarehe sahihi (YYYY-MM-DD)</string>
-    <string name="error_invalid_file">Tafadhali chagua faili sahihi (%s)</string>
-    <string name="table_no_data">Hakuna data</string>
-    <string name="table_pagination_showing">Inaonyesha %1$d hadi %2$d kati ya matokeo %3$d</string>
-    <string name="table_per_page">%1$d kwa ukurasa</string>
     <string name="search_hint">Tafuta...</string>
     <string name="clear_search">Futa utafutaji</string>
     <string name="image_primary_badge">Kuu</string>
     <string name="show_password">Onyesha nenosiri</string>
     <string name="hide_password">Ficha nenosiri</string>
     <string name="label_uploaded_documents">Nyaraka zilizopakiwa</string>
-    <string name="cd_color_swatch">Sampuli ya rangi</string>
     <string name="color_picker_hex_label">HEX</string>
     <string name="error_file_picker_unsupported">Kuchagua faili bado hakuwezekani kwenye jukwaa hili</string>
     <string name="browse_files">Vinjari faili</string>

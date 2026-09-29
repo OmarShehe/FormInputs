@@ -264,6 +264,7 @@ FormInputTheme(
 ) { /* the form */ }
 ```
 
+Build the `FormInputStrings` once (a top-level value or `remember`), not inline on every recomposition, so the form does not recompose needlessly.
 The app keeps its translations in its own resource files and passes them once; the library needs no extra resource files. A library string passed as a label, for example `labelRes = Res.string.select_date`, follows the override too. An app string
 with the same name as a library string does **not** replace it, because Compose Multiplatform keeps each module's resources separate. Labels,
 placeholders, errors, prefixes and suffixes are not part of `FormInputStrings`: they are set per input as plain strings.

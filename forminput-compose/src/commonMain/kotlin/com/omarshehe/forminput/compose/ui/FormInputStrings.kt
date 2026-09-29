@@ -12,6 +12,9 @@ import org.jetbrains.compose.resources.stringResource
  * you want to change. Provide it once with `FormInputTheme(FormInputDefaults(strings = FormInputStrings(...)))`; values
  * can come from the app's own string resources, for example `showPassword = stringResource(Res.string.my_show_password)`.
  *
+ * Build it once (a top-level value, or `remember`) rather than inline on every recomposition: an instance holding a new lambda
+ * each time counts as changed, and the whole form would recompose.
+ *
  * Labels, placeholders, errors, prefixes and suffixes are not here: they are set per input as plain strings.
  */
 @Immutable
