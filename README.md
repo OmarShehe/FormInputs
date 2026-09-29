@@ -197,4 +197,4 @@ commonMain.dependencies { implementation("com.github.OmarShehe:forminput-compose
 
 Breaking changes from 1.x: labels and placeholders are a `String` or a Compose `StringResource` (not an Android `@StringRes` Int),
 `FormInputButton(icon = Painter?)` replaces `iconResourceId`, and the dropdown gained `enabled` and `supportingText`.
-Strings ship in English and Swahili. Until it is on a public repository, run `./gradlew :forminput-compose:publishToMavenLocal`.
+Strings ship in English and Swahili. JitPack builds on Linux, so it publishes the Android and JVM artifacts only; the iOS artifacts need a macOS build. Until it is on a public repository, run `./gradlew :forminput-compose:publishToMavenLocal`.

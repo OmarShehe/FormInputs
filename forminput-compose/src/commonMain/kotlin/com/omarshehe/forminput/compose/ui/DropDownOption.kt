@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +43,8 @@ fun FormInputDropDownOption(
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val resultState by remember { mutableStateOf<FormInputResultState>(FormInputResultState.Idle(DROP_DOWN)) }
+    // A menu left open when the field is disabled must not pop back open when it is enabled again.
+    LaunchedEffect(enabled) { if (!enabled) expanded = false }
     val label = formInputData.labelValue.asText()
     // Keyed on the selected text so an external change (for example a cascade clearing this field) is shown.
     var textValueState by remember(formInputData.textValue) { mutableStateOf(TextFieldValue(text = formInputData.textValue)) }
