@@ -189,68 +189,113 @@ Button
 # Compose Multiplatform (forminput-compose 2.1.0)
 
 `forminput-compose` is a Kotlin Multiplatform library for Android, desktop JVM and iOS (arm64, simulator arm64), built on
-Compose Multiplatform 1.12 and Kotlin 2.4. Strings ship in English and Swahili.
+Compose Multiplatform 1.12 and Kotlin 2.4. Its own texts ship in English and Swahili, and an app can replace them (see
+[Your own texts or language](#your-own-texts-or-language)).
 
-```
+```kotlin
 commonMain.dependencies { implementation("com.github.OmarShehe:forminput-compose:2.1.0") }
 ```
 
+## Inputs
+
 | Input | Android | Desktop | iOS |
 |---|---|---|---|
-| `FormInputTextField` (text, number, phone, email, password, URL), `FormInputSearchField`, `FormInputImmutableTextField` | yes | yes | yes |
-| `FormInputDropDownField` (search, free text, `enabled`, `supportingText`) | yes | yes | yes |
+| `FormInputTextField` (text, number, phone, email, password, URL), `FormInputSearchField`, `FormInputImmutableTextField` (read-only) | yes | yes | yes |
+| `FormInputPriceField` (amount and currency), `FormInputPasswordField` (checklist and strength) | yes | yes | yes |
+| `FormInputDropDownField` (search, free text) | yes | yes | yes |
 | `FormInputDatePickerField`, `FormInputTimePickerField`, `FormInputDateTimePickerField`, `FormInputColorPickerField` | yes | yes | yes |
 | `FormInputButton`, `QuantityStepperControl` | yes | yes | yes |
 | `FormInputUploadDocument`, `FormInputUploadMultiDocument`, `FormInputUploadImage`, `ZoomableImageViewer` | yes | yes | shows, but picking a file reports "not supported" |
 
-`FormInputField(state, ...)` picks the right input for a state class. Labels are `StringResource`s (`labelRes`); the text field and the
-dropdown also accept plain runtime strings (`label`, `placeholder`, `error`). Dates are stored as `yyyy-MM-dd`, `HH:mm` and
-`yyyy-MM-dd HH:mm` and handled in UTC, so a stored date does not shift with the device time zone. An empty picker starts on the
-device's current day, and a picker whose value arrives late opens on that value.
+`FormInputField(state, ...)` picks the right input for a state class. The iOS target is compile-checked only; it has not been run on a device.
 
-Every input takes a `shape`, including the stepper and the file and image uploads. The text field, the dropdown and the
-date, time, date-time and colour pickers also take `style = FormInputFieldStyle.FILLED` (a tinted box with an underline, the old Compose look; the default is `OUTLINED`). For the full
-classic look pass `style = FILLED`, `Modifier.formInputModifier()` as the modifier and `formInputShape()` as the shape (rounded top
-corners, square bottom corners). The date, time, date-time and colour pickers take the same `style` and `shape`.
-`FormInputImmutableTextField` (the read-only field) takes `style` and `shape` too; without `style` it keeps the older `outlined` flag.
-`FormInputSearchField` keeps its compact pill look by default; pass `style` (and `shape`, `colors`) to draw it like the other fields, and
-use the `TextFieldValue` overload to control the cursor.
-To set `style` and `shape` once for a whole form, wrap it in `FormInputTheme(FormInputDefaults(style = FILLED, shape = formInputShape())) { ... }`;
-a `style` or `shape` passed to an input still wins, and a null default leaves that input as it was (including the search pill).
-The stepper and the file and image uploads take `style` and `colors` too, drawn with the same outline or filled box as the text fields
-(without either they keep their own look; `FormInputTheme` applies to them as well). `FormInputTextField` also takes `enabled`, `readOnly`,
-`textStyle`, `keyboardOptions`, `keyboardActions`, `visualTransformation` and custom `leadingIcon` / `trailingIcon` (a custom trailing icon
-replaces the password toggle). `FormInputDropDownField` takes `textStyle`, `leadingIcon`, `menuShape`, `menuContainerColor`, `maxMenuHeight` and
-an `itemContent` slot. `FormInputSearchField` takes `enabled` and `onSearch` (the keyboard's search action). The pickers take `dialogShape` and
-`dialogContainerColor`; so does the colour picker for its popup.
-The date, time, date-time and colour pickers also take `colors`, `enabled`, `supportingText` and `fieldModifier`; the colour picker has an
-overload with a plain-string `label`. The picker, file and image states take plain-string `label`, `placeholder` and `error` like the text field.
-`FormInputTextFieldState` takes plain-string `prefix` and `suffix` (shown dimmed; Material draws them once the field is focused or has text).
-The styled search field has no floating label, only its placeholder. A runtime `error` on a dropdown is shown as written.
-`formInputModifier(padding = ...)` sets the spacing around a field; pass `PaddingValues(0.dp)` inside a screen that already pads its content.
-`FormInputTextField` also has an overload that takes a hoisted `TextFieldValue`
-(`FormInputTextField(state, value, onValueChange)`), so you control the text, cursor and selection; input is still filtered by the
-state's type, `maxChar` and `autoCapitalize`. The `:app` sample opens on a
-launcher screen with two choices: a Compose demo of every input (with a "Classic style" switch) and the old View-based sample.
+## Labels, values and dates
 
-**Price field.** `FormInputPriceField(state = FormInputPriceState(id, currency = "TSH", currencies = listOf("TSH", "USD")), onValueChange)` is an amount with a
-currency dropdown, like the View library's price box. The amount keeps digits and one dot, at most `maxIntegerDigits` whole digits and
-`maxDecimals` decimals (`state.amount` is the plain number). Options: `currencyPlacement` (START or END), `groupThousands` (shows 1,234,567 without
-changing the stored text), `currencyLabel`, `currencyContent`, `currencyTextStyle`, `menuShape`, `menuContainerColor`, plus the text field's `style`,
-`shape`, `colors`, `enabled`, `readOnly`, `textStyle` and `contentPadding`. With one currency the selector is plain text.
+- A field's name is the state's `labelRes` (a `StringResource`) or a plain runtime string: `label`, `placeholder` and `error`, on the text,
+  price, password, dropdown, picker and upload states. The plain strings win when both are set.
+- Dates are stored as `yyyy-MM-dd`, `HH:mm` and `yyyy-MM-dd HH:mm` and handled in UTC, so a stored date does not shift with the device time
+  zone. An empty picker starts on the device's current day, and a picker whose value arrives late opens on that value.
+- `FormInputTextField` also has an overload that takes a hoisted `TextFieldValue` (`FormInputTextField(state, value, onValueChange)`), so you
+  control the text, cursor and selection; input is still filtered by the state's type, `maxChar` and `autoCapitalize`. `FormInputSearchField`
+  has the same overload.
+- `FormInputTextFieldState` takes plain-string `prefix` and `suffix` (shown dimmed). Material draws them once the field is focused or has text.
 
-**Password field.** `FormInputPasswordField(state = FormInputPasswordState(id, label = "Password"), onValueChange)` has a show/hide toggle, a requirement
-checklist and a strength bar. Everything is configurable: `rules` (default: upper case, special character, number, 8 characters; `emptyList()` for none;
-build your own with `PasswordRule` or `PasswordRules.minLength/upperCase/lowerCase/digit/special/...`), `rulesVisibility` (ALWAYS, WHEN_FOCUSED,
-WHEN_NOT_EMPTY, NEVER), `rulesTitle`, `ruleContent` (draw a row yourself), `showStrength`, `strengthLabels`, `passwordColors`, `strengthOf` (your own scoring),
-`strengthContent` (your own view), `confirmWith` and `mismatchMessage` (a "must match" field), `maskCharacter`, `allowReveal`, `initiallyRevealed`,
-`revealIcon`, `hideIcon`, `leadingIcon`, `imeAction`, and `onValidityChange` (true once every rule is met and the match passes, for enabling a submit
-button), plus the text field's `style`, `shape`, `colors`, `enabled`, `textStyle` and `contentPadding`. A `visualTransformation` passed to
-`FormInputTextField` turns off its built-in password toggle.
+## Style, shape and colours
 
-**Your own texts or language.** The texts the library draws itself (OK, Cancel, Next, Back, Delete, the date, time and currency button descriptions, the
-search hint and clear button, the upload prompts, the show and hide password buttons, the password checklist and strength words, and so on) can be replaced
-through `FormInputStrings`. Every field is null by default and a null field keeps the built-in English or Swahili text, so set only what you need:
+Every field takes a `shape`. These take `style = FormInputFieldStyle.OUTLINED` (the default) or `FILLED` (a tinted box with an underline,
+the old Compose look): the text, price and password fields, the dropdown, the four pickers, the read-only field, the search field, the stepper and
+the file and image uploads. The stepper and uploads share one container with the fields, so they match them in either style.
+
+| Option | Where |
+|---|---|
+| `colors` (`TextFieldColors`) | text, price and password fields, dropdown, the four pickers, search field (once it has a `style`), stepper, uploads |
+| `enabled` | text, price, password, dropdown, the four pickers, search |
+| `supportingText` | dropdown and the four pickers; drawn **below** the field, and an error replaces it |
+| `fieldModifier` | dropdown and the four pickers (the modifier for the field itself, `modifier` is for the whole input) |
+| `dialogShape`, `dialogContainerColor` | the date, time, date-time and colour pickers (the colour one for its popup) |
+
+- **Whole form at once:** `FormInputTheme(FormInputDefaults(style = FILLED, shape = formInputShape())) { ... }` sets `style` and `shape` for every input
+  inside, including the stepper and uploads. A `style` or `shape` passed to an input wins, and a null default leaves that input as it was.
+- **The old classic look:** `style = FILLED`, `Modifier.formInputModifier()` as the modifier and `formInputShape()` as the shape (rounded top
+  corners, square bottom corners). `formInputModifier(padding = ...)` sets the spacing around a field; pass `PaddingValues(0.dp)` inside a
+  screen that already pads its content.
+- **Read-only field:** without `style` it keeps the older `outlined` flag. **Search field:** keeps its compact pill by default; pass `style` to
+  draw it like the other fields (it then shows only its placeholder, no floating label).
+- **Spacing:** Material's outlined text field keeps half a label's height free above its border. The dropdown, pickers, read-only and colour
+  fields give that space back, so every field is the same distance from its neighbours. Use `Modifier.trimOutlinedLabelSpace(hasLabel)` if you
+  build another field on `OutlinedTextField`.
+
+## More options per input
+
+- **`FormInputTextField`:** `enabled`, `readOnly`, `textStyle`, `keyboardOptions`, `keyboardActions`, `visualTransformation`, `contentPadding`,
+  and custom `leadingIcon` / `trailingIcon` (a custom trailing icon replaces the password toggle, and so does passing a
+  `visualTransformation`).
+- **`FormInputDropDownField`:** `textStyle`, `leadingIcon`, `menuShape`, `menuContainerColor`, `maxMenuHeight` and an `itemContent` slot. A runtime
+  `error` is shown as written.
+- **`FormInputSearchField`:** `enabled` and `onSearch` (the keyboard's search action).
+- **`FormInputColorPickerField`:** an overload with a plain-string `label`.
+
+## Price field
+
+```kotlin
+var price by remember {
+    mutableStateOf(FormInputPriceState(id = "price", currency = "TSH", currencies = listOf("TSH", "USD"), label = "Price"))
+}
+FormInputPriceField(state = price, onValueChange = { price = it }, groupThousands = true)
+```
+
+An amount with a currency dropdown, like the View library's price box. `state.amount` is the plain number: digits and one dot, at most
+`maxIntegerDigits` whole digits and `maxDecimals` decimals (a leading dot becomes `0.`, leading zeros are dropped). Options:
+`currencyPlacement` (START or END), `groupThousands` (shows 1,234,567 without changing the stored text), `currencyLabel`, `currencyContent`,
+`currencyTextStyle`, `menuShape`, `menuContainerColor`, plus the text field's `style`, `shape`, `colors`, `enabled`, `readOnly`, `textStyle` and
+`contentPadding`. With one currency the selector is plain text; with several it is a dropdown pill that is fully tappable.
+
+## Password field
+
+```kotlin
+var password by remember { mutableStateOf(FormInputPasswordState(id = "pw", label = "Password")) }
+var confirm by remember { mutableStateOf(FormInputPasswordState(id = "pw2", label = "Confirm password")) }
+FormInputPasswordField(state = password, onValueChange = { password = it }, onValidityChange = { canSubmit = it })
+FormInputPasswordField(state = confirm, onValueChange = { confirm = it }, confirmWith = password.value, rules = emptyList(), showStrength = false)
+```
+
+A show/hide toggle, a requirement checklist and a strength bar. Everything is configurable:
+
+- **Rules:** `rules` (default: an upper case letter, a special character, a number, 8 characters; `emptyList()` for none). Build your own
+  with `PasswordRule("text") { it.length > 3 }` or `PasswordRules.minLength / maxLength / upperCase / lowerCase / digit / special / noWhitespace`.
+  `rulesVisibility` is ALWAYS, WHEN_FOCUSED, WHEN_NOT_EMPTY or NEVER; `rulesTitle` replaces the heading; `ruleContent` draws a row yourself.
+- **Strength:** `showStrength`, `strengthLabels`, `passwordColors`, `strengthOf` (your own scoring) and `strengthContent` (your own view).
+  `passwordStrength(value, rules)` is also public.
+- **Match check:** `confirmWith` (the other password) and `mismatchMessage`.
+- **Toggle and mask:** `maskCharacter`, `allowReveal`, `initiallyRevealed`, `revealIcon`, `hideIcon`, `leadingIcon`, `imeAction`.
+- **Validity:** `onValidityChange` reports true once every rule is met and the match check passes, for enabling a submit button.
+- Plus the text field's `style`, `shape`, `colors`, `enabled`, `textStyle` and `contentPadding`.
+
+## Your own texts or language
+
+The texts the library draws itself (OK, Cancel, Next, Back, Delete, the date, time and currency button descriptions, the search hint and clear
+button, the upload prompts, the show and hide password buttons, the password checklist and strength words, and so on) can be replaced through
+`FormInputStrings`. Every field is null by default and a null field keeps the built-in English or Swahili text, so set only what you need:
 
 ```kotlin
 FormInputTheme(
@@ -258,21 +303,34 @@ FormInputTheme(
         strings = FormInputStrings(
             ok = stringResource(Res.string.my_ok),          // from the app's own string resources, so any language works
             showPassword = "Afficher le mot de passe",
-            passwordRuleMinLength = { "Au moins $it caracteres" },
+            passwordRuleMinLength = { "Au moins $it caractères" },
         ),
     ),
 ) { /* the form */ }
 ```
 
-Build the `FormInputStrings` once (a top-level value or `remember`), not inline on every recomposition, so the form does not recompose needlessly.
-The app keeps its translations in its own resource files and passes them once; the library needs no extra resource files. A library string passed as a label, for example `labelRes = Res.string.select_date`, follows the override too. An app string
-with the same name as a library string does **not** replace it, because Compose Multiplatform keeps each module's resources separate. Labels,
-placeholders, errors, prefixes and suffixes are not part of `FormInputStrings`: they are set per input as plain strings.
+- The app keeps its translations in its own resource files and passes them once; the library needs no extra resource files.
+- Build the `FormInputStrings` once (a top-level value or `remember`), not inline on every recomposition, so the form does not recompose needlessly.
+- A library string passed as a label, for example `labelRes = Res.string.select_date`, follows the override too.
+- An app string with the same name as a library string does **not** replace it, because Compose Multiplatform keeps each module's resources separate.
+- Labels, placeholders, errors, prefixes and suffixes are not part of `FormInputStrings`: they are set per input as plain strings.
+- The Swahili wording has not been reviewed by a native speaker.
 
-Coil is used only by the image upload field and the image viewer; loading images from a URL needs a Coil network module in your app
-(for example `coil-network-ktor3`). The iOS target is compile-checked only; it has not been run on a device.
+## Demo app, tests and publishing
 
-Breaking changes from the unreleased 2.0.0: the API now follows FleetIQ's form inputs (`state` parameter, `StringResource` labels,
-outlined fields), and the old self-validating text field, `FormInputResultState` and password-strength helpers are gone. JitPack builds
-on Linux, so it can publish the Android and JVM artifacts only; the iOS artifacts need a macOS build. Until it is on a public
-repository, run `./gradlew :forminput-compose:publishToMavenLocal`.
+- The `:app` sample opens on a launcher with two choices: a Compose demo of every input (with a "Classic style" switch and an "Own texts" switch
+  that shows `FormInputStrings` in French) and the old View-based sample. Install it with `./gradlew :app:installDebug`.
+- Run the library tests with `./gradlew :forminput-compose:jvmTest` (desktop UI tests and the pure logic tests). Compile-check all targets with
+  `:forminput-compose:compileAndroidMain`, `compileKotlinIosArm64` and `compileKotlinIosSimulatorArm64`.
+- Coil is used only by the image upload field and the image viewer; loading images from a URL needs a Coil network module in your app (for
+  example `coil-network-ktor3`).
+- Breaking changes from the unreleased 2.0.0: the API now follows FleetIQ's form inputs (`state` parameter, `StringResource` labels, outlined
+  fields), and the old self-validating text field, `FormInputResultState` and password-strength helpers are gone.
+- JitPack builds on Linux, so it can publish the Android and JVM artifacts only; the iOS artifacts need a macOS build. Until it is on a public
+  repository, run `./gradlew :forminput-compose:publishToMavenLocal`.
+
+## For AI coding assistants
+
+`.claude/skills/use-forminput-compose/` holds a skill (`SKILL.md`, plus a `reference.md` API cheat sheet) that teaches an assistant such as Claude Code how
+to use this library: which input to pick, the state pattern, styling, form-wide defaults, custom texts and the common mistakes. Copy the folder into
+another project's `.claude/skills/` to use it there.

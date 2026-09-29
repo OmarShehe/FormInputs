@@ -4,3 +4,5 @@
 local.properties
 .kotlin/
 build/
+# Local workflow notes (tickets, specs, context) stay on disk and out of the repository.
+.ai/
