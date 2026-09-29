@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.window.PopupProperties
 import org.jetbrains.compose.resources.stringResource
 import com.omarshehe.forminput.compose.ui.composables.FormInputLabel
+import com.omarshehe.forminput.compose.ui.composables.PickerSupportingText
 import com.omarshehe.forminput.compose.ui.composables.resolvedError
 import com.omarshehe.forminput.compose.ui.composables.resolvedLabel
 import com.omarshehe.forminput.compose.ui.composables.resolvedPlaceholder
@@ -128,7 +129,6 @@ fun FormInputDropDownField(
                             )
                             .fillMaxWidth(),
                         enabled = enabled,
-                        supportingText = supportingText?.let { { Text(it) } },
                         isError = state.hasError,
                         readOnly = !editable,
                         singleLine = true,
@@ -168,7 +168,6 @@ fun FormInputDropDownField(
                             )
                             .fillMaxWidth(),
                         enabled = enabled,
-                        supportingText = supportingText?.let { { Text(it) } },
                         isError = state.hasError,
                         readOnly = !editable,
                         singleLine = true,
@@ -202,8 +201,7 @@ fun FormInputDropDownField(
                 if (!editable && enabled) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(TextFieldDefaults.MinHeight)
+                            .matchParentSize()
                             .clip(fieldShape)
                             .clickable { expanded = !expanded }
                             .pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
@@ -240,6 +238,7 @@ fun FormInputDropDownField(
                 }
             }
         }
+        PickerSupportingText(hasError = false, error = null, hint = supportingText)
         if (state.hasError) {
             // A runtime error is shown as written, like the text field; a resource error keeps the "<label> <error>" form.
             val error = if (state.error != null) errorText.orEmpty() else "${labelText.orEmpty()} ${errorText.orEmpty()}"

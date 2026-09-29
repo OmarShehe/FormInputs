@@ -136,9 +136,9 @@ private val frenchStrings = FormInputStrings(
     clickToUpload = "Touchez pour choisir un fichier", uploadedDocuments = "Documents",
     showPassword = "Afficher le mot de passe", hidePassword = "Masquer le mot de passe",
     passwordRulesTitle = "Votre mot de passe doit :", passwordRuleUpperCase = "Contenir une majuscule",
-    passwordRuleSpecial = "Contenir un caractere special", passwordRuleDigit = "Contenir un chiffre",
-    passwordRuleMinLength = { "Avoir au moins $it caracteres" }, passwordMismatch = "Les mots de passe ne correspondent pas",
-    strengthWeak = "Faible", strengthMedium = "Moyen", strengthStrong = "Fort", strengthVeryStrong = "Tres fort",
+    passwordRuleSpecial = "Contenir un caractère spécial", passwordRuleDigit = "Contenir un chiffre",
+    passwordRuleMinLength = { "Avoir au moins $it caractères" }, passwordMismatch = "Les mots de passe ne correspondent pas",
+    strengthWeak = "Faible", strengthMedium = "Moyen", strengthStrong = "Fort", strengthVeryStrong = "Très fort",
 )
 
 private class FieldStyle(val modifier: Modifier, val shape: Shape, val kind: FormInputFieldStyle)
@@ -195,18 +195,18 @@ private fun TextFields(classic: Boolean) = Section("Text fields") {
         style = style.kind,
         state = name.t("Full name", "Nom complet"),
         onValueChange = { name = it.copy(hasError = it.value.isBlank(), error = "Required") })
-    FormInputTextField(modifier = style.modifier, shape = style.shape, style = style.kind, state = number.t("Amount (prefix)", "Montant (prefixe)"), onValueChange = { number = it })
+    FormInputTextField(modifier = style.modifier, shape = style.shape, style = style.kind, state = number.t("Amount (prefix)", "Montant (préfixe)"), onValueChange = { number = it })
     FormInputTextField(modifier = style.modifier, shape = style.shape, style = style.kind, state = weight.t("Weight (suffix)", "Poids (suffixe)"), onValueChange = { weight = it })
-    FormInputTextField(modifier = style.modifier, shape = style.shape, style = style.kind, state = phone.t("Phone (digits and +)", "Telephone (chiffres et +)"), onValueChange = { phone = it })
+    FormInputTextField(modifier = style.modifier, shape = style.shape, style = style.kind, state = phone.t("Phone (digits and +)", "Téléphone (chiffres et +)"), onValueChange = { phone = it })
     FormInputTextField(modifier = style.modifier, shape = style.shape, style = style.kind, state = email.t("Email", "E-mail"), onValueChange = { email = it })
     FormInputTextField(modifier = style.modifier, shape = style.shape, style = style.kind, state = password.t("Password", "Mot de passe"), onValueChange = { password = it })
     FormInputTextField(modifier = style.modifier, shape = style.shape, style = style.kind, state = code.t("Code (capitals, max 6)", "Code (majuscules, 6 max)"), onValueChange = { code = it })
-    FormInputTextField(modifier = style.modifier, shape = style.shape, style = style.kind, state = about.t("About you", "A propos de vous"), onValueChange = { about = it })
+    FormInputTextField(modifier = style.modifier, shape = style.shape, style = style.kind, state = about.t("About you", "À propos de vous"), onValueChange = { about = it })
     FormInputTextField(
         modifier = style.modifier,
         shape = style.shape,
         style = style.kind,
-        state = field("off", "Disabled", FormInputType.TEXT) { it.copy(value = "Cannot be edited") }.t("Disabled", "Desactive"),
+        state = field("off", "Disabled", FormInputType.TEXT) { it.copy(value = "Cannot be edited") }.t("Disabled", "Désactivé"),
         enabled = false,
     )
     var query by remember { mutableStateOf(field("q", "Search", FormInputType.TEXT)) }
@@ -250,7 +250,7 @@ private fun PriceAndPassword(classic: Boolean) = Section("Price and password") {
         groupThousands = true,
     )
     FormInputPriceField(
-        state = deposit.copy(label = tr("Deposit (currency at the end)", "Acompte (devise a la fin)")), onValueChange = { deposit = it }, modifier = style.modifier, shape = style.shape, style = style.kind,
+        state = deposit.copy(label = tr("Deposit (currency at the end)", "Acompte (devise à la fin)")), onValueChange = { deposit = it }, modifier = style.modifier, shape = style.shape, style = style.kind,
         currencyPlacement = CurrencyPlacement.END,
     )
     FormInputPasswordField(

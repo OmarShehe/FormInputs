@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +45,7 @@ import com.omarshehe.forminput.compose.ui.model.FormInputType
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 import com.omarshehe.forminput.compose.ui.utils.ThousandsSeparatorTransformation
 import com.omarshehe.forminput.compose.ui.utils.sanitizeAmount
+import com.omarshehe.forminput.compose.ui.utils.withCleanedText
 import org.jetbrains.compose.resources.stringResource
 
 /** Which side of the amount the currency selector sits on. */
@@ -101,7 +103,7 @@ fun FormInputPriceField(
             Row(
                 modifier = Modifier
                     .clip(RoundedCornerShape(Dimens.oneGrid))
-                    .clickable(enabled = canPick) { menuOpen = true }
+                    .clickable(enabled = canPick, role = Role.DropdownList) { menuOpen = true }
                     .defaultMinSize(minHeight = Dimens.fiveGrid)
                     .padding(horizontal = Dimens.oneAndHalfGrid),
                 verticalAlignment = Alignment.CenterVertically,
@@ -164,11 +166,7 @@ fun FormInputPriceField(
         onValueChange = { typed ->
             val amount = sanitizeAmount(typed.text, state.maxIntegerDigits, state.maxDecimals)
             if (amount != null) {
-                textValue = if (amount == typed.text) {
-                    typed
-                } else {
-                    typed.copy(text = amount, selection = TextRange(amount.length))
-                }
+                textValue = if (amount == typed.text) typed else typed.withCleanedText(amount)
                 if (amount != state.amount) onValueChange(state.copy(amount = amount))
             }
         },

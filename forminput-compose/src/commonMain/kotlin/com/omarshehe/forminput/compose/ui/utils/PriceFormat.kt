@@ -2,6 +2,8 @@ package com.omarshehe.forminput.compose.ui.utils
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 
@@ -33,6 +35,16 @@ fun sanitizeAmount(input: String, maxIntegerDigits: Int, maxDecimals: Int): Stri
     val normalisedWhole = if (trimmed.isNotEmpty()) trimmed else if (whole.isNotEmpty() || dot >= 0) "0" else ""
 
     return if (dot < 0) normalisedWhole else "$normalisedWhole.$fraction"
+}
+
+/**
+ * This value with its text replaced by [cleaned] (after [sanitizeAmount] dropped or added characters), moving the cursor by the
+ * change in length so an edit in the middle does not throw it to the end. Assumes the change happened before the cursor.
+ */
+fun TextFieldValue.withCleanedText(cleaned: String): TextFieldValue {
+    val shift = text.length - cleaned.length
+    fun moved(offset: Int) = (offset - shift).coerceIn(0, cleaned.length)
+    return copy(text = cleaned, selection = TextRange(moved(selection.start), moved(selection.end)), composition = null)
 }
 
 /** Shows the whole part of an amount in groups of three ("1234567.5" as "1,234,567.5") without changing the stored text. */

@@ -88,4 +88,17 @@ class PriceAndPasswordHelpersTest {
         assertEquals(true, PasswordRules.maxLength(3, "").isMet("abc"))
         assertEquals(false, PasswordRules.maxLength(3, "").isMet("abcd"))
     }
+
+    @Test
+    fun cursorFollowsTheChangeInLengthWhenTheTextIsCleaned() {
+        // "007" typed with the cursor at the end becomes "7": the cursor stays at the end.
+        val typed = androidx.compose.ui.text.input.TextFieldValue("007", androidx.compose.ui.text.TextRange(3))
+        assertEquals(androidx.compose.ui.text.TextRange(1), typed.withCleanedText("7").selection)
+        // ".5" becomes "0.5": a zero was added in front, so the cursor moves one place right.
+        val dot = androidx.compose.ui.text.input.TextFieldValue(".5", androidx.compose.ui.text.TextRange(1))
+        assertEquals(androidx.compose.ui.text.TextRange(2), dot.withCleanedText("0.5").selection)
+        // A cursor that would fall outside the new text is kept inside it.
+        val far = androidx.compose.ui.text.input.TextFieldValue("00", androidx.compose.ui.text.TextRange(0))
+        assertEquals(androidx.compose.ui.text.TextRange(0), far.withCleanedText("0").selection)
+    }
 }

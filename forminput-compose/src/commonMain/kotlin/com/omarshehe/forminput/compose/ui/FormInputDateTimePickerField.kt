@@ -38,6 +38,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.omarshehe.forminput.compose.ui.composables.PickerSupportingText
+import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
@@ -56,7 +58,6 @@ import com.omarshehe.forminput.compose.ui.model.FormInputDateTimePickerState
 import com.omarshehe.forminput.compose.ui.composables.resolvedPlaceholder
 import com.omarshehe.forminput.compose.ui.composables.resolvedLabel
 import com.omarshehe.forminput.compose.ui.composables.resolvedError
-import com.omarshehe.forminput.compose.ui.composables.pickerSupportingText
 import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
 import com.omarshehe.forminput.compose.ui.utils.DateUtils
 import com.omarshehe.forminput.compose.ui.utils.utcYear
@@ -192,134 +193,135 @@ private fun DateTimePickerField(
 
     val hasLabelSpace = label != null
 
-    Box(modifier = modifier) {
-        if (filled) {
-            TextField(
-                value = textValueState,
-                onValueChange = { newValueState ->
-                    textValueState = newValueState
-                    if (isManualEditable && newValueState.text != value) {
-                        onValueChange(newValueState.text)
-                    }
-                },
-                readOnly = !isManualEditable,
-                enabled = enabled,
-                label = label?.let { { Text(if (isMandatory) "$it${Symbols.MANDATORY_SYMBOL}" else it) } },
-                placeholder = placeholder?.let { { Text(it) } },
-                trailingIcon = {
-                    IconButton(onClick = { showDatePicker = true }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.EventNote,
-                            contentDescription = formInputString(FormInputStrings::selectDateTime, Res.string.select_date_time),
-                            modifier = Modifier.size(Dimens.twoAndHalfGrid),
-                        )
-                    }
-                },
-                isError = hasError,
-                supportingText = pickerSupportingText(hasError, error, supportingText),
-                modifier = fieldModifier.fillMaxWidth(),
-                shape = fieldShape,
-                colors = colors ?: TextFieldDefaults.colors(),
-            )
-        } else {
-            OutlinedTextField(
-                value = textValueState,
-                onValueChange = { newValueState ->
-                    textValueState = newValueState
-                    if (isManualEditable && newValueState.text != value) {
-                        onValueChange(newValueState.text)
-                    }
-                },
-                readOnly = !isManualEditable,
-                enabled = enabled,
-                label = label?.let { { Text(if (isMandatory) "$it${Symbols.MANDATORY_SYMBOL}" else it) } },
-                placeholder = placeholder?.let { { Text(it) } },
-                trailingIcon = {
-                    IconButton(onClick = { showDatePicker = true }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.EventNote,
-                            contentDescription = formInputString(FormInputStrings::selectDateTime, Res.string.select_date_time),
-                            modifier = Modifier.size(Dimens.twoAndHalfGrid),
-                        )
-                    }
-                },
-                isError = hasError,
-                supportingText = pickerSupportingText(hasError, error, supportingText),
-                modifier = fieldModifier.trimOutlinedLabelSpace(hasLabelSpace).fillMaxWidth(),
-                shape = fieldShape,
-                colors = colors ?: OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline,
-                ),
-            )
-        }
-        if (!isManualEditable && enabled) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(TextFieldDefaults.MinHeight)
-                    .clip(fieldShape)
-                    .clickable { showDatePicker = true }
-                    .pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
-            )
-        }
-
-        if (showDatePicker) {
-            DatePickerDialog(
-                onDismissRequest = { showDatePicker = false },
-                shape = dialogShape ?: MaterialTheme.shapes.large,
-                colors = dialogContainerColor?.let { DatePickerDefaults.colors(containerColor = it) } ?: DatePickerDefaults.colors(),
-                confirmButton = {
-                    TextButton(onClick = {
-                        showDatePicker = false
-                        showTimePicker = true
-                    }) {
-                        Text(formInputString(FormInputStrings::next, Res.string.next))
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showDatePicker = false }) {
-                        Text(formInputString(FormInputStrings::cancel, Res.string.cancel))
-                    }
-                },
-            ) {
-                DatePicker(state = datePickerState)
+    Column(modifier = modifier) {
+        Box {
+            if (filled) {
+                TextField(
+                    value = textValueState,
+                    onValueChange = { newValueState ->
+                        textValueState = newValueState
+                        if (isManualEditable && newValueState.text != value) {
+                            onValueChange(newValueState.text)
+                        }
+                    },
+                    readOnly = !isManualEditable,
+                    enabled = enabled,
+                    label = label?.let { { Text(if (isMandatory) "$it${Symbols.MANDATORY_SYMBOL}" else it) } },
+                    placeholder = placeholder?.let { { Text(it) } },
+                    trailingIcon = {
+                        IconButton(onClick = { showDatePicker = true }) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.EventNote,
+                                contentDescription = formInputString(FormInputStrings::selectDateTime, Res.string.select_date_time),
+                                modifier = Modifier.size(Dimens.twoAndHalfGrid),
+                            )
+                        }
+                    },
+                    isError = hasError,
+                    modifier = fieldModifier.fillMaxWidth(),
+                    shape = fieldShape,
+                    colors = colors ?: TextFieldDefaults.colors(),
+                )
+            } else {
+                OutlinedTextField(
+                    value = textValueState,
+                    onValueChange = { newValueState ->
+                        textValueState = newValueState
+                        if (isManualEditable && newValueState.text != value) {
+                            onValueChange(newValueState.text)
+                        }
+                    },
+                    readOnly = !isManualEditable,
+                    enabled = enabled,
+                    label = label?.let { { Text(if (isMandatory) "$it${Symbols.MANDATORY_SYMBOL}" else it) } },
+                    placeholder = placeholder?.let { { Text(it) } },
+                    trailingIcon = {
+                        IconButton(onClick = { showDatePicker = true }) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.EventNote,
+                                contentDescription = formInputString(FormInputStrings::selectDateTime, Res.string.select_date_time),
+                                modifier = Modifier.size(Dimens.twoAndHalfGrid),
+                            )
+                        }
+                    },
+                    isError = hasError,
+                    modifier = fieldModifier.trimOutlinedLabelSpace(hasLabelSpace).fillMaxWidth(),
+                    shape = fieldShape,
+                    colors = colors ?: OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline,
+                    ),
+                )
             }
-        }
-
-        if (showTimePicker) {
-            DatePickerDialog(
-                onDismissRequest = { showTimePicker = false },
-                shape = dialogShape ?: MaterialTheme.shapes.large,
-                colors = dialogContainerColor?.let { DatePickerDefaults.colors(containerColor = it) } ?: DatePickerDefaults.colors(),
-                confirmButton = {
-                    TextButton(onClick = {
-                        val date = datePickerState.selectedDateMillis ?: todayUtcMidnightMillis()
-                        onValueChange(formatDateTime(date, timePickerState.hour, timePickerState.minute))
-                        showTimePicker = false
-                    }) {
-                        Text(formInputString(FormInputStrings::ok, Res.string.ok))
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = {
-                        showTimePicker = false
-                        showDatePicker = true
-                    }) {
-                        Text(formInputString(FormInputStrings::back, Res.string.back))
-                    }
-                },
-            ) {
+            if (!isManualEditable && enabled) {
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clip(fieldShape)
+                        .clickable { showDatePicker = true }
+                        .pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
+                )
+            }
+
+            if (showDatePicker) {
+                DatePickerDialog(
+                    onDismissRequest = { showDatePicker = false },
+                    shape = dialogShape ?: MaterialTheme.shapes.large,
+                    colors = dialogContainerColor?.let { DatePickerDefaults.colors(containerColor = it) } ?: DatePickerDefaults.colors(),
+                    confirmButton = {
+                        TextButton(onClick = {
+                            showDatePicker = false
+                            showTimePicker = true
+                        }) {
+                            Text(formInputString(FormInputStrings::next, Res.string.next))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDatePicker = false }) {
+                            Text(formInputString(FormInputStrings::cancel, Res.string.cancel))
+                        }
+                    },
                 ) {
-                    TimePicker(
-                        state = timePickerState,
-                        modifier = Modifier.padding(top = Dimens.twoGrid),
-                    )
+                    DatePicker(state = datePickerState)
                 }
             }
+
+            if (showTimePicker) {
+                DatePickerDialog(
+                    onDismissRequest = { showTimePicker = false },
+                    shape = dialogShape ?: MaterialTheme.shapes.large,
+                    colors = dialogContainerColor?.let { DatePickerDefaults.colors(containerColor = it) } ?: DatePickerDefaults.colors(),
+                    confirmButton = {
+                        TextButton(onClick = {
+                            val date = datePickerState.selectedDateMillis ?: todayUtcMidnightMillis()
+                            onValueChange(formatDateTime(date, timePickerState.hour, timePickerState.minute))
+                            showTimePicker = false
+                        }) {
+                            Text(formInputString(FormInputStrings::ok, Res.string.ok))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            showTimePicker = false
+                            showDatePicker = true
+                        }) {
+                            Text(formInputString(FormInputStrings::back, Res.string.back))
+                        }
+                    },
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        TimePicker(
+                            state = timePickerState,
+                            modifier = Modifier.padding(top = Dimens.twoGrid),
+                        )
+                    }
+                }
+            }
+    
         }
+        PickerSupportingText(hasError, error, supportingText)
     }
 }
