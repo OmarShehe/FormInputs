@@ -31,16 +31,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.TextFieldColors
+import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
+import com.omarshehe.forminput.compose.ui.composables.formInputContainer
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.omarshehe.forminput.compose.resources.Res
 import com.omarshehe.forminput.compose.resources.label_uploaded_documents
+import com.omarshehe.forminput.compose.resources.browse_files
 import org.jetbrains.compose.resources.stringResource
 import com.omarshehe.forminput.compose.ui.model.FormInputFileState
 import com.omarshehe.forminput.compose.ui.model.FormInputFileType
 import com.omarshehe.forminput.compose.ui.model.FormInputMultiFileState
+import com.omarshehe.forminput.compose.ui.composables.resolvedPlaceholder
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 import com.omarshehe.forminput.compose.ui.utils.FilePicker
 import com.omarshehe.forminput.compose.ui.utils.FileUtils
@@ -50,7 +56,11 @@ fun FormInputUploadMultiDocument(
     state: FormInputMultiFileState,
     onValueChange: (FormInputMultiFileState) -> Unit,
     modifier: Modifier = Modifier,
+    shape: Shape? = null,
+    style: FormInputFieldStyle? = null,
+    colors: TextFieldColors? = null,
 ) {
+    val boxShape = shape ?: LocalFormInputDefaults.current.shape ?: RoundedCornerShape(Dimens.oneGrid)
     var showFilePicker by remember { mutableStateOf(false) }
 
     FilePicker(
@@ -77,13 +87,14 @@ fun FormInputUploadMultiDocument(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp)
-                .clip(RoundedCornerShape(Dimens.oneGrid))
-                .border(
-                    width = Dimens.stroke,
-                    color = colorScheme.outlineVariant.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(Dimens.oneGrid),
+                .formInputContainer(
+                    shape = boxShape,
+                    style = style,
+                    colors = colors,
+                    hasError = state.hasError,
+                    defaultBorder = colorScheme.outlineVariant.copy(alpha = 0.5f),
+                    defaultBackground = colorScheme.surfaceVariant.copy(alpha = 0.1f),
                 )
-                .background(colorScheme.surfaceVariant.copy(alpha = 0.1f))
                 .clickable { showFilePicker = true },
             contentAlignment = Alignment.Center,
         ) {
@@ -96,7 +107,7 @@ fun FormInputUploadMultiDocument(
                 )
                 Spacer(Modifier.height(Dimens.oneGrid))
                 Text(
-                    text = state.placeholderRes?.let { stringResource(it) } ?: "Browse Files",
+                    text = state.resolvedPlaceholder() ?: formInputString(FormInputStrings::browseFiles, Res.string.browse_files),
                     style = typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     color = colorScheme.onSurface,
@@ -108,7 +119,7 @@ fun FormInputUploadMultiDocument(
         if (state.values.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(Dimens.oneGrid)) {
                 Text(
-                    text = stringResource(Res.string.label_uploaded_documents),
+                    text = formInputString(FormInputStrings::uploadedDocuments, Res.string.label_uploaded_documents),
                     style = typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = colorScheme.onSurfaceVariant,
@@ -117,6 +128,7 @@ fun FormInputUploadMultiDocument(
                 state.values.forEachIndexed { index, file ->
                     FileListItem(
                         file = file,
+                        shape = boxShape,
                         onDelete = {
                             val newList = state.values.toMutableList().apply { removeAt(index) }
                             onValueChange(state.copy(values = newList))
@@ -131,12 +143,13 @@ fun FormInputUploadMultiDocument(
 @Composable
 private fun FileListItem(
     file: FormInputFileState.FileUploadValue,
+    shape: Shape,
     onDelete: () -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceVariant.copy(alpha = 0.3f)),
-        shape = RoundedCornerShape(Dimens.oneGrid),
+        shape = shape,
     ) {
         Row(
             modifier = Modifier.padding(Dimens.oneAndHalfGrid),

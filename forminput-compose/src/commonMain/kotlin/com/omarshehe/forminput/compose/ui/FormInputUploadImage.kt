@@ -42,6 +42,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.TextFieldColors
+import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
+import com.omarshehe.forminput.compose.ui.composables.formInputContainer
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,6 +62,7 @@ import com.omarshehe.forminput.compose.ui.model.FormInputImageState.ImageUploadV
 import com.omarshehe.forminput.compose.ui.model.FormInputState
 import com.omarshehe.forminput.compose.ui.model.withImageRemoved
 import com.omarshehe.forminput.compose.ui.model.withPickedImage
+import com.omarshehe.forminput.compose.ui.composables.resolvedLabel
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 import com.omarshehe.forminput.compose.ui.utils.FilePicker
 import com.omarshehe.forminput.compose.ui.utils.Symbols
@@ -86,7 +92,11 @@ fun FormInputUploadImage(
     showPrimaryBadge: Boolean = true,
     captureRequester: ImageCaptureRequester? = null,
     onImageClick: ((url: String) -> Unit)? = null,
+    shape: Shape? = null,
+    style: FormInputFieldStyle? = null,
+    colors: TextFieldColors? = null,
 ) {
+    val slotShape = shape ?: LocalFormInputDefaults.current.shape ?: RoundedCornerShape(Dimens.oneGrid)
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -120,10 +130,8 @@ fun FormInputUploadImage(
     }
 
     Column(modifier = modifier.fillMaxWidth()) {
-        state.labelRes?.let {
-            val label = stringResource(it)
-
-            Text(
+        state.resolvedLabel()?.let { label ->
+Text(
                 text = if (state.isMandatory) {
                     "$label${Symbols.MANDATORY_SYMBOL}"
                 } else {
@@ -149,6 +157,10 @@ fun FormInputUploadImage(
                                 index = index,
                                 value = value,
                                 sizeModifier = Modifier.size(Dimens.imageSlotSize),
+                                shape = slotShape,
+                                style = style,
+                                colors = colors,
+                                hasError = state.hasError,
                                 showPrimaryBadge = showPrimaryBadge,
                                 onDeleteImage = onDeleteImage,
                                 onRemove = ::removeAt,
@@ -157,7 +169,7 @@ fun FormInputUploadImage(
                         }
                     }
                     if (maxItems == null || state.values.size < maxItems) {
-                        ImageSlotContainer(sizeModifier = Modifier.size(Dimens.imageSlotSize)) {
+                        ImageSlotContainer(sizeModifier = Modifier.size(Dimens.imageSlotSize), shape = slotShape, style = style, colors = colors, hasError = state.hasError) {
                             EmptyImage { requestImage(PendingTarget.New) }
                         }
                     }
@@ -171,7 +183,7 @@ fun FormInputUploadImage(
                     state.values.forEachIndexed { slotIndex, value ->
                         val slotModifier = Modifier.weight(1f).aspectRatio(1f).widthIn(min = Dimens.tenGrid, max = Dimens.imageSlotSize)
                         if (value == null) {
-                            ImageSlotContainer(sizeModifier = slotModifier) {
+                            ImageSlotContainer(sizeModifier = slotModifier, shape = slotShape, style = style, colors = colors, hasError = state.hasError) {
                                 EmptyImage { requestImage(PendingTarget.Existing(slotIndex)) }
                             }
                         } else {
@@ -179,6 +191,10 @@ fun FormInputUploadImage(
                                 index = slotIndex,
                                 value = value,
                                 sizeModifier = slotModifier,
+                                shape = slotShape,
+                                style = style,
+                                colors = colors,
+                                hasError = state.hasError,
                                 showPrimaryBadge = showPrimaryBadge,
                                 onDeleteImage = onDeleteImage,
                                 onRemove = ::removeAt,
@@ -214,12 +230,16 @@ private fun FilledImageSlot(
     index: Int,
     value: ImageUploadValue,
     sizeModifier: Modifier,
+    shape: Shape,
+    style: FormInputFieldStyle?,
+    colors: TextFieldColors?,
+    hasError: Boolean,
     showPrimaryBadge: Boolean,
     onDeleteImage: (String) -> Unit,
     onRemove: (Int) -> Unit,
     onImageClick: ((url: String) -> Unit)? = null,
 ) {
-    ImageSlotContainer(sizeModifier = sizeModifier) {
+    ImageSlotContainer(sizeModifier = sizeModifier, shape = shape, style = style, colors = colors, hasError = hasError) {
         ImageSlot(
             value = value,
             progress = value.progress,
@@ -236,15 +256,21 @@ private fun FilledImageSlot(
 @Composable
 private fun ImageSlotContainer(
     sizeModifier: Modifier,
+    shape: Shape,
+    style: FormInputFieldStyle?,
+    colors: TextFieldColors?,
+    hasError: Boolean,
     content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
         modifier = sizeModifier
-            .clip(RoundedCornerShape(Dimens.oneGrid))
-            .border(
-                width = Dimens.stroke,
-                color = colorScheme.outlineVariant,
-                shape = RoundedCornerShape(Dimens.oneGrid),
+            .formInputContainer(
+                shape = shape,
+                style = style,
+                colors = colors,
+                hasError = hasError,
+                defaultBorder = colorScheme.outlineVariant,
+                defaultBackground = Color.Transparent,
             ),
         contentAlignment = Alignment.Center,
         content = content,
@@ -328,7 +354,7 @@ private fun BoxScope.ImageSlot(
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
-                contentDescription = stringResource(Res.string.delete),
+                contentDescription = formInputString(FormInputStrings::delete, Res.string.delete),
                 tint = colorScheme.onSurface,
                 modifier = Modifier.size(Dimens.twoAndHalfGrid),
             )
@@ -336,7 +362,7 @@ private fun BoxScope.ImageSlot(
 
         if (isPrimary) {
             Text(
-                text = stringResource(Res.string.image_primary_badge),
+                text = formInputString(FormInputStrings::primaryBadge, Res.string.image_primary_badge),
                 color = colorScheme.onPrimaryContainer,
                 style = typography.labelSmall,
                 modifier = Modifier

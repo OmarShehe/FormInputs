@@ -39,7 +39,12 @@ fun Long.utcMillisToDate(): String = Instant.fromEpochMilliseconds(this).toLocal
 
 fun Long.utcYear(): Int = Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.UTC).year
 
-fun todayUtcMidnightMillis(): Long = nowMillis().utcMillisToDate().dateToUtcMillis() ?: 0L
+/** The device's current calendar day as UTC-midnight millis, the form Material date pickers expect. */
+fun todayUtcMidnightMillis(): Long = localDayAsUtcMillis(nowMillis(), TimeZone.currentSystemDefault())
+
+/** The calendar day of [instantMillis] in [zone], as UTC-midnight millis. */
+internal fun localDayAsUtcMillis(instantMillis: Long, zone: TimeZone): Long =
+    Instant.fromEpochMilliseconds(instantMillis).toLocalDateTime(zone).date.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
 internal fun nowMillis(): Long = Clock.System.now().toEpochMilliseconds()
 

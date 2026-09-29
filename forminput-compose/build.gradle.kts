@@ -28,7 +28,8 @@ kotlin {
             api(libs.compose.material3)
             api(libs.compose.ui)
             implementation(libs.compose.material.icons.extended)
-            implementation(libs.compose.components.resources)
+            // StringResource is part of the public API (labelRes and friends), so consumers need it on their classpath.
+            api(libs.compose.components.resources)
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.kotlinx.datetime)
             // Only used by the image upload field and the image viewer.
@@ -48,7 +49,7 @@ kotlin {
 }
 
 compose.resources {
-    publicResClass = false
+    publicResClass = true
     packageOfResClass = "com.omarshehe.forminput.compose.resources"
 }
 

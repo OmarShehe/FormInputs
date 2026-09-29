@@ -1,5 +1,9 @@
 package com.omarshehe.forminput.compose.ui
 
+import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TextField
 import com.omarshehe.forminput.compose.ui.utils.rgbToHex
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -34,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.omarshehe.forminput.compose.ui.utils.trimOutlinedLabelSpace
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.focusProperties
@@ -55,6 +61,7 @@ import com.omarshehe.forminput.compose.resources.color_picker_hex_label
 import com.omarshehe.forminput.compose.resources.ok
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import com.omarshehe.forminput.compose.ui.composables.pickerSupportingText
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 import kotlin.math.max
 import kotlin.math.min
@@ -124,7 +131,56 @@ fun FormInputColorPickerField(
     value: String,
     onColorSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
+    shape: Shape? = null,
+    style: FormInputFieldStyle? = null,
+    colors: TextFieldColors? = null,
+    enabled: Boolean = true,
+    hasError: Boolean = false,
+    error: String? = null,
+    supportingText: String? = null,
+    fieldModifier: Modifier = Modifier,
+    dialogShape: Shape? = null,
+    dialogContainerColor: Color? = null,
 ) {
+    FormInputColorPickerField(
+        label = libraryString(label),
+        value = value,
+        onColorSelected = onColorSelected,
+        modifier = modifier,
+        shape = shape,
+        style = style,
+        colors = colors,
+        enabled = enabled,
+        hasError = hasError,
+        error = error,
+        supportingText = supportingText,
+        fieldModifier = fieldModifier,
+        dialogShape = dialogShape,
+        dialogContainerColor = dialogContainerColor,
+    )
+}
+
+/** Same field with a runtime [label]. While [hasError] is set, [error] replaces [supportingText] below the field. */
+@Composable
+fun FormInputColorPickerField(
+    label: String,
+    value: String,
+    onColorSelected: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    shape: Shape? = null,
+    style: FormInputFieldStyle? = null,
+    colors: TextFieldColors? = null,
+    enabled: Boolean = true,
+    hasError: Boolean = false,
+    error: String? = null,
+    supportingText: String? = null,
+    fieldModifier: Modifier = Modifier,
+    dialogShape: Shape? = null,
+    dialogContainerColor: Color? = null,
+) {
+    val defaults = LocalFormInputDefaults.current
+    val filled = (style ?: defaults.style) == FormInputFieldStyle.FILLED
+    val fieldShape = shape ?: defaults.shape ?: if (filled) TextFieldDefaults.shape else OutlinedTextFieldDefaults.shape
     var showPicker by remember { mutableStateOf(false) }
     val swatchColor = if (isValidHex(value)) parseHexColor(value) else null
 
@@ -132,45 +188,101 @@ fun FormInputColorPickerField(
     // A transparent matchParentSize overlay on top captures all clicks reliably —
     // the TextField itself is non-focusable so it won't steal the tap.
     Box(modifier = modifier.fillMaxWidth()) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = {},
-            readOnly = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusProperties { canFocus = false }
-                .focusable(false)
-                .pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
-            label = { Text(stringResource(label)) },
-            trailingIcon = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.height(Dimens.threeGrid),
-                ) {
-                    VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                    Spacer(Modifier.width(Dimens.oneGrid))
-                    Box(
-                        modifier = Modifier
-                            .size(Dimens.threeGrid)
-                            .clip(RoundedCornerShape(Dimens.quarterGrid))
-                            .border(
-                                Dimens.stroke,
-                                MaterialTheme.colorScheme.outlineVariant,
-                                RoundedCornerShape(Dimens.quarterGrid),
-                            )
-                            .background(swatchColor ?: MaterialTheme.colorScheme.surfaceVariant),
-                    )
-                    Spacer(Modifier.width(Dimens.oneGrid))
-                }
-            },
-            colors = OutlinedTextFieldDefaults.colors(),
-            singleLine = true,
-        )
-        Box(modifier = Modifier.matchParentSize().clickable { showPicker = true })
+        if (filled) {
+            TextField(
+                value = value,
+                onValueChange = {},
+                readOnly = true,
+                modifier = fieldModifier
+                    .fillMaxWidth()
+                    .focusProperties { canFocus = false }
+                    .focusable(false)
+                    .pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
+                label = { Text(label) },
+                enabled = enabled,
+                isError = hasError,
+                supportingText = pickerSupportingText(hasError, error, supportingText),
+                trailingIcon = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.height(Dimens.threeGrid),
+                    ) {
+                        VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Spacer(Modifier.width(Dimens.oneGrid))
+                        Box(
+                            modifier = Modifier
+                                .size(Dimens.threeGrid)
+                                .clip(RoundedCornerShape(Dimens.quarterGrid))
+                                .border(
+                                    Dimens.stroke,
+                                    MaterialTheme.colorScheme.outlineVariant,
+                                    RoundedCornerShape(Dimens.quarterGrid),
+                                )
+                                .background(swatchColor ?: MaterialTheme.colorScheme.surfaceVariant),
+                        )
+                        Spacer(Modifier.width(Dimens.oneGrid))
+                    }
+                },
+                shape = fieldShape,
+                colors = colors ?: TextFieldDefaults.colors(),
+                singleLine = true,
+            )
+        } else {
+            OutlinedTextField(
+                value = value,
+                onValueChange = {},
+                readOnly = true,
+                modifier = fieldModifier
+                    .trimOutlinedLabelSpace(hasLabel = true)
+                    .fillMaxWidth()
+                    .focusProperties { canFocus = false }
+                    .focusable(false)
+                    .pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
+                label = { Text(label) },
+                enabled = enabled,
+                isError = hasError,
+                supportingText = pickerSupportingText(hasError, error, supportingText),
+                trailingIcon = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.height(Dimens.threeGrid),
+                    ) {
+                        VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Spacer(Modifier.width(Dimens.oneGrid))
+                        Box(
+                            modifier = Modifier
+                                .size(Dimens.threeGrid)
+                                .clip(RoundedCornerShape(Dimens.quarterGrid))
+                                .border(
+                                    Dimens.stroke,
+                                    MaterialTheme.colorScheme.outlineVariant,
+                                    RoundedCornerShape(Dimens.quarterGrid),
+                                )
+                                .background(swatchColor ?: MaterialTheme.colorScheme.surfaceVariant),
+                        )
+                        Spacer(Modifier.width(Dimens.oneGrid))
+                    }
+                },
+                shape = fieldShape,
+                colors = colors ?: OutlinedTextFieldDefaults.colors(),
+                singleLine = true,
+            )
+        }
+        if (enabled) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(TextFieldDefaults.MinHeight)
+                    .clip(fieldShape)
+                    .clickable { showPicker = true },
+            )
+        }
     }
 
     if (showPicker) {
         ColorPickerPopup(
+            shape = dialogShape ?: RoundedCornerShape(Dimens.oneGrid),
+            containerColor = dialogContainerColor ?: MaterialTheme.colorScheme.surface,
             initialHex = value.takeIf { isValidHex(it) } ?: "",
             onDismiss = { showPicker = false },
             onConfirm = { hex ->
@@ -185,6 +297,8 @@ fun FormInputColorPickerField(
 
 @Composable
 private fun ColorPickerPopup(
+    shape: Shape,
+    containerColor: Color,
     initialHex: String,
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit,
@@ -209,10 +323,10 @@ private fun ColorPickerPopup(
     ) {
         Surface(
             modifier = Modifier
-                .shadow(elevation = Dimens.twoGrid, shape = RoundedCornerShape(Dimens.oneGrid))
+                .shadow(elevation = Dimens.twoGrid, shape = shape)
                 .width(300.dp),
-            shape = RoundedCornerShape(Dimens.oneGrid),
-            color = MaterialTheme.colorScheme.surface,
+            shape = shape,
+            color = containerColor,
             tonalElevation = Dimens.twoGrid,
         ) {
             Column(modifier = Modifier.padding(Dimens.twoGrid)) {
@@ -243,7 +357,7 @@ private fun ColorPickerPopup(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.oneGrid),
                 ) {
                     Text(
-                        text = stringResource(Res.string.color_picker_hex_label),
+                        text = formInputString(FormInputStrings::colorHexLabel, Res.string.color_picker_hex_label),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -297,13 +411,13 @@ private fun ColorPickerPopup(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     FormInputButton(
-                        text = stringResource(Res.string.cancel),
+                        text = formInputString(FormInputStrings::cancel, Res.string.cancel),
                         onClick = onDismiss,
                         style = FormInputButtonStyle.OUTLINED,
                     )
                     Spacer(Modifier.width(Dimens.oneGrid))
                     FormInputButton(
-                        text = stringResource(Res.string.ok),
+                        text = formInputString(FormInputStrings::ok, Res.string.ok),
                         onClick = {
                             val finalHex = if (isValidHex(hexInput)) {
                                 hexInput.uppercase()

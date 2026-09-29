@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.omarshehe.forminput.compose.resources.Res
 import com.omarshehe.forminput.compose.resources.select_file
+import com.omarshehe.forminput.compose.ui.LocalFormInputDefaults
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.getString
@@ -18,9 +19,10 @@ actual fun FilePicker(
     extensions: List<String>,
     onFileSelected: (path: String?, name: String?, size: Long?, error: String?) -> Unit,
 ) {
+    val titleOverride = LocalFormInputDefaults.current.strings.selectFile
     LaunchedEffect(show) {
         if (show) {
-            val title = getString(Res.string.select_file)
+            val title = titleOverride ?: getString(Res.string.select_file)
             var selectedFile: File? = null
 
             withContext(Dispatchers.IO) {

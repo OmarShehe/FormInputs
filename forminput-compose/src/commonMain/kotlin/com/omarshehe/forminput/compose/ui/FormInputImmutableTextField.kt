@@ -10,12 +10,14 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.omarshehe.forminput.compose.ui.utils.trimOutlinedLabelSpace
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextOverflow
+import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 
 @Composable
@@ -26,15 +28,20 @@ fun FormInputImmutableTextField(
     imageVector: ImageVector? = null,
     isError: Boolean = false,
     outlined: Boolean = false,
-    shape: Shape = if (outlined) {
-        OutlinedTextFieldDefaults.shape
-    } else {
-        MaterialTheme.shapes.medium.copy(bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize)
-    },
+    shape: Shape? = null,
     onIconClick: () -> Unit = {},
+    style: FormInputFieldStyle? = null,
 ) {
-    if (outlined) {
-        OutlinedTextField(
+    // `style` wins; without it the older `outlined` flag chooses between outlined and the flat underlined look.
+    val defaults = LocalFormInputDefaults.current
+    val effectiveStyle = style ?: defaults.style ?: if (outlined) FormInputFieldStyle.OUTLINED else null
+    val fieldShape = shape ?: defaults.shape ?: when (effectiveStyle) {
+        FormInputFieldStyle.OUTLINED -> OutlinedTextFieldDefaults.shape
+        FormInputFieldStyle.FILLED -> TextFieldDefaults.shape
+        null -> MaterialTheme.shapes.medium.copy(bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize)
+    }
+    if (effectiveStyle == FormInputFieldStyle.FILLED) {
+        TextField(
             value = text.orEmpty(),
             onValueChange = {},
             readOnly = true,
@@ -52,7 +59,31 @@ fun FormInputImmutableTextField(
                 }
             },
             isError = isError,
-            shape = shape,
+            shape = fieldShape,
+            colors = TextFieldDefaults.colors(),
+            singleLine = true,
+        )
+    } else if (effectiveStyle == FormInputFieldStyle.OUTLINED) {
+        OutlinedTextField(
+            value = text.orEmpty(),
+            onValueChange = {},
+            readOnly = true,
+            modifier = modifier
+                .trimOutlinedLabelSpace(hasLabel = label != null)
+                .fillMaxWidth()
+                .focusProperties { canFocus = false }
+                .focusable(false)
+                .pointerHoverIcon(PointerIcon.Default, overrideDescendants = true),
+            label = label?.let { { Text(it) } },
+            trailingIcon = imageVector?.let {
+                {
+                    IconButton(onClick = onIconClick) {
+                        Icon(it, contentDescription = label, tint = if (isError) colorScheme.error else colorScheme.secondary)
+                    }
+                }
+            },
+            isError = isError,
+            shape = fieldShape,
             colors = OutlinedTextFieldDefaults.colors(),
             singleLine = true,
         )
@@ -62,7 +93,7 @@ fun FormInputImmutableTextField(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .background(color = colorScheme.surface, shape = shape),
+                .background(color = colorScheme.surface, shape = fieldShape),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

@@ -32,4 +32,8 @@ data class FormInputTextFieldState(
     override val label: String? = null,
     override val placeholder: String? = null,
     override val error: String? = null,
+    /** Runtime text shown before the value; wins over [prefixRes]. */
+    val prefix: String? = null,
+    /** Runtime text shown after the value; wins over [suffixRes]. */
+    val suffix: String? = null,
 ) : FormInputState

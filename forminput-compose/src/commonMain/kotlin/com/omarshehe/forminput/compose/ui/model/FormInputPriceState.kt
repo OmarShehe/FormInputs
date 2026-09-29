@@ -4,30 +4,28 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.StringResource
 
+/**
+ * State of [com.omarshehe.forminput.compose.ui.FormInputPriceField]: an amount plus the currency picked for it.
+ * [amount] is the plain typed number (digits and at most one dot, no grouping), so it can be parsed as it is.
+ */
 @Stable
-data class FormInputFileState(
+data class FormInputPriceState(
     override val id: String,
-    override val labelRes: StringResource?,
-    override val placeholderRes: StringResource?,
-    override val type: FormInputType = FormInputType.FILE_UPLOAD,
+    val amount: String = "",
+    val currency: String,
+    val currencies: List<String> = listOf(currency),
+    val maxDecimals: Int = 2,
+    val maxIntegerDigits: Int = 12,
+    override val labelRes: StringResource? = null,
+    override val placeholderRes: StringResource? = null,
     override val isMandatory: Boolean = false,
     override val hasError: Boolean = false,
     override val errorRes: StringResource? = null,
     override val icon: ImageVector? = null,
     override val isVisible: Boolean = true,
-    val value: FileUploadValue? = null,
-    val allowedExtensions: List<String> = emptyList(),
-    val progress: Float? = null,
-    val statusRes: StringResource? = null,
     override val label: String? = null,
     override val placeholder: String? = null,
     override val error: String? = null,
 ) : FormInputState {
-    data class FileUploadValue(
-        val filePath: String? = null,
-        val url: String? = null,
-        val fileKey: String? = null,
-        val fileName: String? = null,
-        val fileSize: String? = null,
-    )
+    override val type: FormInputType get() = FormInputType.NUMBER
 }

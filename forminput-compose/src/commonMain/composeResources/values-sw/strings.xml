@@ -31,4 +31,18 @@
     <string name="cd_color_swatch">Sampuli ya rangi</string>
     <string name="color_picker_hex_label">HEX</string>
     <string name="error_file_picker_unsupported">Kuchagua faili bado hakuwezekani kwenye jukwaa hili</string>
+    <string name="browse_files">Vinjari faili</string>
+    <string name="password_rules_title">Nenosiri lako linahitaji:</string>
+    <string name="password_rule_upper_case">Liwe na angalau herufi kubwa moja</string>
+    <string name="password_rule_special">Liwe na angalau alama moja maalum</string>
+    <string name="password_rule_digit">Liwe na angalau namba moja</string>
+    <string name="password_rule_min_length">Liwe na angalau herufi %1$d</string>
+    <string name="password_strength_weak">Dhaifu</string>
+    <string name="password_strength_medium">Wastani</string>
+    <string name="password_strength_strong">Imara</string>
+    <string name="password_strength_very_strong">Imara sana</string>
+    <string name="password_mismatch">Manenosiri hayalingani</string>
+    <string name="cd_rule_met">Sharti limetimizwa</string>
+    <string name="cd_rule_not_met">Sharti halijatimizwa</string>
+    <string name="select_currency">Chagua sarafu</string>
 </resources>

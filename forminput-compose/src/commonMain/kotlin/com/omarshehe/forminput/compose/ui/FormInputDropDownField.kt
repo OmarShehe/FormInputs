@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -14,11 +15,15 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
@@ -36,6 +42,9 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.window.PopupProperties
 import org.jetbrains.compose.resources.stringResource
 import com.omarshehe.forminput.compose.ui.composables.FormInputLabel
@@ -45,20 +54,33 @@ import com.omarshehe.forminput.compose.ui.composables.resolvedPlaceholder
 import com.omarshehe.forminput.compose.ui.composables.TextContent
 import com.omarshehe.forminput.compose.ui.model.DropDownOptionModel
 import com.omarshehe.forminput.compose.ui.model.FormInputDropDownState
+import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
 import com.omarshehe.forminput.compose.ui.utils.Dimens
+import com.omarshehe.forminput.compose.ui.utils.trimOutlinedLabelSpace
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormInputDropDownField(
     modifier: Modifier = Modifier,
     state: FormInputDropDownState,
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
-    shape: Shape = OutlinedTextFieldDefaults.shape,
+    colors: TextFieldColors? = null,
+    shape: Shape? = null,
     enabled: Boolean = true,
     supportingText: String? = null,
     fieldModifier: Modifier = Modifier,
+    style: FormInputFieldStyle? = null,
+    textStyle: TextStyle? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    menuShape: Shape? = null,
+    menuContainerColor: Color? = null,
+    maxMenuHeight: Dp = 240.dp,
+    itemContent: (@Composable (DropDownOptionModel) -> Unit)? = null,
     onSelected: (FormInputDropDownState) -> Unit,
 ) {
+    val defaults = LocalFormInputDefaults.current
+    val filled = (style ?: defaults.style) == FormInputFieldStyle.FILLED
+    val fieldColors = colors ?: if (filled) TextFieldDefaults.colors() else OutlinedTextFieldDefaults.colors()
+    val fieldShape = shape ?: defaults.shape ?: if (filled) TextFieldDefaults.shape else OutlinedTextFieldDefaults.shape
     var expanded by rememberSaveable { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -87,16 +109,7 @@ fun FormInputDropDownField(
         state.options
     }
 
-    // OutlinedTextField(value, onValueChange, ...) reserves extra top space above its own border
-    // (half the floated label's line height) to make room for the label to float there — space that
-    // FormInputTextField's hand-rolled BasicTextField + DecorationBox never reserves. Left alone,
-    // a dropdown sits visibly lower than a text field in the same row. Cancel that reserved space out
-    // so both field types line up.
-    val minimizedLabelHalfHeight = if (labelText != null) {
-        with(LocalDensity.current) { MaterialTheme.typography.bodySmall.lineHeight.toDp() / 2 }
-    } else {
-        0.dp
-    }
+    val hasLabelSpace = labelText != null && !filled
 
     Column(modifier = modifier) {
         ExposedDropdownMenuBox(
@@ -105,47 +118,93 @@ fun FormInputDropDownField(
             onExpandedChange = { expanded = enabled && it },
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
-                OutlinedTextField(
-                    modifier = fieldModifier
-                        .offset(y = -minimizedLabelHalfHeight)
-                        .menuAnchor(
-                            if (editable) ExposedDropdownMenuAnchorType.PrimaryEditable else ExposedDropdownMenuAnchorType.PrimaryNotEditable,
-                            enabled = enabled,
-                        )
-                        .fillMaxWidth(),
-                    enabled = enabled,
-                    supportingText = supportingText?.let { { Text(it) } },
-                    isError = state.hasError,
-                    readOnly = !editable,
-                    singleLine = true,
-                    value = textValueState,
-                    onValueChange = { newValueState ->
-                        textValueState = newValueState
-                        if (allowFreeText) {
-                            // Only auto-open while there's text to filter against — otherwise
-                            // backspacing to empty falls back to the unfiltered full option list,
-                            // reproducing the same "suggestions flood the screen" problem. Scoped to
-                            // allowFreeText only — isSearchEnable-only dropdowns (desktop date pickers)
-                            // rely on reopening with the full unfiltered list on any keystroke, including
-                            // backspace-to-empty.
-                            expanded = newValueState.text.isNotEmpty()
-                            onSelected(state.copy(value = DropDownOptionModel(text = newValueState.text), hasError = false))
-                        } else if (editable) {
-                            expanded = true
-                        }
-                    },
-                    label = labelText?.let {
-                        { FormInputLabel(state) }
-                    },
-                    placeholder = placeholderText?.let { { Text(it) } },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded && enabled) },
-                    colors = colors,
-                    shape = shape,
-                )
+                if (filled) {
+                    TextField(
+                        modifier = fieldModifier
+                            .trimOutlinedLabelSpace(hasLabelSpace)
+                            .menuAnchor(
+                                if (editable) ExposedDropdownMenuAnchorType.PrimaryEditable else ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                                enabled = enabled,
+                            )
+                            .fillMaxWidth(),
+                        enabled = enabled,
+                        supportingText = supportingText?.let { { Text(it) } },
+                        isError = state.hasError,
+                        readOnly = !editable,
+                        singleLine = true,
+                        value = textValueState,
+                        onValueChange = { newValueState ->
+                            textValueState = newValueState
+                            if (allowFreeText) {
+                                // Only auto-open while there's text to filter against — otherwise
+                                // backspacing to empty falls back to the unfiltered full option list,
+                                // reproducing the same "suggestions flood the screen" problem. Scoped to
+                                // allowFreeText only — isSearchEnable-only dropdowns (desktop date pickers)
+                                // rely on reopening with the full unfiltered list on any keystroke, including
+                                // backspace-to-empty.
+                                expanded = newValueState.text.isNotEmpty()
+                                onSelected(state.copy(value = DropDownOptionModel(text = newValueState.text), hasError = false))
+                            } else if (editable) {
+                                expanded = true
+                            }
+                        },
+                        label = labelText?.let {
+                            { FormInputLabel(state) }
+                        },
+                        placeholder = placeholderText?.let { { Text(it) } },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded && enabled) },
+                        colors = fieldColors,
+                        shape = fieldShape,
+                        leadingIcon = leadingIcon,
+                        textStyle = textStyle ?: LocalTextStyle.current,
+                    )
+                } else {
+                    OutlinedTextField(
+                        modifier = fieldModifier
+                            .trimOutlinedLabelSpace(hasLabelSpace)
+                            .menuAnchor(
+                                if (editable) ExposedDropdownMenuAnchorType.PrimaryEditable else ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                                enabled = enabled,
+                            )
+                            .fillMaxWidth(),
+                        enabled = enabled,
+                        supportingText = supportingText?.let { { Text(it) } },
+                        isError = state.hasError,
+                        readOnly = !editable,
+                        singleLine = true,
+                        value = textValueState,
+                        onValueChange = { newValueState ->
+                            textValueState = newValueState
+                            if (allowFreeText) {
+                                // Only auto-open while there's text to filter against — otherwise
+                                // backspacing to empty falls back to the unfiltered full option list,
+                                // reproducing the same "suggestions flood the screen" problem. Scoped to
+                                // allowFreeText only — isSearchEnable-only dropdowns (desktop date pickers)
+                                // rely on reopening with the full unfiltered list on any keystroke, including
+                                // backspace-to-empty.
+                                expanded = newValueState.text.isNotEmpty()
+                                onSelected(state.copy(value = DropDownOptionModel(text = newValueState.text), hasError = false))
+                            } else if (editable) {
+                                expanded = true
+                            }
+                        },
+                        label = labelText?.let {
+                            { FormInputLabel(state) }
+                        },
+                        placeholder = placeholderText?.let { { Text(it) } },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded && enabled) },
+                        colors = fieldColors,
+                        shape = fieldShape,
+                        leadingIcon = leadingIcon,
+                        textStyle = textStyle ?: LocalTextStyle.current,
+                    )
+                }
                 if (!editable && enabled) {
                     Box(
                         modifier = Modifier
-                            .matchParentSize()
+                            .fillMaxWidth()
+                            .height(TextFieldDefaults.MinHeight)
+                            .clip(fieldShape)
                             .clickable { expanded = !expanded }
                             .pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
                     )
@@ -157,7 +216,9 @@ fun FormInputDropDownField(
                     // Capped so a broad "contains" match (e.g. a single common typed character
                     // matching most options) scrolls internally instead of the popup swelling to
                     // cover most of the screen.
-                    modifier = Modifier.exposedDropdownSize(true).heightIn(max = 240.dp),
+                    modifier = Modifier.exposedDropdownSize(true).heightIn(max = maxMenuHeight),
+                    shape = menuShape ?: MenuDefaults.shape,
+                    containerColor = menuContainerColor ?: MenuDefaults.containerColor,
                     expanded = expanded && enabled,
                     onDismissRequest = { expanded = false },
                     properties = PopupProperties(focusable = false),
@@ -165,7 +226,7 @@ fun FormInputDropDownField(
                     filteringOptions.forEach { selectionOption ->
                         val textValue = selectionOption.textRes?.let { stringResource(it) } ?: selectionOption.text
                         DropdownMenuItem(
-                            text = { Text(textValue) },
+                            text = { itemContent?.invoke(selectionOption) ?: Text(textValue) },
                             onClick = {
                                 textValueState = textValueState.copy(textValue, TextRange(textValue.length))
                                 onSelected(state.copy(value = selectionOption, hasError = false))
@@ -180,7 +241,8 @@ fun FormInputDropDownField(
             }
         }
         if (state.hasError) {
-            val error = "${labelText.orEmpty()} ${errorText.orEmpty()}"
+            // A runtime error is shown as written, like the text field; a resource error keeps the "<label> <error>" form.
+            val error = if (state.error != null) errorText.orEmpty() else "${labelText.orEmpty()} ${errorText.orEmpty()}"
             TextContent(textValue = error, modifier = Modifier.padding(top = Dimens.halfGrid), color = colorScheme.error, setPadding = false)
         }
     }
