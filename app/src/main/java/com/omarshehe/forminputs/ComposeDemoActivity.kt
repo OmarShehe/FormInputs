@@ -297,8 +297,22 @@ private fun Pickers(classic: Boolean) = Section("Date, time and colour") {
     var time by remember { mutableStateOf(picker(FormInputType.TIME_PICKER, Res.string.select_time)) }
     var dateTime by remember { mutableStateOf(picker(FormInputType.DATE_TIME_PICKER, Res.string.select_date_time)) }
     var color by remember { mutableStateOf("#3F51B5") }
-    FormInputDatePickerField(modifier = style.modifier, shape = style.shape, style = style.kind, state = date, onValueChange = { date = it })
-    FormInputTimePickerField(modifier = style.modifier, shape = style.shape, style = style.kind, state = time, onValueChange = { time = it })
+    FormInputDatePickerField(
+        modifier = style.modifier,
+        shape = style.shape,
+        style = style.kind,
+        state = date,
+        supportingText = tr("Supporting text sits below the field", "Le texte d'aide est sous le champ"),
+        onValueChange = { date = it },
+    )
+    // Shows an error until a time is picked.
+    FormInputTimePickerField(
+        modifier = style.modifier,
+        shape = style.shape,
+        style = style.kind,
+        state = time.copy(hasError = time.value.isEmpty(), error = tr("Choose a time", "Choisissez une heure")),
+        onValueChange = { time = it },
+    )
     FormInputDateTimePickerField(
         modifier = style.modifier,
         shape = style.shape,
@@ -306,12 +320,13 @@ private fun Pickers(classic: Boolean) = Section("Date, time and colour") {
         state = dateTime,
         onValueChange = { dateTime = it })
     FormInputColorPickerField(
-        label = Res.string.select_date,
+        label = tr("Colour", "Couleur"),
         value = color,
         onColorSelected = { color = it },
         modifier = style.modifier,
         shape = style.shape,
         style = style.kind,
+        supportingText = tr("Used for the badge", "Utilisée pour le badge"),
     )
 }
 

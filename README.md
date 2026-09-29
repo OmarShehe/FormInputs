@@ -241,9 +241,9 @@ the file and image uploads. The stepper and uploads share one container with the
   screen that already pads its content.
 - **Read-only field:** without `style` it keeps the older `outlined` flag. **Search field:** keeps its compact pill by default; pass `style` to
   draw it like the other fields (it then shows only its placeholder, no floating label).
-- **Spacing:** Material's outlined text field keeps half a label's height free above its border. The dropdown, pickers, read-only and colour
-  fields give that space back, so every field is the same distance from its neighbours. Use `Modifier.trimOutlinedLabelSpace(hasLabel)` if you
-  build another field on `OutlinedTextField`.
+- **Spacing:** the dropdown, the four pickers and the read-only field draw Material's outlined or filled decoration around a plain text box, the same
+  way `FormInputTextField` does, so every field is the same height and the same distance from its neighbours, and a tap or ripple lines up with the
+  drawn box at any font size.
 
 ## More options per input
 

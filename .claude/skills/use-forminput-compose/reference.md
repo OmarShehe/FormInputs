@@ -55,5 +55,5 @@ parameter that is not listed here (`forminput-compose/src/commonMain/kotlin/com/
   `clearSearch`, `uploadedDocuments`, `clickToUpload`, `browseFiles`, `unknownFile`, `primaryBadge`, `showPassword`, `hidePassword`, `passwordRulesTitle`,
   `passwordRuleUpperCase`, `passwordRuleSpecial`, `passwordRuleDigit`, `passwordRuleMinLength: ((Int) -> String)?`, `passwordMismatch`, `strengthWeak/Medium/Strong/VeryStrong`,
   `ruleMet`, `ruleNotMet`, `filePickerUnsupported`, `selectFile`. A library `StringResource` passed as a label follows these overrides too.
-- `formInputShape()`, `Modifier.formInputModifier(padding)`, `Modifier.trimOutlinedLabelSpace(hasLabel)`.
+- `formInputShape()`, `Modifier.formInputModifier(padding)`.
 - Pure helpers with tests: `sanitizeAmount`, `ThousandsSeparatorTransformation`, `TextFieldValue.withCleanedText`, and the date helpers in `utils/DateExtensions.kt`.
