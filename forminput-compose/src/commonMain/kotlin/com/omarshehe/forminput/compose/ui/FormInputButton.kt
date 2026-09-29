@@ -36,6 +36,7 @@ fun FormInputButton(
     shape: Shape = MaterialTheme.shapes.small,
     color: Color? = null,
     contentColor: Color? = null,
+    /** The least height of the filled and outlined button; it grows with a larger font size or a longer text. */
     height: Dp = Dimens.fiveGrid,
 ) {
     val buttonText = text ?: textRes?.let { libraryString(it) } ?: ""
@@ -46,7 +47,7 @@ fun FormInputButton(
         FormInputButtonStyle.FILLED -> {
             Button(
                 onClick = onClick,
-                modifier = modifier.widthIn(min = 130.dp).height(height),
+                modifier = modifier.widthIn(min = 130.dp).heightIn(min = height),
                 enabled = enabled && !isLoading,
                 shape = shape,
                 contentPadding = contentPadding,
@@ -63,7 +64,7 @@ fun FormInputButton(
         FormInputButtonStyle.OUTLINED -> {
             OutlinedButton(
                 onClick = onClick,
-                modifier = modifier.widthIn(min = 130.dp).height(height),
+                modifier = modifier.widthIn(min = 130.dp).heightIn(min = height),
                 enabled = enabled && !isLoading,
                 shape = shape,
                 contentPadding = contentPadding,

@@ -10,7 +10,8 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.omarshehe.forminput.compose.ui.utils.trimOutlinedLabelSpace
+import com.omarshehe.forminput.compose.ui.composables.FormInputBoxField
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -40,16 +41,18 @@ fun FormInputImmutableTextField(
         FormInputFieldStyle.FILLED -> TextFieldDefaults.shape
         null -> MaterialTheme.shapes.medium.copy(bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize)
     }
-    if (effectiveStyle == FormInputFieldStyle.FILLED) {
-        TextField(
-            value = text.orEmpty(),
+    if (effectiveStyle != null) {
+        val filled = effectiveStyle == FormInputFieldStyle.FILLED
+        FormInputBoxField(
+            value = TextFieldValue(text.orEmpty()),
             onValueChange = {},
+            filled = filled,
+            shape = fieldShape,
+            colors = if (filled) TextFieldDefaults.colors() else OutlinedTextFieldDefaults.colors(),
+            modifier = modifier.pointerHoverIcon(PointerIcon.Default, overrideDescendants = true),
             readOnly = true,
-            modifier = modifier
-                .fillMaxWidth()
-                .focusProperties { canFocus = false }
-                .focusable(false)
-                .pointerHoverIcon(PointerIcon.Default, overrideDescendants = true),
+            focusable = false,
+            isError = isError,
             label = label?.let { { Text(it) } },
             trailingIcon = imageVector?.let {
                 {
@@ -58,34 +61,6 @@ fun FormInputImmutableTextField(
                     }
                 }
             },
-            isError = isError,
-            shape = fieldShape,
-            colors = TextFieldDefaults.colors(),
-            singleLine = true,
-        )
-    } else if (effectiveStyle == FormInputFieldStyle.OUTLINED) {
-        OutlinedTextField(
-            value = text.orEmpty(),
-            onValueChange = {},
-            readOnly = true,
-            modifier = modifier
-                .trimOutlinedLabelSpace(hasLabel = label != null)
-                .fillMaxWidth()
-                .focusProperties { canFocus = false }
-                .focusable(false)
-                .pointerHoverIcon(PointerIcon.Default, overrideDescendants = true),
-            label = label?.let { { Text(it) } },
-            trailingIcon = imageVector?.let {
-                {
-                    IconButton(onClick = onIconClick) {
-                        Icon(it, contentDescription = label, tint = if (isError) colorScheme.error else colorScheme.secondary)
-                    }
-                }
-            },
-            isError = isError,
-            shape = fieldShape,
-            colors = OutlinedTextFieldDefaults.colors(),
-            singleLine = true,
         )
     } else {
         val borderColor = if (isError) colorScheme.error else colorScheme.onSurface.copy(alpha = 0.42f)

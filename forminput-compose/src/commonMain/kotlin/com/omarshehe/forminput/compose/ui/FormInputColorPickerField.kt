@@ -39,8 +39,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.omarshehe.forminput.compose.ui.composables.FormInputBoxField
 import com.omarshehe.forminput.compose.ui.composables.PickerSupportingText
-import com.omarshehe.forminput.compose.ui.utils.trimOutlinedLabelSpace
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.focusProperties
@@ -52,6 +52,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -189,84 +190,45 @@ fun FormInputColorPickerField(
     // the TextField itself is non-focusable so it won't steal the tap.
     Column(modifier = modifier.fillMaxWidth()) {
         Box {
-            if (filled) {
-                TextField(
-                    value = value,
-                    onValueChange = {},
-                    readOnly = true,
-                    modifier = fieldModifier
-                        .fillMaxWidth()
-                        .focusProperties { canFocus = false }
-                        .focusable(false)
-                        .pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
-                    label = { Text(label) },
-                    enabled = enabled,
-                    isError = hasError,
-                    trailingIcon = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.height(Dimens.threeGrid),
-                        ) {
-                            VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                            Spacer(Modifier.width(Dimens.oneGrid))
-                            Box(
-                                modifier = Modifier
-                                    .size(Dimens.threeGrid)
-                                    .clip(RoundedCornerShape(Dimens.quarterGrid))
-                                    .border(
-                                        Dimens.stroke,
-                                        MaterialTheme.colorScheme.outlineVariant,
-                                        RoundedCornerShape(Dimens.quarterGrid),
-                                    )
-                                    .background(swatchColor ?: MaterialTheme.colorScheme.surfaceVariant),
-                            )
-                            Spacer(Modifier.width(Dimens.oneGrid))
-                        }
-                    },
-                    shape = fieldShape,
-                    colors = colors ?: TextFieldDefaults.colors(),
-                    singleLine = true,
-                )
-            } else {
-                OutlinedTextField(
-                    value = value,
-                    onValueChange = {},
-                    readOnly = true,
-                    modifier = fieldModifier
-                        .trimOutlinedLabelSpace(hasLabel = true)
-                        .fillMaxWidth()
-                        .focusProperties { canFocus = false }
-                        .focusable(false)
-                        .pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
-                    label = { Text(label) },
-                    enabled = enabled,
-                    isError = hasError,
-                    trailingIcon = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.height(Dimens.threeGrid),
-                        ) {
-                            VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                            Spacer(Modifier.width(Dimens.oneGrid))
-                            Box(
-                                modifier = Modifier
-                                    .size(Dimens.threeGrid)
-                                    .clip(RoundedCornerShape(Dimens.quarterGrid))
-                                    .border(
-                                        Dimens.stroke,
-                                        MaterialTheme.colorScheme.outlineVariant,
-                                        RoundedCornerShape(Dimens.quarterGrid),
-                                    )
-                                    .background(swatchColor ?: MaterialTheme.colorScheme.surfaceVariant),
-                            )
-                            Spacer(Modifier.width(Dimens.oneGrid))
-                        }
-                    },
-                    shape = fieldShape,
-                    colors = colors ?: OutlinedTextFieldDefaults.colors(),
-                    singleLine = true,
-                )
-            }
+            FormInputBoxField(
+                filled = filled,
+                focusable = false,
+                value = TextFieldValue(value),
+                onValueChange = {},
+                readOnly = true,
+                modifier = fieldModifier
+                    .fillMaxWidth()
+                    .focusProperties { canFocus = false }
+                    .focusable(false)
+                    .pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
+                label = { Text(label) },
+                enabled = enabled,
+                isError = hasError,
+                trailingIcon = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.height(Dimens.threeGrid),
+                    ) {
+                        VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Spacer(Modifier.width(Dimens.oneGrid))
+                        Box(
+                            modifier = Modifier
+                                .size(Dimens.threeGrid)
+                                .clip(RoundedCornerShape(Dimens.quarterGrid))
+                                .border(
+                                    Dimens.stroke,
+                                    MaterialTheme.colorScheme.outlineVariant,
+                                    RoundedCornerShape(Dimens.quarterGrid),
+                                )
+                                .background(swatchColor ?: MaterialTheme.colorScheme.surfaceVariant),
+                        )
+                        Spacer(Modifier.width(Dimens.oneGrid))
+                    }
+                },
+                shape = fieldShape,
+                colors = colors ?: if (filled) TextFieldDefaults.colors() else OutlinedTextFieldDefaults.colors(),
+            )
+        
             if (enabled) {
                 Box(
                     modifier = Modifier

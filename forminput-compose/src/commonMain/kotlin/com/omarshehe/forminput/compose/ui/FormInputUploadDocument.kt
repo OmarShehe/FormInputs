@@ -37,6 +37,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.TextFieldColors
 import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
 import com.omarshehe.forminput.compose.ui.composables.formInputContainer
@@ -105,12 +109,19 @@ fun FormInputUploadDocument(
 
     // An outline is cut by the label sitting on it; a filled box has nothing to cut, so its label goes above it.
     val labelAbove = (style ?: LocalFormInputDefaults.current.style) == FormInputFieldStyle.FILLED && state.resolvedLabel() != null
+    // A floating label hangs 8dp above the border and reaches this far into the box; the content starts below it, at any font size.
+    val labelLineHeight = typography.labelMedium.lineHeight
+    val labelInset = if (state.resolvedLabel() != null && !labelAbove) {
+        with(LocalDensity.current) { ((if (labelLineHeight.isSp) labelLineHeight else 16.sp).toDp() - Dimens.oneGrid).coerceAtLeast(Dimens.default) }
+    } else {
+        Dimens.default
+    }
     Box(modifier = modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
                 .padding(top = if (labelAbove) Dimens.threeGrid else Dimens.default)
                 .fillMaxWidth()
-                .height(Dimens.sevenGrid)
+                .heightIn(min = Dimens.sevenGrid)
                 .formInputContainer(
                     shape = boxShape,
                     style = style,
@@ -124,11 +135,13 @@ fun FormInputUploadDocument(
                 IdleState(
                     state = state,
                     onClick = { showFilePicker = true },
+                    topInset = labelInset,
                 )
             } else {
                 FileSelectedState(
                     state = state,
                     onDeleteClick = { onValueChange(state.copy(value = null)) },
+                    topInset = labelInset,
                 )
             }
         }
@@ -161,10 +174,11 @@ fun FormInputUploadDocument(
 private fun IdleState(
     state: FormInputFileState,
     onClick: () -> Unit,
+    topInset: Dp,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxSize().clickable { onClick() },
+        modifier = modifier.fillMaxWidth().heightIn(min = Dimens.sevenGrid).clickable { onClick() }.padding(top = topInset),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
@@ -188,11 +202,12 @@ private fun IdleState(
 private fun FileSelectedState(
     state: FormInputFileState,
     onDeleteClick: () -> Unit,
+    topInset: Dp,
     modifier: Modifier = Modifier,
 ) {
     val fileValue = state.value
     Row(
-        modifier = modifier.padding(Dimens.oneGrid),
+        modifier = modifier.padding(top = topInset).padding(Dimens.oneGrid),
         verticalAlignment = Alignment.Top,
     ) {
         FileIconWithBadge(

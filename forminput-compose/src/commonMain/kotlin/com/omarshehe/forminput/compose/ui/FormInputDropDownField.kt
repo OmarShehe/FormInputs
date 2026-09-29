@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.window.PopupProperties
 import org.jetbrains.compose.resources.stringResource
 import com.omarshehe.forminput.compose.ui.composables.FormInputLabel
+import com.omarshehe.forminput.compose.ui.composables.FormInputBoxField
 import com.omarshehe.forminput.compose.ui.composables.PickerSupportingText
 import com.omarshehe.forminput.compose.ui.composables.resolvedError
 import com.omarshehe.forminput.compose.ui.composables.resolvedLabel
@@ -57,7 +58,6 @@ import com.omarshehe.forminput.compose.ui.model.DropDownOptionModel
 import com.omarshehe.forminput.compose.ui.model.FormInputDropDownState
 import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
 import com.omarshehe.forminput.compose.ui.utils.Dimens
-import com.omarshehe.forminput.compose.ui.utils.trimOutlinedLabelSpace
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,7 +110,6 @@ fun FormInputDropDownField(
         state.options
     }
 
-    val hasLabelSpace = labelText != null && !filled
 
     Column(modifier = modifier) {
         ExposedDropdownMenuBox(
@@ -119,85 +118,45 @@ fun FormInputDropDownField(
             onExpandedChange = { expanded = enabled && it },
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
-                if (filled) {
-                    TextField(
-                        modifier = fieldModifier
-                            .trimOutlinedLabelSpace(hasLabelSpace)
-                            .menuAnchor(
-                                if (editable) ExposedDropdownMenuAnchorType.PrimaryEditable else ExposedDropdownMenuAnchorType.PrimaryNotEditable,
-                                enabled = enabled,
-                            )
-                            .fillMaxWidth(),
-                        enabled = enabled,
-                        isError = state.hasError,
-                        readOnly = !editable,
-                        singleLine = true,
-                        value = textValueState,
-                        onValueChange = { newValueState ->
-                            textValueState = newValueState
-                            if (allowFreeText) {
-                                // Only auto-open while there's text to filter against — otherwise
-                                // backspacing to empty falls back to the unfiltered full option list,
-                                // reproducing the same "suggestions flood the screen" problem. Scoped to
-                                // allowFreeText only — isSearchEnable-only dropdowns (desktop date pickers)
-                                // rely on reopening with the full unfiltered list on any keystroke, including
-                                // backspace-to-empty.
-                                expanded = newValueState.text.isNotEmpty()
-                                onSelected(state.copy(value = DropDownOptionModel(text = newValueState.text), hasError = false))
-                            } else if (editable) {
-                                expanded = true
-                            }
-                        },
-                        label = labelText?.let {
-                            { FormInputLabel(state) }
-                        },
-                        placeholder = placeholderText?.let { { Text(it) } },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded && enabled) },
-                        colors = fieldColors,
-                        shape = fieldShape,
-                        leadingIcon = leadingIcon,
-                        textStyle = textStyle ?: LocalTextStyle.current,
-                    )
-                } else {
-                    OutlinedTextField(
-                        modifier = fieldModifier
-                            .trimOutlinedLabelSpace(hasLabelSpace)
-                            .menuAnchor(
-                                if (editable) ExposedDropdownMenuAnchorType.PrimaryEditable else ExposedDropdownMenuAnchorType.PrimaryNotEditable,
-                                enabled = enabled,
-                            )
-                            .fillMaxWidth(),
-                        enabled = enabled,
-                        isError = state.hasError,
-                        readOnly = !editable,
-                        singleLine = true,
-                        value = textValueState,
-                        onValueChange = { newValueState ->
-                            textValueState = newValueState
-                            if (allowFreeText) {
-                                // Only auto-open while there's text to filter against — otherwise
-                                // backspacing to empty falls back to the unfiltered full option list,
-                                // reproducing the same "suggestions flood the screen" problem. Scoped to
-                                // allowFreeText only — isSearchEnable-only dropdowns (desktop date pickers)
-                                // rely on reopening with the full unfiltered list on any keystroke, including
-                                // backspace-to-empty.
-                                expanded = newValueState.text.isNotEmpty()
-                                onSelected(state.copy(value = DropDownOptionModel(text = newValueState.text), hasError = false))
-                            } else if (editable) {
-                                expanded = true
-                            }
-                        },
-                        label = labelText?.let {
-                            { FormInputLabel(state) }
-                        },
-                        placeholder = placeholderText?.let { { Text(it) } },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded && enabled) },
-                        colors = fieldColors,
-                        shape = fieldShape,
-                        leadingIcon = leadingIcon,
-                        textStyle = textStyle ?: LocalTextStyle.current,
-                    )
-                }
+                FormInputBoxField(
+                    filled = filled,
+                    focusable = editable,
+                    modifier = fieldModifier
+                        .menuAnchor(
+                            if (editable) ExposedDropdownMenuAnchorType.PrimaryEditable else ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                            enabled = enabled,
+                        )
+                        .fillMaxWidth(),
+                    enabled = enabled,
+                    isError = state.hasError,
+                    readOnly = !editable,
+                    value = textValueState,
+                    onValueChange = { newValueState ->
+                        textValueState = newValueState
+                        if (allowFreeText) {
+                            // Only auto-open while there's text to filter against — otherwise
+                            // backspacing to empty falls back to the unfiltered full option list,
+                            // reproducing the same "suggestions flood the screen" problem. Scoped to
+                            // allowFreeText only — isSearchEnable-only dropdowns (desktop date pickers)
+                            // rely on reopening with the full unfiltered list on any keystroke, including
+                            // backspace-to-empty.
+                            expanded = newValueState.text.isNotEmpty()
+                            onSelected(state.copy(value = DropDownOptionModel(text = newValueState.text), hasError = false))
+                        } else if (editable) {
+                            expanded = true
+                        }
+                    },
+                    label = labelText?.let {
+                        { FormInputLabel(state) }
+                    },
+                    placeholder = placeholderText?.let { { Text(it) } },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded && enabled) },
+                    colors = fieldColors,
+                    shape = fieldShape,
+                    leadingIcon = leadingIcon,
+                    textStyle = textStyle ?: LocalTextStyle.current,
+                )
+            
                 if (!editable && enabled) {
                     Box(
                         modifier = Modifier
