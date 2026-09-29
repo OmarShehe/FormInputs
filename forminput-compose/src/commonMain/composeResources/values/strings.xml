@@ -1,7 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="cant_be_empty">can\'t be empty</string>
-    <string name="invalid_email_address">Invalid email address</string>
-    <string name="invalid_password">Invalid password</string>
-    <string name="maximum_limit">Exceeded the maximum word count</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="select_date">Select Date</string>
+    <string name="select_time">Select Time</string>
+    <string name="select_date_time">Select Date &amp; Time</string>
+    <string name="no_file_selected">No file selected</string>
+    <string name="click_to_upload">Click to upload file</string>
+    <string name="unknown_file">Unknown file</string>
+    <string name="select_file">Select File</string>
+    <string name="image_selected">Image Selected</string>
+    <string name="delete">Delete</string>
+    <string name="calculating">Calculating...</string>
+    <string name="selected">Selected</string>
+    <string name="error_required">This field is required</string>
+    <string name="error_invalid_number">Please enter a valid number</string>
+    <string name="error_invalid_date">Please enter a valid date (YYYY-MM-DD)</string>
+    <string name="error_invalid_file">Please select a valid file (%s)</string>
+    <string name="table_no_data">No data found</string>
+    <string name="table_pagination_showing">Showing %1$d to %2$d of %3$d results</string>
+    <string name="table_per_page">%1$d per page</string>
+    <string name="search_hint">Search...</string>
+    <string name="clear_search">Clear search</string>
+    <string name="image_primary_badge">Primary</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
+    <string name="label_uploaded_documents">Uploaded Documents</string>
+    <string name="cd_color_swatch">Color swatch</string>
+    <string name="color_picker_hex_label">HEX</string>
+    <string name="error_file_picker_unsupported">Picking files is not supported on this platform yet</string>
 </resources>

@@ -1,88 +1,126 @@
 package com.omarshehe.forminput.compose.ui
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.tooling.preview.Preview
-import com.omarshehe.forminput.compose.ui.model.Dimens
-import com.omarshehe.forminput.compose.ui.model.FormInputButtonUiState
-import com.omarshehe.forminput.compose.ui.model.FormInputButtonUiState.Idle
-import com.omarshehe.forminput.compose.ui.model.FormInputButtonUiState.Loading
-import com.omarshehe.forminput.compose.ui.model.WhenLoading
-import com.omarshehe.forminput.compose.ui.model.isLoading
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+import com.omarshehe.forminput.compose.ui.utils.Dimens
+
+enum class FormInputButtonStyle {
+    FILLED,
+    OUTLINED,
+    TEXT,
+}
 
 @Composable
-public fun FormInputButton(
+fun FormInputButton(
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    uiState: FormInputButtonUiState,
-    icon: Painter? = null,
-    shape: Shape = MaterialTheme.shapes.large,
-    isEnable: Boolean = true,
-    onClick: () -> Unit
+    text: String? = null,
+    textRes: StringResource? = null,
+    style: FormInputButtonStyle = FormInputButtonStyle.FILLED,
+    icon: ImageVector? = null,
+    enabled: Boolean = true,
+    isLoading: Boolean = false,
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
+    shape: Shape = MaterialTheme.shapes.small,
+    color: Color? = null,
+    contentColor: Color? = null,
+    height: Dp = Dimens.fiveGrid,
 ) {
-    val enabledState by remember(uiState, isEnable) {
-        mutableStateOf(if (uiState.isLoading()) uiState.isLoading().not() else isEnable)
-    }
-    Button(
-        onClick = onClick,
-        enabled = enabledState,
-        colors = ButtonDefaults.buttonColors(
-            disabledContainerColor = colorScheme.primary.copy(0.5f),
-            disabledContentColor = colorScheme.onPrimary.copy(0.5f)
-        ),
-        shape = shape,
-        modifier = modifier.defaultMinSize(minHeight = Dimens.buttonHeight)
-    ) {
-        icon?.let {
-            Icon(
-                painter = it,
-                contentDescription = null,
-                tint = Color.Unspecified
-            )
-            Spacer(modifier = Modifier.width(Dimens.normal))
+    val buttonText = text ?: textRes?.let { stringResource(it) } ?: ""
+    val resolvedColor = color ?: MaterialTheme.colorScheme.primary
+    val resolvedContentColor = contentColor ?: MaterialTheme.colorScheme.onPrimary
+
+    when (style) {
+        FormInputButtonStyle.FILLED -> {
+            Button(
+                onClick = onClick,
+                modifier = modifier.widthIn(min = 130.dp).height(height),
+                enabled = enabled && !isLoading,
+                shape = shape,
+                contentPadding = contentPadding,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = resolvedColor,
+                    contentColor = resolvedContentColor,
+                    disabledContainerColor = resolvedColor.copy(alpha = 0.3f),
+                    disabledContentColor = resolvedContentColor.copy(alpha = 0.5f),
+                ),
+            ) {
+                ButtonContent(buttonText, icon, isLoading)
+            }
         }
-
-        Text(
-            text = uiState.text.asText(),
-            softWrap = false,
-            style = MaterialTheme.typography.labelLarge
-        )
-
-        uiState.WhenLoading {
-            Spacer(modifier = Modifier.width(Dimens.normal))
-            CircularProgressIndicator(
-                color = colorScheme.primary,
-                strokeWidth = Dimens.strokeNormal,
-                modifier = Modifier.size(Dimens.large)
-            )
+        FormInputButtonStyle.OUTLINED -> {
+            OutlinedButton(
+                onClick = onClick,
+                modifier = modifier.widthIn(min = 130.dp).height(height),
+                enabled = enabled && !isLoading,
+                shape = shape,
+                contentPadding = contentPadding,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = resolvedColor,
+                ),
+                border = BorderStroke(
+                    width = Dimens.stroke,
+                    color = if (enabled && !isLoading) resolvedColor else MaterialTheme.colorScheme.outline.copy(alpha = 0.12f),
+                ),
+            ) {
+                ButtonContent(buttonText, icon, isLoading)
+            }
+        }
+        FormInputButtonStyle.TEXT -> {
+            TextButton(
+                onClick = onClick,
+                modifier = modifier,
+                enabled = enabled && !isLoading,
+                shape = shape,
+                contentPadding = contentPadding,
+                colors = ButtonDefaults.textButtonColors(contentColor = resolvedColor),
+            ) {
+                ButtonContent(buttonText, icon, isLoading)
+            }
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
-private fun ButtonPreview() {
-    var buttonState by remember {
-        mutableStateOf<FormInputButtonUiState>(Idle("Click me"))
-    }
-    FormInputButton(Modifier, buttonState) {
-        buttonState = Loading("Loading...")
+private fun RowScope.ButtonContent(
+    text: String,
+    icon: ImageVector?,
+    isLoading: Boolean,
+) {
+    if (isLoading) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(Dimens.threeGrid),
+            strokeWidth = Dimens.quarterGrid,
+            color = LocalContentColor.current,
+        )
+    } else {
+        icon?.let {
+            Icon(
+                imageVector = it,
+                contentDescription = null,
+                modifier = Modifier.size(Dimens.twoAndHalfGrid),
+            )
+            if (text.isNotEmpty()) {
+                Spacer(Modifier.width(Dimens.oneGrid))
+            }
+        }
+        if (text.isNotEmpty()) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
     }
 }
