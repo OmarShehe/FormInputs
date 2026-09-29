@@ -1,4 +1,4 @@
 jdk:
-  - openjdk11
+  - openjdk17
 install:
-  - ./gradlew build publishToMavenLocal
+  - ./gradlew :forminput-compose:publishToMavenLocal :forminputkotlin:publishToMavenLocal -Pkotlin.native.ignoreDisabledTargets=true
