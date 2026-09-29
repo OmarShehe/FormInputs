@@ -1,24 +1,29 @@
 [versions]
-gradlePlugin = "9.1.0"
-kotlin = "2.3.20"
-coreKtx = "1.17.0"
-lifecycleRuntimeKtx = "2.10.0"
-activityCompose = "1.12.1"
-composeBom = "2025.12.00"
-appcompat = "1.7.1"
-material = "1.13.0"
-constraintlayout = "2.2.1"
+gradlePlugin = "9.4.1"
+kotlin = "2.4.20"
+coreKtx = "1.19.1"
+lifecycleRuntimeKtx = "2.11.0"
+activityCompose = "1.13.0"
+composeBom = "2026.09.00"
+appcompat = "1.8.0"
+material = "1.14.0"
+constraintlayout = "2.2.2"
 swiperefreshlayout = "1.2.0"
 materialIconsExtended = "1.7.8"
 
-sdk = "36"
+sdk = "37"
 minSdk = "23"
 versionCode = "6"
 versionName = "1.0.7"
+composeMultiplatform = "1.12.1"
+composeMaterial3 = "1.9.0"
+composeIcons = "1.7.3"
+mavenPublish = "0.37.0"
 
 groupId = "com.github.OmarShehe"
 artifactIdKotlin = "forminput-kotlin"
 artifactIdCompose = "forminput-compose"
+composeVersion = "2.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +41,15 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 
+compose-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "composeMultiplatform" }
+compose-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "composeMultiplatform" }
+compose-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "composeMultiplatform" }
+compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "composeMaterial3" }
+compose-material-icons-extended = { group = "org.jetbrains.compose.material", name = "material-icons-extended", version.ref = "composeIcons" }
+compose-components-resources = { group = "org.jetbrains.compose.components", name = "components-resources", version.ref = "composeMultiplatform" }
+compose-ui-tooling-preview = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview", version.ref = "composeMultiplatform" }
+compose-ui-test = { group = "org.jetbrains.compose.ui", name = "ui-test", version.ref = "composeMultiplatform" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradlePlugin" }
@@ -43,4 +57,8 @@ android-library = { id = "com.android.library", version.ref = "gradlePlugin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 maven-publish = { id = "maven-publish" }
+vanniktech-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "gradlePlugin" }
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 legacy-kapt = { id = "com.android.legacy-kapt", version.ref = "gradlePlugin" }

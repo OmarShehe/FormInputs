@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
@@ -32,14 +33,18 @@ import com.omarshehe.forminput.compose.ui.utils.formInputModifier
 @Composable
 fun FormInputDropDownOption(
     modifier: Modifier = Modifier,
+    fieldModifier: Modifier = Modifier,
     formInputData: FormInputDropDownState,
     isSearchEnable: Boolean = false,
+    enabled: Boolean = true,
+    supportingText: String? = null,
     onSelected: (FormInputDropDownState) -> Unit
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val resultState by remember { mutableStateOf<FormInputResultState>(FormInputResultState.Idle(DROP_DOWN)) }
     val label = formInputData.labelValue.asText()
-    var textValueState by remember { mutableStateOf(TextFieldValue(text = formInputData.textValue)) }
+    // Keyed on the selected text so an external change (for example a cascade clearing this field) is shown.
+    var textValueState by remember(formInputData.textValue) { mutableStateOf(TextFieldValue(text = formInputData.textValue)) }
 
     val filteringOptions = formInputData.options.takeIf { isSearchEnable && textValueState.text.isNotEmpty() }
         ?.filter { it.textValue.contains(textValueState.text, ignoreCase = true) }
@@ -47,14 +52,16 @@ fun FormInputDropDownOption(
 
     ExposedDropdownMenuBox(
         modifier = modifier,
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded },
+        expanded = expanded && enabled,
+        onExpandedChange = { expanded = enabled && !expanded },
     ) {
         TextField(
-            modifier = Modifier
-                .menuAnchor()
+            modifier = fieldModifier
+                .menuAnchor(if (isSearchEnable) ExposedDropdownMenuAnchorType.PrimaryEditable else ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled = enabled)
                 .fillMaxWidth(),
             isError = resultState.isError,
+            enabled = enabled,
+            supportingText = supportingText?.let { { Text(it) } },
             readOnly = isSearchEnable.not(),
             singleLine = true,
             value = textValueState,
@@ -64,7 +71,7 @@ fun FormInputDropDownOption(
             },
             label = { Text(label) },
             placeholder = { Text(formInputData.placeholderValue.asText()) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded && enabled) },
             colors = TextFieldDefaults.colors(),
         )
 
@@ -72,7 +79,7 @@ fun FormInputDropDownOption(
             DropdownMenu(
                 modifier = Modifier.exposedDropdownSize(true),
                 properties = PopupProperties(focusable = false),
-                expanded = expanded,
+                expanded = expanded && enabled,
                 onDismissRequest = { if (!isSearchEnable) expanded = false },
             ) {
                 filteringOptions.forEach { selectionOption ->

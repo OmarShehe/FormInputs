@@ -19,7 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.tooling.preview.Preview
 import com.omarshehe.forminput.compose.ui.model.Dimens
 import com.omarshehe.forminput.compose.ui.model.FormInputButtonUiState
@@ -29,10 +29,10 @@ import com.omarshehe.forminput.compose.ui.model.WhenLoading
 import com.omarshehe.forminput.compose.ui.model.isLoading
 
 @Composable
-fun FormInputButton(
+public fun FormInputButton(
     modifier: Modifier = Modifier,
     uiState: FormInputButtonUiState,
-    iconResourceId: Int? = null,
+    icon: Painter? = null,
     shape: Shape = MaterialTheme.shapes.large,
     isEnable: Boolean = true,
     onClick: () -> Unit
@@ -50,10 +50,10 @@ fun FormInputButton(
         shape = shape,
         modifier = modifier.defaultMinSize(minHeight = Dimens.buttonHeight)
     ) {
-        iconResourceId?.apply {
+        icon?.let {
             Icon(
-                painter = painterResource(this),
-                contentDescription = "SignInButton",
+                painter = it,
+                contentDescription = null,
                 tint = Color.Unspecified
             )
             Spacer(modifier = Modifier.width(Dimens.normal))

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cant_be_empty">haiwezi kuwa tupu</string>
+    <string name="invalid_email_address">Barua pepe si sahihi</string>
+    <string name="invalid_password">Nenosiri si sahihi</string>
+    <string name="maximum_limit">Umezidi kikomo cha maneno</string>
+</resources>

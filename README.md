@@ -185,3 +185,16 @@ Button
             app:form_valueOnLoad="Please, wait.." />
 
 ```
+
+# Compose Multiplatform (forminput-compose 2.0.0)
+
+`forminput-compose` is now a Kotlin Multiplatform library for Android, desktop JVM and iOS (arm64, simulator arm64), built on
+Compose Multiplatform 1.12 and Kotlin 2.4. It provides `FormInputTextField`, `FormInputDropDownOption` and `FormInputButton`.
+
+```
+commonMain.dependencies { implementation("com.github.OmarShehe:forminput-compose:2.0.0") }
+```
+
+Breaking changes from 1.x: labels and placeholders are a `String` or a Compose `StringResource` (not an Android `@StringRes` Int),
+`FormInputButton(icon = Painter?)` replaces `iconResourceId`, and the dropdown gained `enabled` and `supportingText`.
+Strings ship in English and Swahili. Until it is on a public repository, run `./gradlew :forminput-compose:publishToMavenLocal`.

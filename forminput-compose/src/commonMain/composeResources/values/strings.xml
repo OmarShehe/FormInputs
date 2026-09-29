@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="cant_be_bmpty">can\'t be empty</string>
+    <string name="cant_be_empty">can\'t be empty</string>
     <string name="invalid_email_address">Invalid email address</string>
     <string name="invalid_password">Invalid password</string>
     <string name="maximum_limit">Exceeded the maximum word count</string>
