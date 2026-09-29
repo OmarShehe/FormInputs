@@ -9,10 +9,14 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.v2.runComposeUiTest
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import com.omarshehe.forminput.compose.ui.model.DropDownOptionModel
 import com.omarshehe.forminput.compose.ui.model.FormInputDropDownState
+import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
 import com.omarshehe.forminput.compose.ui.model.FormInputTextFieldState
 import com.omarshehe.forminput.compose.ui.model.FormInputType
+import com.omarshehe.forminput.compose.ui.utils.formInputShape
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -43,6 +47,12 @@ class TextAndDropDownTest {
             setContent { FormInputTextField(state = state, onValueChange = { state = it }) }
             block { state }
         }
+
+    @Test
+    fun prefixAndSuffixAreShown() = runText(text().copy(prefix = "TZS", suffix = "kg", value = "5")) {
+        onNodeWithText("TZS").assertExists()
+        onNodeWithText("kg").assertExists()
+    }
 
     @Test
     fun runtimeLabelIsShown() = runText(text()) {
@@ -140,5 +150,68 @@ class TextAndDropDownTest {
         enabled = true
         waitForIdle()
         onNodeWithText("Arusha").assertDoesNotExist()
+    }
+
+    @Test
+    fun filledTextFieldShowsItsLabelAndReportsTyping() = runComposeUiTest {
+        var state by mutableStateOf(text())
+        setContent { FormInputTextField(state = state, style = FormInputFieldStyle.FILLED, onValueChange = { state = it }) }
+        onNodeWithText("Field").performTextInput("abc")
+        assertEquals("abc", state.value)
+    }
+
+    @Test
+    fun filledDropDownSelectsOption() = runComposeUiTest {
+        var state by mutableStateOf(regions())
+        setContent { FormInputDropDownField(state = state, style = FormInputFieldStyle.FILLED, onSelected = { state = it }) }
+        onNodeWithText("Region").performClick()
+        onNodeWithText("Arusha").performClick()
+        assertEquals("2", state.value.id)
+    }
+
+    @Test
+    fun filledDropDownWithShapeStaysDisabledWhenDisabled() = runComposeUiTest {
+        setContent {
+            FormInputDropDownField(
+                state = regions(), style = FormInputFieldStyle.FILLED, shape = formInputShape(), enabled = false,
+                supportingText = "Select Country first", onSelected = {},
+            )
+        }
+        onNodeWithText("Select Country first").assertExists()
+        onNodeWithText("Region").performClick()
+        onNodeWithText("Arusha").assertDoesNotExist()
+    }
+
+    @Test
+    fun textFieldValueOverloadFiltersInputAndReportsTheSelection() = runComposeUiTest {
+        var value by mutableStateOf(TextFieldValue(""))
+        setContent {
+            FormInputTextField(state = text(FormInputType.NUMBER), value = value, onValueChange = { value = it })
+        }
+        onNodeWithText("Field").performTextInput("1a2")
+        assertEquals("12", value.text)
+        assertEquals(TextRange(2), value.selection)
+    }
+
+    @Test
+    fun textFieldValueOverloadHonoursACursorSetByTheCaller() = runComposeUiTest {
+        var value by mutableStateOf(TextFieldValue("hello", TextRange(5)))
+        setContent {
+            FormInputTextField(state = text(), value = value, onValueChange = { value = it })
+        }
+        value = TextFieldValue("hello", TextRange(0))
+        waitForIdle()
+        onNodeWithText("Field").performTextInput("X")
+        assertEquals("Xhello", value.text)
+    }
+
+    @Test
+    fun textFieldValueOverloadRejectsInputBeyondMaxChar() = runComposeUiTest {
+        var value by mutableStateOf(TextFieldValue(""))
+        setContent {
+            FormInputTextField(state = text(maxChar = 3), value = value, onValueChange = { value = it })
+        }
+        onNodeWithText("Field").performTextInput("abcdef")
+        assertEquals("", value.text)
     }
 }

@@ -19,6 +19,9 @@ data class FormInputFileState(
     val allowedExtensions: List<String> = emptyList(),
     val progress: Float? = null,
     val statusRes: StringResource? = null,
+    override val label: String? = null,
+    override val placeholder: String? = null,
+    override val error: String? = null,
 ) : FormInputState {
     data class FileUploadValue(
         val filePath: String? = null,

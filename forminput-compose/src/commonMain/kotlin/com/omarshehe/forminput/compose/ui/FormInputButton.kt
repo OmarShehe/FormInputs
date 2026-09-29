@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.StringResource
+import com.omarshehe.forminput.compose.ui.libraryString
 import org.jetbrains.compose.resources.stringResource
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 
@@ -37,7 +38,7 @@ fun FormInputButton(
     contentColor: Color? = null,
     height: Dp = Dimens.fiveGrid,
 ) {
-    val buttonText = text ?: textRes?.let { stringResource(it) } ?: ""
+    val buttonText = text ?: textRes?.let { libraryString(it) } ?: ""
     val resolvedColor = color ?: MaterialTheme.colorScheme.primary
     val resolvedContentColor = contentColor ?: MaterialTheme.colorScheme.onPrimary
 

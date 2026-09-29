@@ -24,6 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.TextFieldColors
+import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
+import com.omarshehe.forminput.compose.ui.composables.formInputContainer
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,11 +43,20 @@ fun QuantityStepperControl(
     icon: ImageVector? = null,
     minValue: Int = 0,
     maxValue: Int = 9,
+    shape: Shape? = null,
+    style: FormInputFieldStyle? = null,
+    colors: TextFieldColors? = null,
 ) {
-    OutlinedCard(
-        modifier = modifier,
-        shape = RoundedCornerShape(Dimens.oneAndHalfGrid),
-        border = BorderStroke(Dimens.stroke, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+    val boxShape = shape ?: LocalFormInputDefaults.current.shape ?: RoundedCornerShape(Dimens.oneAndHalfGrid)
+    Box(
+        modifier = modifier.formInputContainer(
+            shape = boxShape,
+            style = style,
+            colors = colors,
+            hasError = false,
+            defaultBorder = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+            defaultBackground = MaterialTheme.colorScheme.surface,
+        ),
     ) {
         Row(
             modifier = Modifier.padding(Dimens.twoGrid),

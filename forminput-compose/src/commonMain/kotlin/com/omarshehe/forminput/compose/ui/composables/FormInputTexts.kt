@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import com.omarshehe.forminput.compose.ui.libraryString
 import org.jetbrains.compose.resources.stringResource
 import com.omarshehe.forminput.compose.ui.model.FormInputState
 import com.omarshehe.forminput.compose.ui.utils.Dimens
@@ -39,13 +40,13 @@ fun TextContent(
 
 /** The label as text: the runtime [FormInputState.label] if set, else [FormInputState.labelRes]. */
 @Composable
-fun FormInputState.resolvedLabel(): String? = label ?: labelRes?.let { stringResource(it) }
+fun FormInputState.resolvedLabel(): String? = label ?: labelRes?.let { libraryString(it) }
 
 @Composable
-fun FormInputState.resolvedPlaceholder(): String? = placeholder ?: placeholderRes?.let { stringResource(it) }
+fun FormInputState.resolvedPlaceholder(): String? = placeholder ?: placeholderRes?.let { libraryString(it) }
 
 @Composable
-fun FormInputState.resolvedError(): String? = error ?: errorRes?.let { stringResource(it) }
+fun FormInputState.resolvedError(): String? = error ?: errorRes?.let { libraryString(it) }
 
 @Composable
 fun FormInputLabel(

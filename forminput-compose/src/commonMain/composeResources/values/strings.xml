@@ -30,4 +30,18 @@
     <string name="cd_color_swatch">Color swatch</string>
     <string name="color_picker_hex_label">HEX</string>
     <string name="error_file_picker_unsupported">Picking files is not supported on this platform yet</string>
+    <string name="browse_files">Browse files</string>
+    <string name="password_rules_title">Your password needs to:</string>
+    <string name="password_rule_upper_case">Include at least one upper case letter</string>
+    <string name="password_rule_special">Include at least one special character</string>
+    <string name="password_rule_digit">Include at least one number</string>
+    <string name="password_rule_min_length">Be at least %1$d characters long</string>
+    <string name="password_strength_weak">Weak</string>
+    <string name="password_strength_medium">Medium</string>
+    <string name="password_strength_strong">Strong</string>
+    <string name="password_strength_very_strong">Very strong</string>
+    <string name="password_mismatch">Passwords do not match</string>
+    <string name="cd_rule_met">Requirement met</string>
+    <string name="cd_rule_not_met">Requirement not met</string>
+    <string name="select_currency">Select currency</string>
 </resources>

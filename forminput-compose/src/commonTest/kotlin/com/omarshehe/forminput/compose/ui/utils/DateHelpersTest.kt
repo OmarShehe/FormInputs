@@ -1,5 +1,6 @@
 package com.omarshehe.forminput.compose.ui.utils
 
+import kotlinx.datetime.TimeZone
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -87,5 +88,14 @@ class DateHelpersTest {
         val text = formatUtcMillisPattern("2026-09-29".dateToUtcMillis()!! + 14 * 3_600_000L + 30 * 60_000L, "yyyy-MM-dd HH:mm")
         assertEquals("2026-09-29 14:30", text)
         assertTrue(formatUtcMillisPattern(0L, "dd MMM yyyy").startsWith("01 "))
+    }
+
+    @Test
+    fun todayIsTheLocalDayNotTheUtcDay() {
+        // 2026-09-28 22:00 UTC is already 2026-09-29 in Tanzania (UTC+3).
+        val instant = "2026-09-28".dateToUtcMillis()!! + 22 * 3_600_000L
+        assertEquals("2026-09-29".dateToUtcMillis(), localDayAsUtcMillis(instant, TimeZone.of("Africa/Dar_es_Salaam")))
+        assertEquals("2026-09-28".dateToUtcMillis(), localDayAsUtcMillis(instant, TimeZone.UTC))
+        assertEquals("2026-09-28".dateToUtcMillis(), localDayAsUtcMillis(instant, TimeZone.of("America/New_York")))
     }
 }

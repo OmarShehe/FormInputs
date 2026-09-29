@@ -37,6 +37,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.TextFieldColors
+import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
+import com.omarshehe.forminput.compose.ui.composables.formInputContainer
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.font.FontWeight
@@ -56,6 +60,8 @@ import org.jetbrains.compose.resources.stringResource
 import com.omarshehe.forminput.compose.ui.model.FormInputFileState
 import com.omarshehe.forminput.compose.ui.model.FormInputFileType
 import com.omarshehe.forminput.compose.ui.model.FormInputType
+import com.omarshehe.forminput.compose.ui.composables.resolvedLabel
+import com.omarshehe.forminput.compose.ui.composables.resolvedPlaceholder
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 import com.omarshehe.forminput.compose.ui.utils.FilePicker
 import com.omarshehe.forminput.compose.ui.utils.FileUtils
@@ -66,7 +72,11 @@ fun FormInputUploadDocument(
     state: FormInputFileState,
     onValueChange: (FormInputFileState) -> Unit,
     modifier: Modifier = Modifier,
+    shape: Shape? = null,
+    style: FormInputFieldStyle? = null,
+    colors: TextFieldColors? = null,
 ) {
+    val boxShape = shape ?: LocalFormInputDefaults.current.shape ?: RoundedCornerShape(Dimens.oneGrid)
     var showFilePicker by remember { mutableStateOf(false) }
     val isSelected = state.value != null
 
@@ -93,16 +103,22 @@ fun FormInputUploadDocument(
         },
     )
 
+    // An outline is cut by the label sitting on it; a filled box has nothing to cut, so its label goes above it.
+    val labelAbove = (style ?: LocalFormInputDefaults.current.style) == FormInputFieldStyle.FILLED && state.resolvedLabel() != null
     Box(modifier = modifier.fillMaxWidth()) {
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .padding(top = if (labelAbove) Dimens.threeGrid else Dimens.default)
+                .fillMaxWidth()
                 .height(Dimens.sevenGrid)
-                .clip(RoundedCornerShape(Dimens.oneGrid))
-                .border(
-                    width = Dimens.stroke,
-                    color = if (state.hasError) colorScheme.error else colorScheme.outlineVariant,
-                    shape = RoundedCornerShape(Dimens.oneGrid),
-                ).background(color = colorScheme.surface),
+                .formInputContainer(
+                    shape = boxShape,
+                    style = style,
+                    colors = colors,
+                    hasError = state.hasError,
+                    defaultBorder = colorScheme.outlineVariant,
+                    defaultBackground = colorScheme.surface,
+                ),
         ) {
             if (!isSelected) {
                 IdleState(
@@ -117,17 +133,20 @@ fun FormInputUploadDocument(
             }
         }
 
-        state.labelRes?.let {
-            val label = stringResource(it)
-            Text(
+        state.resolvedLabel()?.let { label ->
+    Text(
                 text = if (state.isMandatory) "$label${Symbols.MANDATORY_SYMBOL}" else label,
                 style = typography.labelMedium,
                 color = colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .padding(start = Dimens.oneAndHalfGrid)
-                    .offset(y = -(Dimens.oneGrid))
-                    .background(colorScheme.surface)
-                    .padding(horizontal = Dimens.halfGrid),
+                modifier = if (labelAbove) {
+                    Modifier.padding(start = Dimens.oneAndHalfGrid)
+                } else {
+                    Modifier
+                        .padding(start = Dimens.oneAndHalfGrid)
+                        .offset(y = -(Dimens.oneGrid))
+                        .background(colorScheme.surface)
+                        .padding(horizontal = Dimens.halfGrid)
+                },
             )
         }
 
@@ -158,7 +177,7 @@ private fun IdleState(
         )
         Spacer(Modifier.width(Dimens.oneGrid))
         Text(
-            state.placeholderRes?.let { stringResource(it) } ?: stringResource(Res.string.click_to_upload),
+            state.resolvedPlaceholder() ?: formInputString(FormInputStrings::clickToUpload, Res.string.click_to_upload),
             style = typography.bodyMedium,
             color = colorScheme.onSurfaceVariant,
         )
@@ -190,7 +209,7 @@ private fun FileSelectedState(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = fileValue?.fileName ?: stringResource(Res.string.unknown_file),
+                    text = fileValue?.fileName ?: formInputString(FormInputStrings::unknownFile, Res.string.unknown_file),
                     style = typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
@@ -204,7 +223,7 @@ private fun FileSelectedState(
                 ) {
                     Icon(
                         Icons.Default.Delete,
-                        contentDescription = stringResource(Res.string.delete),
+                        contentDescription = formInputString(FormInputStrings::delete, Res.string.delete),
                         tint = colorScheme.onSurface,
                         modifier = Modifier.size(Dimens.twoAndHalfGrid),
                     )

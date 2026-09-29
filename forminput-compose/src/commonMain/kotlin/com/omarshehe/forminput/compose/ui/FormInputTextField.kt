@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -25,6 +26,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +40,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -56,37 +59,102 @@ import org.jetbrains.compose.resources.stringResource
 import com.omarshehe.forminput.compose.ui.composables.resolvedError
 import com.omarshehe.forminput.compose.ui.composables.resolvedLabel
 import com.omarshehe.forminput.compose.ui.composables.resolvedPlaceholder
+import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
 import com.omarshehe.forminput.compose.ui.model.FormInputTextFieldState
 import com.omarshehe.forminput.compose.ui.model.FormInputType
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 import com.omarshehe.forminput.compose.ui.utils.Symbols
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Text field driven by [FormInputTextFieldState.value]. The cursor and selection are kept internally; use the
+ * overload that takes a [TextFieldValue] to control them.
+ */
 @Composable
 fun FormInputTextField(
     state: FormInputTextFieldState,
     modifier: Modifier = Modifier,
     textModifier: Modifier = Modifier,
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
-    shape: Shape = OutlinedTextFieldDefaults.shape,
-    contentPadding: PaddingValues = OutlinedTextFieldDefaults.contentPadding(),
+    colors: TextFieldColors? = null,
+    shape: Shape? = null,
+    contentPadding: PaddingValues? = null,
+    style: FormInputFieldStyle? = null,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    textStyle: TextStyle? = null,
+    keyboardOptions: KeyboardOptions? = null,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    visualTransformation: VisualTransformation? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     onValueChange: (FormInputTextFieldState) -> Unit = {},
 ) {
+    var textValueState by remember { mutableStateOf(TextFieldValue(text = state.value)) }
+    LaunchedEffect(state.value) {
+        if (textValueState.text != state.value) {
+            textValueState = textValueState.copy(text = state.value, selection = TextRange(state.value.length))
+        }
+    }
+    FormInputTextField(
+        state = state,
+        value = textValueState,
+        onValueChange = { newValue ->
+            textValueState = newValue
+            onValueChange(state.copy(value = newValue.text))
+        },
+        modifier = modifier,
+        textModifier = textModifier,
+        colors = colors,
+        shape = shape,
+        contentPadding = contentPadding,
+        style = style,
+        enabled = enabled,
+        readOnly = readOnly,
+        textStyle = textStyle,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        visualTransformation = visualTransformation,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+    )
+}
+
+/**
+ * Text field with a hoisted [TextFieldValue], so the caller owns the text, cursor and selection. Input is filtered
+ * by the state's type, [FormInputTextFieldState.maxChar] and [FormInputTextFieldState.autoCapitalize] before
+ * [onValueChange] is called; [FormInputTextFieldState.value] is not used by this overload.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FormInputTextField(
+    state: FormInputTextFieldState,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    modifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier,
+    colors: TextFieldColors? = null,
+    shape: Shape? = null,
+    contentPadding: PaddingValues? = null,
+    style: FormInputFieldStyle? = null,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    textStyle: TextStyle? = null,
+    keyboardOptions: KeyboardOptions? = null,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    visualTransformation: VisualTransformation? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
+) {
+    val defaults = LocalFormInputDefaults.current
+    val filled = (style ?: defaults.style) == FormInputFieldStyle.FILLED
+    val fieldColors = colors ?: if (filled) TextFieldDefaults.colors() else OutlinedTextFieldDefaults.colors()
+    val fieldShape = shape ?: defaults.shape ?: if (filled) TextFieldDefaults.shape else OutlinedTextFieldDefaults.shape
     val labelText = state.resolvedLabel()
     val placeholderText = state.resolvedPlaceholder()
     val errorText = state.resolvedError()
-    var textValueState by remember { mutableStateOf(TextFieldValue(text = state.value)) }
     var passwordVisible by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
 
-    LaunchedEffect(state.value) {
-        if (textValueState.text != state.value) {
-            textValueState =
-                textValueState.copy(text = state.value, selection = TextRange(state.value.length))
-        }
-    }
-
-    val visualTransformation = if (state.type == FormInputType.PASSWORD && !passwordVisible) {
+    val effectiveTransformation = visualTransformation ?: if (state.type == FormInputType.PASSWORD && !passwordVisible) {
         PasswordVisualTransformation()
     } else {
         VisualTransformation.None
@@ -116,81 +184,102 @@ fun FormInputTextField(
         }
 
         BasicTextField(
-            value = textValueState,
-            onValueChange = { newValueState ->
-                val isNumeric = state.type == FormInputType.NUMBER
-                val isPhone = state.type == FormInputType.PHONE
-                var filteredText = when {
-                    isNumeric -> newValueState.text.filter { it.isDigit() || it == '.' }
-                    isPhone -> newValueState.text.filter { it.isDigit() || it == '+' }
-                    else -> newValueState.text
-                }
-
-                if (isNumeric && filteredText.count { it == '.' } > 1) {
-                    val firstDotIndex = filteredText.indexOf('.')
-                    val beforeDot = filteredText.substring(0, firstDotIndex + 1)
-                    val afterDot = filteredText.substring(firstDotIndex + 1).replace(".", "")
-                    filteredText = beforeDot + afterDot
-                }
-
-                if (filteredText.length <= state.maxChar) {
-                    val formattedValue =
-                        if (state.autoCapitalize) filteredText.uppercase() else filteredText
-                    textValueState = newValueState.copy(text = formattedValue)
-                    onValueChange(state.copy(value = formattedValue))
-                }
-            },
+            value = value,
+            onValueChange = { newValue -> state.sanitize(newValue)?.let(onValueChange) },
             modifier = textModifier.fillMaxWidth(),
-            textStyle = MaterialTheme.typography.bodyLarge.copy(color = colorScheme.onSurface),
-            keyboardOptions = getKeyboardOptions(state),
-            visualTransformation = visualTransformation,
+            enabled = enabled,
+            readOnly = readOnly,
+            textStyle = textStyle ?: MaterialTheme.typography.bodyLarge.copy(
+                color = if (enabled) colorScheme.onSurface else colorScheme.onSurface.copy(alpha = 0.38f),
+            ),
+            keyboardOptions = keyboardOptions ?: getKeyboardOptions(state),
+            keyboardActions = keyboardActions,
+            visualTransformation = effectiveTransformation,
             singleLine = state.isSingleLine,
             minLines = state.minLines,
             maxLines = state.maxLines,
             cursorBrush = SolidColor(colorScheme.primary),
             interactionSource = interactionSource,
             decorationBox = { innerTextField ->
-                OutlinedTextFieldDefaults.DecorationBox(
-                    value = textValueState.text,
-                    innerTextField = innerTextField,
-                    enabled = true,
-                    singleLine = state.isSingleLine,
-                    visualTransformation = visualTransformation,
-                    interactionSource = interactionSource,
-                    isError = state.hasError,
-                    label = labelText?.let {
-                        {
-                            Text(
-                                text = buildAnnotatedString {
-                                    append(it)
-                                    if (state.isMandatory) {
-                                        withStyle(SpanStyle(color = colorScheme.error)) {
-                                            append(" ${Symbols.MANDATORY_SYMBOL}")
-                                        }
+                val labelSlot: (@Composable () -> Unit)? = labelText?.let {
+                    {
+                        Text(
+                            text = buildAnnotatedString {
+                                append(it)
+                                if (state.isMandatory) {
+                                    withStyle(SpanStyle(color = colorScheme.error)) {
+                                        append(" ${Symbols.MANDATORY_SYMBOL}")
                                     }
-                                },
-                            )
-                        }
-                    },
-                    placeholder = placeholderText?.let { { Text(it) } },
-                    leadingIcon = state.icon?.let {
-                        { Icon(imageVector = it, contentDescription = null, tint = colorScheme.primary) }
-                    },
-                    trailingIcon = getTrailingIcon(state, passwordVisible) { passwordVisible = !passwordVisible },
-                    prefix = state.prefixRes?.let { { Text(stringResource(it)) } },
-                    suffix = state.suffixRes?.let { { Text(stringResource(it)) } },
-                    colors = colors,
-                    contentPadding = contentPadding,
-                    container = {
-                        OutlinedTextFieldDefaults.Container(
-                            enabled = true,
-                            isError = state.hasError,
-                            interactionSource = interactionSource,
-                            colors = colors,
-                            shape = shape,
+                                }
+                            },
                         )
-                    },
-                )
+                    }
+                }
+                val placeholderSlot: (@Composable () -> Unit)? = placeholderText?.let { { Text(it) } }
+                val leadingSlot: (@Composable () -> Unit)? = leadingIcon ?: state.icon?.let {
+                    { Icon(imageVector = it, contentDescription = null, tint = colorScheme.primary) }
+                }
+                // A caller-supplied visualTransformation means the caller handles masking, so the built-in password toggle steps aside.
+                val trailingSlot = trailingIcon ?: if (visualTransformation != null) null else getTrailingIcon(state, passwordVisible) { passwordVisible = !passwordVisible }
+                val prefixSlot: (@Composable () -> Unit)? = (state.prefix ?: state.prefixRes?.let { stringResource(it) })?.let { { Text(it, color = colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) } }
+                val suffixSlot: (@Composable () -> Unit)? = (state.suffix ?: state.suffixRes?.let { stringResource(it) })?.let { { Text(it, color = colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) } }
+                if (filled) {
+                    TextFieldDefaults.DecorationBox(
+                        value = value.text,
+                        innerTextField = innerTextField,
+                        enabled = enabled,
+                        singleLine = state.isSingleLine,
+                        visualTransformation = effectiveTransformation,
+                        interactionSource = interactionSource,
+                        isError = state.hasError,
+                        label = labelSlot,
+                        placeholder = placeholderSlot,
+                        leadingIcon = leadingSlot,
+                        trailingIcon = trailingSlot,
+                        prefix = prefixSlot,
+                        suffix = suffixSlot,
+                        shape = fieldShape,
+                        colors = fieldColors,
+                        contentPadding = contentPadding
+                            ?: if (labelText != null) TextFieldDefaults.contentPaddingWithLabel() else TextFieldDefaults.contentPaddingWithoutLabel(),
+                        container = {
+                            TextFieldDefaults.Container(
+                                enabled = enabled,
+                                isError = state.hasError,
+                                interactionSource = interactionSource,
+                                colors = fieldColors,
+                                shape = fieldShape,
+                            )
+                        },
+                    )
+                } else {
+                    OutlinedTextFieldDefaults.DecorationBox(
+                        value = value.text,
+                        innerTextField = innerTextField,
+                        enabled = enabled,
+                        singleLine = state.isSingleLine,
+                        visualTransformation = effectiveTransformation,
+                        interactionSource = interactionSource,
+                        isError = state.hasError,
+                        label = labelSlot,
+                        placeholder = placeholderSlot,
+                        leadingIcon = leadingSlot,
+                        trailingIcon = trailingSlot,
+                        prefix = prefixSlot,
+                        suffix = suffixSlot,
+                        colors = fieldColors,
+                        contentPadding = contentPadding ?: OutlinedTextFieldDefaults.contentPadding(),
+                        container = {
+                            OutlinedTextFieldDefaults.Container(
+                                enabled = enabled,
+                                isError = state.hasError,
+                                interactionSource = interactionSource,
+                                colors = fieldColors,
+                                shape = fieldShape,
+                            )
+                        },
+                    )
+                }
             },
         )
 
@@ -221,6 +310,28 @@ fun FormInputTextField(
             }
         }
     }
+}
+
+/** The typed value after type filtering, the dot rule, upper-casing and the length limit; null when it is too long. */
+internal fun FormInputTextFieldState.sanitize(new: TextFieldValue): TextFieldValue? {
+    val isNumeric = type == FormInputType.NUMBER
+    val isPhone = type == FormInputType.PHONE
+    var filtered = when {
+        isNumeric -> new.text.filter { it.isDigit() || it == '.' }
+        isPhone -> new.text.filter { it.isDigit() || it == '+' }
+        else -> new.text
+    }
+    if (isNumeric && filtered.count { it == '.' } > 1) {
+        val firstDotIndex = filtered.indexOf('.')
+        filtered = filtered.substring(0, firstDotIndex + 1) + filtered.substring(firstDotIndex + 1).replace(".", "")
+    }
+    if (filtered.length > maxChar) return null
+    val formatted = if (autoCapitalize) filtered.uppercase() else filtered
+    val length = formatted.length
+    return new.copy(
+        text = formatted,
+        selection = TextRange(new.selection.start.coerceAtMost(length), new.selection.end.coerceAtMost(length)),
+    )
 }
 
 private fun getKeyboardOptions(state: FormInputTextFieldState): KeyboardOptions {
@@ -257,7 +368,7 @@ private fun getTrailingIcon(
         IconButton(onClick = onPasswordToggle) {
             Icon(
                 imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                contentDescription = stringResource(if (passwordVisible) Res.string.hide_password else Res.string.show_password),
+                contentDescription = if (passwordVisible) formInputString(FormInputStrings::hidePassword, Res.string.hide_password) else formInputString(FormInputStrings::showPassword, Res.string.show_password),
                 modifier = Modifier.size(18.dp),
             )
         }
