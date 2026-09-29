@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.painter.Painter
 
 @Composable
 internal fun FormInputIcon(
@@ -25,10 +25,10 @@ internal fun FormInputIcon(
             )
         }
 
-        is Int -> {
+        is Painter -> {
             Icon(
                 modifier = modifier,
-                painter = painterResource(id = icon),
+                painter = icon,
                 tint = tint,
                 contentDescription = description?.asText()
             )

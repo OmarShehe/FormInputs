@@ -17,9 +17,9 @@ internal class PasswordStrength {
 
         input.forEach {
             when {
-                Character.isUpperCase(it) -> upperCasePresent = true
-                Character.isLetterOrDigit(it).not() && Character.isWhitespace(it).not() -> specialCharPresent = true
-                Character.isDigit(it) -> numberPresent = true
+                it.isUpperCase() -> upperCasePresent = true
+                it.isLetterOrDigit().not() && it.isWhitespace().not() -> specialCharPresent = true
+                it.isDigit() -> numberPresent = true
             }
         }
 

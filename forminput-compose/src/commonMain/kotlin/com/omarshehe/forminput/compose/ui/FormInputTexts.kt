@@ -6,14 +6,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.omarshehe.forminput.compose.ui.model.Dimens
 
 @Composable
-fun TextContent(
+public fun TextContent(
     modifier: Modifier = Modifier,
     textValue: Any,
     textAlignment: TextAlign = TextAlign.Start,
@@ -39,7 +40,7 @@ fun TextContent(
 }
 
 @Composable
-fun Any.asText() = when (this) {
-    is Int -> stringResource(this)
+public fun Any.asText(): String = when (this) {
+    is StringResource -> stringResource(this)
     else -> this.toString()
 }

@@ -1,74 +1,60 @@
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.vanniktech.publish)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.maven.publish)
 }
 
-android {
-    namespace = "com.omarshehe.forminput.compose"
-    compileSdk = libs.versions.sdk.get().toInt()
-
-    defaultConfig {
+kotlin {
+    android {
+        namespace = "com.omarshehe.forminput.compose"
+        compileSdk = libs.versions.sdk.get().toInt()
         minSdk = libs.versions.minSdk.get().toInt()
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            )
+        // Off by default in the AGP-KMP library plugin; without it the Compose resources (strings) never reach the AAR.
+        androidResources { enable = true }
+    }
+    jvm()
+    iosArm64()
+    iosSimulatorArm64()
+
+    jvmToolchain(17)
+
+    sourceSets {
+        commonMain.dependencies {
+            api(libs.compose.runtime)
+            api(libs.compose.foundation)
+            api(libs.compose.material3)
+            api(libs.compose.ui)
+            implementation(libs.compose.material.icons.extended)
+            implementation(libs.compose.components.resources)
+            implementation(libs.compose.ui.tooling.preview)
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
         }
-    }
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
+        jvmTest.dependencies {
+            implementation(libs.compose.ui.test)
+            implementation(compose.desktop.currentOs)
         }
     }
 }
 
-dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.material.icons.extended)
-
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
-
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    debugImplementation(libs.androidx.compose.ui.tooling)
+compose.resources {
+    publicResClass = false
+    packageOfResClass = "com.omarshehe.forminput.compose.resources"
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            register("release", MavenPublication::class) {
-                from(components["release"])
-                groupId = libs.versions.groupId.get()
-                artifactId = libs.versions.artifactIdCompose.get()
-                version = libs.versions.versionName.get()
-            }
-        }
+mavenPublishing {
+    coordinates(libs.versions.groupId.get(), libs.versions.artifactIdCompose.get(), libs.versions.composeVersion.get())
+    pom {
+        name.set("FormInputs Compose")
+        description.set("Compose Multiplatform form inputs: validated text field, dropdown and button (Android, desktop, iOS).")
+        url.set("https://github.com/OmarShehe/FormInputs")
+        licenses { license { name.set("MIT"); url.set("https://opensource.org/licenses/MIT") } }
+        developers { developer { id.set("OmarShehe"); name.set("Omar Mtara") } }
+        scm { url.set("https://github.com/OmarShehe/FormInputs"); connection.set("scm:git:https://github.com/OmarShehe/FormInputs.git") }
     }
+    if (providers.gradleProperty("signingInMemoryKey").isPresent) signAllPublications()
 }
