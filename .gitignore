@@ -2,3 +2,5 @@
 /.idea
 /.idea/
 local.properties
+.kotlin/
+build/

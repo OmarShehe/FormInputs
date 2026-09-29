@@ -30,6 +30,12 @@ kotlin {
             implementation(libs.compose.material.icons.extended)
             implementation(libs.compose.components.resources)
             implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.kotlinx.datetime)
+            // Only used by the image upload field and the image viewer.
+            implementation(libs.coil.compose)
+        }
+        androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

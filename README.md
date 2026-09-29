@@ -186,15 +186,31 @@ Button
 
 ```
 
-# Compose Multiplatform (forminput-compose 2.0.0)
+# Compose Multiplatform (forminput-compose 2.1.0)
 
-`forminput-compose` is now a Kotlin Multiplatform library for Android, desktop JVM and iOS (arm64, simulator arm64), built on
-Compose Multiplatform 1.12 and Kotlin 2.4. It provides `FormInputTextField`, `FormInputDropDownOption` and `FormInputButton`.
+`forminput-compose` is a Kotlin Multiplatform library for Android, desktop JVM and iOS (arm64, simulator arm64), built on
+Compose Multiplatform 1.12 and Kotlin 2.4. Strings ship in English and Swahili.
 
 ```
-commonMain.dependencies { implementation("com.github.OmarShehe:forminput-compose:2.0.0") }
+commonMain.dependencies { implementation("com.github.OmarShehe:forminput-compose:2.1.0") }
 ```
 
-Breaking changes from 1.x: labels and placeholders are a `String` or a Compose `StringResource` (not an Android `@StringRes` Int),
-`FormInputButton(icon = Painter?)` replaces `iconResourceId`, and the dropdown gained `enabled` and `supportingText`.
-Strings ship in English and Swahili. JitPack builds on Linux, so it publishes the Android and JVM artifacts only; the iOS artifacts need a macOS build. Until it is on a public repository, run `./gradlew :forminput-compose:publishToMavenLocal`.
+| Input | Android | Desktop | iOS |
+|---|---|---|---|
+| `FormInputTextField` (text, number, phone, email, password, URL), `FormInputSearchField`, `FormInputImmutableTextField` | yes | yes | yes |
+| `FormInputDropDownField` (search, free text, `enabled`, `supportingText`) | yes | yes | yes |
+| `FormInputDatePickerField`, `FormInputTimePickerField`, `FormInputDateTimePickerField`, `FormInputColorPickerField` | yes | yes | yes |
+| `FormInputButton`, `QuantityStepperControl` | yes | yes | yes |
+| `FormInputUploadDocument`, `FormInputUploadMultiDocument`, `FormInputUploadImage`, `ZoomableImageViewer` | yes | yes | shows, but picking a file reports "not supported" |
+
+`FormInputField(state, ...)` picks the right input for a state class. Labels are `StringResource`s (`labelRes`); the text field and the
+dropdown also accept plain runtime strings (`label`, `placeholder`, `error`). Dates are stored as `yyyy-MM-dd`, `HH:mm` and
+`yyyy-MM-dd HH:mm` and handled in UTC, so a date does not shift with the device time zone.
+
+Coil is used only by the image upload field and the image viewer; loading images from a URL needs a Coil network module in your app
+(for example `coil-network-ktor3`). The iOS target is compile-checked only; it has not been run on a device.
+
+Breaking changes from the unreleased 2.0.0: the API now follows FleetIQ's form inputs (`state` parameter, `StringResource` labels,
+outlined fields), and the old self-validating text field, `FormInputResultState` and password-strength helpers are gone. JitPack builds
+on Linux, so it can publish the Android and JVM artifacts only; the iOS artifacts need a macOS build. Until it is on a public
+repository, run `./gradlew :forminput-compose:publishToMavenLocal`.
