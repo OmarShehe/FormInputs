@@ -19,7 +19,7 @@
             android:exported="true"
             android:label="Programmatically" />
         <activity
-            android:name=".MainActivity"
+            android:name=".LauncherActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,6 +27,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ComposeDemoActivity"
+            android:exported="false"
+            android:label="Compose" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="View system" />
     </application>
 
 </manifest>
