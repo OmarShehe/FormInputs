@@ -1,9 +1,9 @@
 ---
-name: use-forminput-compose
-description: Use when building or changing forms with forminput-compose (io.github.omarshehe:forminput) in a Compose Multiplatform or Android app - text, price, password, dropdown, date/time, colour, search and upload inputs, styling (outlined or filled), form-wide defaults with FormInputTheme, and replacing the library's texts or language with FormInputStrings.
+name: use-forminput
+description: Use when building or changing forms with forminput (io.github.omarshehe:forminput) in a Compose Multiplatform or Android app - text, price, password, dropdown, date/time, colour, search and upload inputs, styling (outlined or filled), form-wide defaults with FormInputTheme, and replacing the library's texts or language with FormInputStrings.
 ---
 
-# Using forminput-compose
+# Using forminput
 
 A Kotlin Multiplatform form-input library (Android, desktop JVM, iOS arm64 and simulator arm64) on Compose Multiplatform 1.12 and Kotlin 2.4.
 All packages are under `com.omarshehe.forminput.compose.ui` (composables), `.ui.model` (state classes) and `.ui.utils` (helpers).
@@ -16,7 +16,7 @@ The runnable sample is `app/src/main/java/com/omarshehe/forminputs/ComposeDemoAc
 commonMain.dependencies { implementation("io.github.omarshehe:forminput:2.1.0") }
 ```
 
-The artifact is not on a public repository yet. Publish it locally (`./gradlew :forminput-compose:publishToMavenLocal` in this repo) and
+The artifact is not on a public repository yet. Publish it locally (`./gradlew :forminput:publishToMavenLocal` in this repo) and
 add `mavenLocal()` to the consuming project's repositories. JitPack cannot build the iOS targets.
 Coil is only used by image upload; loading images from a URL needs a Coil network module (for example `coil-network-ktor3`) in the app.
 
@@ -99,12 +99,12 @@ own plain `label`.
 - A custom `visualTransformation` on `FormInputTextField` turns off its built-in password toggle. `FormInputPasswordField` already handles masking and the toggle.
 - Build `FormInputStrings` / `FormInputDefaults` once (a top-level value or `remember`); a lambda created inline each recomposition makes the whole form recompose.
 - On iOS, picking a file is not supported yet: the upload fields show, and picking reports an error through the state.
-- Do not invent parameters. If unsure, check [reference.md](reference.md) or the source in `forminput-compose/src/commonMain/kotlin/com/omarshehe/forminput/compose/ui/`.
+- Do not invent parameters. If unsure, check [reference.md](reference.md) or the source in `forminput/src/commonMain/kotlin/com/omarshehe/forminput/compose/ui/`.
 
 ## Verifying a change
 
 ```
-./gradlew :forminput-compose:jvmTest                       # desktop UI tests and pure logic tests
-./gradlew :forminput-compose:compileAndroidMain :forminput-compose:compileKotlinIosArm64 :forminput-compose:compileKotlinIosSimulatorArm64
+./gradlew :forminput:jvmTest                       # desktop UI tests and pure logic tests
+./gradlew :forminput:compileAndroidMain :forminput:compileKotlinIosArm64 :forminput:compileKotlinIosSimulatorArm64
 ./gradlew :app:installDebug                               # the demo on a device
 ```

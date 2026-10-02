@@ -40,8 +40,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":forminputkotlin"))
-    implementation(project(":forminput-compose"))
+    implementation(project(":forminput-views"))
+    implementation(project(":forminput"))
 
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
