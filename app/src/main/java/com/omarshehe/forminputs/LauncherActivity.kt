@@ -36,7 +36,7 @@ class LauncherActivity : ComponentActivity() {
                         Button(
                             onClick = { startActivity(Intent(this@LauncherActivity, ComposeDemoActivity::class.java)) },
                             modifier = Modifier.fillMaxWidth(),
-                        ) { Text("Compose (forminput-compose)") }
+                        ) { Text("Compose (forminput)") }
                         OutlinedButton(
                             onClick = { startActivity(Intent(this@LauncherActivity, MainActivity::class.java)) },
                             modifier = Modifier.fillMaxWidth(),

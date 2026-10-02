@@ -186,9 +186,9 @@ Button
 
 ```
 
-# Compose Multiplatform (forminput-compose 2.1.0)
+# Compose Multiplatform (forminput 2.1.0)
 
-`forminput-compose` is a Kotlin Multiplatform library for Android, desktop JVM and iOS (arm64, simulator arm64), built on
+`forminput` is a Kotlin Multiplatform library for Android, desktop JVM and iOS (arm64, simulator arm64), built on
 Compose Multiplatform 1.12 and Kotlin 2.4. Its own texts ship in English and Swahili, and an app can replace them (see
 [Your own texts or language](#your-own-texts-or-language)).
 
@@ -320,17 +320,17 @@ FormInputTheme(
 
 - The `:app` sample opens on a launcher with two choices: a Compose demo of every input (with a "Classic style" switch and an "Own texts" switch
   that shows `FormInputStrings` in French) and the old View-based sample. Install it with `./gradlew :app:installDebug`.
-- Run the library tests with `./gradlew :forminput-compose:jvmTest` (desktop UI tests and the pure logic tests). Compile-check all targets with
-  `:forminput-compose:compileAndroidMain`, `compileKotlinIosArm64` and `compileKotlinIosSimulatorArm64`.
+- Run the library tests with `./gradlew :forminput:jvmTest` (desktop UI tests and the pure logic tests). Compile-check all targets with
+  `:forminput:compileAndroidMain`, `compileKotlinIosArm64` and `compileKotlinIosSimulatorArm64`.
 - Coil is used only by the image upload field and the image viewer; loading images from a URL needs a Coil network module in your app (for
   example `coil-network-ktor3`).
 - Breaking changes from the unreleased 2.0.0: the API now follows FleetIQ's form inputs (`state` parameter, `StringResource` labels, outlined
   fields), and the old self-validating text field, `FormInputResultState` and password-strength helpers are gone.
 - JitPack builds on Linux, so it can publish the Android and JVM artifacts only; the iOS artifacts need a macOS build. Until it is on a public
-  repository, run `./gradlew :forminput-compose:publishToMavenLocal`.
+  repository, run `./gradlew :forminput:publishToMavenLocal`.
 
 ## For AI coding assistants
 
-`.claude/skills/use-forminput-compose/` holds a skill (`SKILL.md`, plus a `reference.md` API cheat sheet) that teaches an assistant such as Claude Code how
+`.claude/skills/use-forminput/` holds a skill (`SKILL.md`, plus a `reference.md` API cheat sheet) that teaches an assistant such as Claude Code how
 to use this library: which input to pick, the state pattern, styling, form-wide defaults, custom texts and the common mistakes. Copy the folder into
 another project's `.claude/skills/` to use it there.

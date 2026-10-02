@@ -1,7 +1,7 @@
-# forminput-compose API cheat sheet
+# forminput API cheat sheet
 
 Packages: composables `com.omarshehe.forminput.compose.ui`, states `...ui.model`, helpers `...ui.utils`. Check the source before relying on a
-parameter that is not listed here (`forminput-compose/src/commonMain/kotlin/com/omarshehe/forminput/compose/ui/`).
+parameter that is not listed here (`forminput/src/commonMain/kotlin/com/omarshehe/forminput/compose/ui/`).
 
 ## Shared state fields (interface `FormInputState`)
 

@@ -71,7 +71,7 @@ import com.omarshehe.forminput.compose.ui.utils.formInputShape
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.StringResource
 
-/** Every forminput-compose input on one screen, for trying on a device. */
+/** Every forminput input on one screen, for trying on a device. */
 class ComposeDemoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,7 +88,7 @@ class ComposeDemoActivity : ComponentActivity() {
                             .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                     ) {
-                        Text("forminput-compose", style = MaterialTheme.typography.headlineSmall)
+                        Text("forminput", style = MaterialTheme.typography.headlineSmall)
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             Switch(checked = classic, onCheckedChange = { classic = it })
                             Text("Classic style (formInputModifier)")
