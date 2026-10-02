@@ -34,17 +34,5 @@ object Dimens {
     val imageSlotSize: Dp = 140.dp
     val filterDropdownWidth: Dp = 200.dp
 
-    /** Width of the parking/road-debt verification rail on the Return & Settlement dialog's Handover
-     * and Return steps. */
-    val verificationRailWidth: Dp = 220.dp
-    val sideMenuWidth: Dp = 240.dp
-    val sideMenuCollapsedWidth: Dp = 64.dp
-    val topBarSearchWidth: Dp = 400.dp
-    val topBarSearchMinWidth: Dp = 200.dp
-    val desktopCompactWidthBreakpoint: Dp = 1200.dp
-    val fuelGaugeHeight: Dp = 180.dp
-    val taskThumbnailWidth: Dp = 112.dp
-    val submittedSuccessIconSize: Dp = 120.dp
-
     val labelFontSize = 8.sp
 }
