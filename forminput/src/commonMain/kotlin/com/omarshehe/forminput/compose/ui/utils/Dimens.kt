@@ -28,11 +28,8 @@ object Dimens {
     val thirteenAndHalfGrid: Dp = 108.dp
 
     val stroke: Dp = 1.dp
-    val selectedBorder: Dp = 2.dp
 
-    val iconSizeSmall: Dp = 18.dp
     val imageSlotSize: Dp = 140.dp
-    val filterDropdownWidth: Dp = 200.dp
 
     val labelFontSize = 8.sp
 }
