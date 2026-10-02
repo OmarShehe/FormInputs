@@ -4,8 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.omarshehe.forminput.compose.ui.model.*
 
+/**
+ * Picks the input that matches [state] (text, password, price, dropdown, date and time, file or image upload) and draws it with
+ * its default options, so a form can be drawn from a list of states: call this for each one and replace the state that comes back
+ * (by its `id`) in your list. A state type with no input of its own draws nothing. Use the dedicated composable when you need to
+ * pass a shape, style, size or other option; a `FormInputTheme` around the form sets style and shape for all of them.
+ */
 @Composable
-fun FormInputField(
+public fun FormInputField(
     state: FormInputState,
     onValueChange: (input: FormInputState) -> Unit,
     modifier: Modifier = Modifier,
@@ -14,6 +20,22 @@ fun FormInputField(
     when (state) {
         is FormInputTextFieldState -> {
             FormInputTextField(
+                state = state,
+                modifier = modifier,
+                onValueChange = { newState -> onValueChange(newState) },
+            )
+        }
+
+        is FormInputPasswordState -> {
+            FormInputPasswordField(
+                state = state,
+                modifier = modifier,
+                onValueChange = { newState -> onValueChange(newState) },
+            )
+        }
+
+        is FormInputPriceState -> {
+            FormInputPriceField(
                 state = state,
                 modifier = modifier,
                 onValueChange = { newState -> onValueChange(newState) },

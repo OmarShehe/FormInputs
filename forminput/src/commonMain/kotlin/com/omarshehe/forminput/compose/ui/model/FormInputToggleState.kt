@@ -3,7 +3,7 @@ package com.omarshehe.forminput.compose.ui.model
 import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.StringResource
 
-data class FormInputToggleState(
+public data class FormInputToggleState(
     override val id: String,
     override val labelRes: StringResource? = null,
     override val placeholderRes: StringResource? = null,

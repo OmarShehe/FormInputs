@@ -75,6 +75,18 @@ FormInputDatePickerField(state = date, onValueChange = { date = it })   // date.
   Inside a screen that already pads its content, use `formInputModifier(padding = PaddingValues(0.dp))`.
 - The stepper and the file and image uploads take `style`, `shape` and `colors` too, so they match the fields.
 
+## Sizes and spacing
+
+- Change a size the library picks with a plain `Modifier`; yours is applied first, so it wins. Image slots: `slotModifier = Modifier.size(96.dp)`
+  (or `widthIn(max = ...)` to cap slots in a fixed-count row) and `slotSpacing`. Multi-document drop area: `areaModifier = Modifier.height(80.dp)`.
+  Button: `modifier = Modifier.width(...)`. Colour picker: `popupModifier`, `spectrumModifier`, `thumbSize`, `thumbColor`.
+- `textStyle` and `contentPadding` work the same on the text, price and password fields, the dropdown, the pickers and the search field.
+- To draw a form from data, keep a `List<FormInputState>` and call `FormInputField(state, onValueChange)` for each, replacing the returned state by `id`; it covers text, password, price, dropdown, date/time, file and image states (not the colour picker or stepper, which take plain values).
+- Trim the password checklist with `defaultPasswordRules(special = false)` (also `upperCase`, `digit`, and `minLength = 0` for no length rule) and pass it as `rules`; an empty list shows no checklist.
+- `FormInputPasswordField` animates its checklist and strength meter; pass `animated = false` for none.
+- The document upload shows a type icon for PDF, image, CSV, Word, PowerPoint and audio files, and a generic icon with the extension for the rest (`FormInputFileType`).
+- `maxFileSizeBytes` on the three upload states refuses a larger file; `FormInputStrings.fileTooLarge` replaces the message.
+
 ## Your own texts or language
 
 The texts the library draws itself (OK, Cancel, "Show password", the password checklist, "Browse files", ...) can be replaced with `FormInputStrings`.

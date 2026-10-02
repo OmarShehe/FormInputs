@@ -11,7 +11,7 @@ import com.omarshehe.forminput.compose.ui.utils.readFileBytes
 
 /** `BitmapFactory.decodeFile` returns null for `content://` paths — read via [readFileBytes] instead. */
 @Composable
-actual fun rememberImageBitmap(
+public actual fun rememberImageBitmap(
     path: String,
     maxWidth: Int?,
     maxHeight: Int?,

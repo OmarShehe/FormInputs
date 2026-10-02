@@ -9,7 +9,7 @@ import org.jetbrains.compose.resources.getString
 
 /** iOS has no document picker here yet: opening it reports an error through the callback. */
 @Composable
-actual fun FilePicker(
+public actual fun FilePicker(
     show: Boolean,
     extensions: List<String>,
     onFileSelected: (path: String?, name: String?, size: Long?, error: String?) -> Unit,

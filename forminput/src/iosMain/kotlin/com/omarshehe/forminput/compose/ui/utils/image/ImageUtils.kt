@@ -16,7 +16,7 @@ import platform.Foundation.dataWithContentsOfFile
 import platform.posix.memcpy
 
 @Composable
-actual fun rememberImageBitmap(
+public actual fun rememberImageBitmap(
     path: String,
     maxWidth: Int?,
     maxHeight: Int?,

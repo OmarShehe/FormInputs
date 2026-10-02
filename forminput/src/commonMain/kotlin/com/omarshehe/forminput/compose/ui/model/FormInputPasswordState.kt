@@ -6,7 +6,7 @@ import org.jetbrains.compose.resources.StringResource
 
 /** State of [com.omarshehe.forminput.compose.ui.FormInputPasswordField]. What the field checks is set on the composable, not here. */
 @Stable
-data class FormInputPasswordState(
+public data class FormInputPasswordState(
     override val id: String,
     val value: String = "",
     override val labelRes: StringResource? = null,

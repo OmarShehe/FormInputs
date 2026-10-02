@@ -12,7 +12,7 @@ import androidx.compose.ui.text.input.VisualTransformation
  * Keeps digits and the first dot, drops leading zeros ("007" becomes "7", "0.5" stays), and refuses more than
  * [maxIntegerDigits] whole digits or [maxDecimals] decimals (no dot at all when [maxDecimals] is 0).
  */
-fun sanitizeAmount(input: String, maxIntegerDigits: Int, maxDecimals: Int): String? {
+internal fun sanitizeAmount(input: String, maxIntegerDigits: Int, maxDecimals: Int): String? {
     var seenDot = false
     val kept = buildString {
         for (ch in input) {
@@ -41,14 +41,14 @@ fun sanitizeAmount(input: String, maxIntegerDigits: Int, maxDecimals: Int): Stri
  * This value with its text replaced by [cleaned] (after [sanitizeAmount] dropped or added characters), moving the cursor by the
  * change in length so an edit in the middle does not throw it to the end. Assumes the change happened before the cursor.
  */
-fun TextFieldValue.withCleanedText(cleaned: String): TextFieldValue {
+internal fun TextFieldValue.withCleanedText(cleaned: String): TextFieldValue {
     val shift = text.length - cleaned.length
     fun moved(offset: Int) = (offset - shift).coerceIn(0, cleaned.length)
     return copy(text = cleaned, selection = TextRange(moved(selection.start), moved(selection.end)), composition = null)
 }
 
 /** Shows the whole part of an amount in groups of three ("1234567.5" as "1,234,567.5") without changing the stored text. */
-class ThousandsSeparatorTransformation(private val separator: Char = ',') : VisualTransformation {
+internal class ThousandsSeparatorTransformation(private val separator: Char = ',') : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val raw = text.text
         val dot = raw.indexOf('.').let { if (it < 0) raw.length else it }

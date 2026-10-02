@@ -1,25 +1,25 @@
 package com.omarshehe.forminput.compose.ui.utils
 
-object NumericUtils {
-    fun parseDouble(value: String): Double? {
+public object NumericUtils {
+    public fun parseDouble(value: String): Double? {
         if (value.isBlank()) return 0.0
         val sanitized = value.replace(",", "").trim()
         return sanitized.toDoubleOrNull()
     }
 
-    fun parseInt(value: String): Int? {
+    public fun parseInt(value: String): Int? {
         if (value.isBlank()) return 0
         val sanitized = value.replace(",", "").trim()
         return sanitized.split(".")[0].toIntOrNull()
     }
 
-    fun parseLong(value: String): Long? {
+    public fun parseLong(value: String): Long? {
         if (value.isBlank()) return 0L
         val sanitized = value.replace(",", "").trim()
         return sanitized.split(".")[0].toLongOrNull()
     }
 
-    fun formatDecimal(value: Double): String {
+    public fun formatDecimal(value: Double): String {
         val isNegative = value < 0
         val absValue = if (isNegative) -value else value
 
@@ -34,7 +34,7 @@ object NumericUtils {
         return "$sign$integerPart.$fractionalString"
     }
 
-    fun formatInteger(value: Double): String {
+    public fun formatInteger(value: Double): String {
         val isNegative = value < 0
         val absValue = if (isNegative) -value else value
         val longValue = (absValue + 0.5).toLong()

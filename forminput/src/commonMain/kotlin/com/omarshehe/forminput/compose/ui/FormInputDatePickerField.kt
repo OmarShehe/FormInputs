@@ -1,5 +1,7 @@
 package com.omarshehe.forminput.compose.ui
 
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,8 +41,13 @@ import com.omarshehe.forminput.compose.ui.utils.dateToUtcMillis
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 import com.omarshehe.forminput.compose.ui.utils.Symbols
 
+/**
+ * A date field that opens a date dialog; with [FormInputDateTimePickerState.isManualEditable] the user can also type the date.
+ * [style], [shape] and [colors] fall back to the form-wide defaults from [FormInputTheme]. [textStyle] and [contentPadding] style
+ * the field, [fieldModifier] reaches the field itself, and [dialogShape] and [dialogContainerColor] style the dialog.
+ */
 @Composable
-fun FormInputDatePickerField(
+public fun FormInputDatePickerField(
     state: FormInputDateTimePickerState,
     onValueChange: (FormInputDateTimePickerState) -> Unit,
     modifier: Modifier = Modifier,
@@ -52,6 +59,8 @@ fun FormInputDatePickerField(
     fieldModifier: Modifier = Modifier,
     dialogShape: Shape? = null,
     dialogContainerColor: Color? = null,
+    textStyle: TextStyle? = null,
+    contentPadding: PaddingValues? = null,
 ) {
     DatePickerField(
         value = state.value,
@@ -73,6 +82,8 @@ fun FormInputDatePickerField(
         fieldModifier = fieldModifier,
         dialogShape = dialogShape,
         dialogContainerColor = dialogContainerColor,
+        textStyle = textStyle,
+        contentPadding = contentPadding,
     )
 }
 
@@ -98,6 +109,8 @@ private fun DatePickerField(
     fieldModifier: Modifier = Modifier,
     dialogShape: Shape? = null,
     dialogContainerColor: Color? = null,
+    textStyle: TextStyle? = null,
+    contentPadding: PaddingValues? = null,
 ) {
     val defaults = LocalFormInputDefaults.current
     val filled = (style ?: defaults.style) == FormInputFieldStyle.FILLED
@@ -155,6 +168,8 @@ private fun DatePickerField(
     Column(modifier = modifier) {
         Box {
             FormInputBoxField(
+                textStyle = textStyle,
+                contentPadding = contentPadding,
                 filled = filled,
                 focusable = isManualEditable,
                 value = textValueState,

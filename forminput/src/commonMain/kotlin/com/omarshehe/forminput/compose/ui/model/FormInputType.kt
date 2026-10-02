@@ -1,6 +1,6 @@
 package com.omarshehe.forminput.compose.ui.model
 
-enum class FormInputType {
+public enum class FormInputType {
     TEXT,
     PHONE,
     NUMBER,

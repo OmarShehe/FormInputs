@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -69,8 +70,16 @@ import com.omarshehe.forminput.compose.ui.utils.Symbols
  * Text field driven by [FormInputTextFieldState.value]. The cursor and selection are kept internally; use the
  * overload that takes a [TextFieldValue] to control them.
  */
+/** The glyph beside a header action label; it is label-sized, so it is not meant to change. */
+private val HeaderActionIconSize = 14.dp
+
+/**
+ * The library's text input, driven by [FormInputTextFieldState]; [onValueChange] receives the updated state. [style], [shape]
+ * and [colors] fall back to the form-wide defaults from [FormInputTheme]. [textStyle] and [contentPadding] style the text and
+ * the box, [textModifier] reaches the text field itself, and [leadingIcon] and [trailingIcon] replace the built-in icons.
+ */
 @Composable
-fun FormInputTextField(
+public fun FormInputTextField(
     state: FormInputTextFieldState,
     modifier: Modifier = Modifier,
     textModifier: Modifier = Modifier,
@@ -125,7 +134,7 @@ fun FormInputTextField(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormInputTextField(
+public fun FormInputTextField(
     state: FormInputTextFieldState,
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
@@ -173,11 +182,11 @@ fun FormInputTextField(
                     modifier = Modifier.height(Dimens.threeGrid),
                 ) {
                     if (state.headerActionIcon != null) {
-                        Icon(state.headerActionIcon, null, modifier = Modifier.size(14.dp))
+                        Icon(state.headerActionIcon, null, modifier = Modifier.size(HeaderActionIconSize)) // decorative: the action label beside it names it
                         Spacer(Modifier.width(Dimens.halfGrid))
                     }
                     state.headerActionLabelRes?.let {
-                        Text(stringResource(it), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(stringResource(it), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -217,7 +226,7 @@ fun FormInputTextField(
                 }
                 val placeholderSlot: (@Composable () -> Unit)? = placeholderText?.let { { Text(it) } }
                 val leadingSlot: (@Composable () -> Unit)? = leadingIcon ?: state.icon?.let {
-                    { Icon(imageVector = it, contentDescription = null, tint = colorScheme.primary) }
+                    { Icon(imageVector = it, contentDescription = null, tint = colorScheme.primary) } // decorative: the label names the field
                 }
                 // A caller-supplied visualTransformation means the caller handles masking, so the built-in password toggle steps aside.
                 val trailingSlot = trailingIcon ?: if (visualTransformation != null) null else getTrailingIcon(state, passwordVisible) { passwordVisible = !passwordVisible }
@@ -369,7 +378,7 @@ private fun getTrailingIcon(
             Icon(
                 imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                 contentDescription = if (passwordVisible) formInputString(FormInputStrings::hidePassword, Res.string.hide_password) else formInputString(FormInputStrings::showPassword, Res.string.show_password),
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(ButtonDefaults.IconSize),
             )
         }
     }

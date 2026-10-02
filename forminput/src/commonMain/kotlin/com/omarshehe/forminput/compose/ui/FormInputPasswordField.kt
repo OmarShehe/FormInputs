@@ -1,5 +1,21 @@
 package com.omarshehe.forminput.compose.ui
 
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -70,10 +86,10 @@ import com.omarshehe.forminput.compose.ui.utils.passwordStrength
 import org.jetbrains.compose.resources.stringResource
 
 /** When the requirement checklist under the field is shown. */
-enum class PasswordRulesVisibility { ALWAYS, WHEN_FOCUSED, WHEN_NOT_EMPTY, NEVER }
+public enum class PasswordRulesVisibility { ALWAYS, WHEN_FOCUSED, WHEN_NOT_EMPTY, NEVER }
 
 /** The text shown for each strength; null falls back to the library's (translated) words. */
-data class PasswordStrengthLabels(
+public data class PasswordStrengthLabels(
     val weak: String? = null,
     val medium: String? = null,
     val strong: String? = null,
@@ -81,7 +97,7 @@ data class PasswordStrengthLabels(
 )
 
 /** The colour used for each strength, and for a met or unmet requirement; null unmet uses the theme's error colour. */
-data class PasswordColors(
+public data class PasswordColors(
     val weak: Color? = null,
     val medium: Color = Color(0xFFF9A825),
     val strong: Color = Color(0xFF7CB342),
@@ -90,17 +106,30 @@ data class PasswordColors(
     val ruleUnmet: Color? = null,
 )
 
-/** The library's default checklist: an upper case letter, a special character, a number and a minimum length. */
+/**
+ * The library's default checklist: an upper case letter, a special character, a number and a minimum length. Switch a rule off
+ * with its flag (`special = false`), or pass `minLength = 0` for no length rule; [minLength] otherwise sets the length asked for.
+ * Pass the result to `FormInputPasswordField(rules = ...)`. For a rule of your own, add a [PasswordRule] to the list or build the
+ * list from [PasswordRules].
+ */
 @Composable
-fun defaultPasswordRules(minLength: Int = 8): List<PasswordRule> {
+public fun defaultPasswordRules(
+    minLength: Int = 8,
+    upperCase: Boolean = true,
+    special: Boolean = true,
+    digit: Boolean = true,
+): List<PasswordRule> {
+    val upperCaseText = formInputString(FormInputStrings::passwordRuleUpperCase, Res.string.password_rule_upper_case)
+    val specialText = formInputString(FormInputStrings::passwordRuleSpecial, Res.string.password_rule_special)
+    val digitText = formInputString(FormInputStrings::passwordRuleDigit, Res.string.password_rule_digit)
     val minLengthText = LocalFormInputDefaults.current.strings.passwordRuleMinLength?.invoke(minLength)
         ?: stringResource(Res.string.password_rule_min_length, minLength)
-    return listOf(
-        PasswordRules.upperCase(formInputString(FormInputStrings::passwordRuleUpperCase, Res.string.password_rule_upper_case)),
-        PasswordRules.special(formInputString(FormInputStrings::passwordRuleSpecial, Res.string.password_rule_special)),
-        PasswordRules.digit(formInputString(FormInputStrings::passwordRuleDigit, Res.string.password_rule_digit)),
-        PasswordRules.minLength(minLength, minLengthText),
-    )
+    return buildList {
+        if (upperCase) add(PasswordRules.upperCase(upperCaseText))
+        if (special) add(PasswordRules.special(specialText))
+        if (digit) add(PasswordRules.digit(digitText))
+        if (minLength > 0) add(PasswordRules.minLength(minLength, minLengthText))
+    }
 }
 
 /**
@@ -113,9 +142,11 @@ fun defaultPasswordRules(minLength: Int = 8): List<PasswordRule> {
  * - [confirmWith]: the other password this one must equal; a mismatch shows [mismatchMessage] as the field's error.
  * - [allowReveal], [initiallyRevealed], [revealIcon] and [hideIcon] control the toggle; [maskCharacter] the dots.
  * - [onValidityChange] reports whether every rule is met and the match check passes, so the caller can enable a submit button.
+ * - [animated] eases the checklist and the strength meter in and out, turns each requirement from a cross into a tick, and fades the
+ *   meter's colours. Set it to false for no motion at all.
  */
 @Composable
-fun FormInputPasswordField(
+public fun FormInputPasswordField(
     state: FormInputPasswordState,
     onValueChange: (FormInputPasswordState) -> Unit,
     modifier: Modifier = Modifier,
@@ -145,12 +176,17 @@ fun FormInputPasswordField(
     initiallyRevealed: Boolean = false,
     revealIcon: ImageVector = Icons.Default.Visibility,
     hideIcon: ImageVector = Icons.Default.VisibilityOff,
+    animated: Boolean = true,
     onValidityChange: ((Boolean) -> Unit)? = null,
 ) {
     val activeRules = rules ?: defaultPasswordRules()
     var revealed by remember { mutableStateOf(initiallyRevealed) }
     var focused by remember { mutableStateOf(false) }
     val value = state.value
+    // While the checklist or the meter leaves because the field was cleared, keep showing what it last showed.
+    val shownValue = rememberLastNonEmpty(value)
+    val enter = if (animated) fadeIn(tween(MotionMillis)) + expandVertically(tween(MotionMillis)) else EnterTransition.None
+    val exit = if (animated) fadeOut(tween(MotionMillis)) + shrinkVertically(tween(MotionMillis)) else ExitTransition.None
 
     val mismatchText = mismatchMessage ?: formInputString(FormInputStrings::passwordMismatch, Res.string.password_mismatch)
     val mismatch = confirmWith != null && value.isNotEmpty() && value != confirmWith
@@ -206,13 +242,13 @@ fun FormInputPasswordField(
             trailingIcon = toggle,
         )
 
-        if (showStrength && value.isNotEmpty()) {
-            val strength = strengthOf?.invoke(value) ?: passwordStrength(value, activeRules)
+        AnimatedVisibility(visible = showStrength && value.isNotEmpty(), enter = enter, exit = exit) {
+            val strength = strengthOf?.invoke(shownValue) ?: passwordStrength(shownValue, activeRules)
             val label = strengthLabel(strength, strengthLabels)
             if (strengthContent != null) {
                 strengthContent(strength, label)
             } else {
-                StrengthIndicator(strength, label, passwordColors)
+                StrengthIndicator(strength, label, passwordColors, animated)
             }
         }
 
@@ -222,13 +258,15 @@ fun FormInputPasswordField(
             PasswordRulesVisibility.WHEN_NOT_EMPTY -> value.isNotEmpty()
             PasswordRulesVisibility.NEVER -> false
         }
-        if (showRules) {
+        AnimatedVisibility(visible = showRules, enter = enter, exit = exit) {
             RuleChecklist(
                 title = rulesTitle ?: formInputString(FormInputStrings::passwordRulesTitle, Res.string.password_rules_title),
                 rules = activeRules,
-                value = value,
+                // The cached value is only for the exit animation; a checklist that stays visible must follow the field.
+                value = if (showRules) value else shownValue,
                 colors = passwordColors,
                 ruleContent = ruleContent,
+                animated = animated,
             )
         }
     }
@@ -244,13 +282,16 @@ private fun strengthLabel(strength: PasswordStrength, labels: PasswordStrengthLa
 }
 
 @Composable
-private fun StrengthIndicator(strength: PasswordStrength, label: String, colors: PasswordColors) {
-    val color = when (strength) {
+private fun StrengthIndicator(strength: PasswordStrength, label: String, colors: PasswordColors, animated: Boolean) {
+    val target = when (strength) {
         PasswordStrength.NONE, PasswordStrength.WEAK -> colors.weak ?: MaterialTheme.colorScheme.error
         PasswordStrength.MEDIUM -> colors.medium
         PasswordStrength.STRONG -> colors.strong
         PasswordStrength.VERY_STRONG -> colors.veryStrong
     }
+    val colorSpec: AnimationSpec<Color> = if (animated) tween(MotionMillis) else snap()
+    val color by animateColorAsState(target, colorSpec)
+    val outline = MaterialTheme.colorScheme.outlineVariant
     val filled = when (strength) {
         PasswordStrength.NONE -> 0
         PasswordStrength.WEAK -> 1
@@ -264,19 +305,19 @@ private fun StrengthIndicator(strength: PasswordStrength, label: String, colors:
     ) {
         Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(Dimens.halfGrid)) {
             repeat(4) { index ->
+                val segment by animateColorAsState(if (index < filled) target else outline, colorSpec)
                 Spacer(
                     modifier = Modifier
                         .weight(1f)
                         .height(Dimens.halfGrid)
-                        .background(
-                            color = if (index < filled) color else MaterialTheme.colorScheme.outlineVariant,
-                            shape = RoundedCornerShape(Dimens.quarterGrid),
-                        ),
+                        .background(color = segment, shape = RoundedCornerShape(Dimens.quarterGrid)),
                 )
             }
         }
         Spacer(Modifier.width(Dimens.oneAndHalfGrid))
-        Text(text = label, style = MaterialTheme.typography.labelLarge, color = color, fontWeight = FontWeight.Medium)
+        Crossfade(targetState = label, animationSpec = if (animated) tween(MotionMillis) else snap()) { text ->
+            Text(text = text, style = MaterialTheme.typography.labelLarge, color = color, fontWeight = FontWeight.Medium)
+        }
     }
 }
 
@@ -287,6 +328,7 @@ private fun RuleChecklist(
     value: String,
     colors: PasswordColors,
     ruleContent: (@Composable (PasswordRule, Boolean) -> Unit)?,
+    animated: Boolean,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth().padding(top = Dimens.oneAndHalfGrid),
@@ -294,7 +336,7 @@ private fun RuleChecklist(
     ) {
         if (title.isNotEmpty()) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(Dimens.twoAndHalfGrid))
+                Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(Dimens.twoAndHalfGrid)) // decorative: the rule text beside it names it
                 Spacer(Modifier.width(Dimens.oneGrid))
                 Text(text = title, style = MaterialTheme.typography.titleSmall)
             }
@@ -305,16 +347,46 @@ private fun RuleChecklist(
                 ruleContent(rule, met)
             } else {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = if (met) Icons.Default.CheckCircle else Icons.Default.Close,
-                        contentDescription = if (met) formInputString(FormInputStrings::ruleMet, Res.string.cd_rule_met) else formInputString(FormInputStrings::ruleNotMet, Res.string.cd_rule_not_met),
-                        tint = if (met) colors.ruleMet else colors.ruleUnmet ?: MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(Dimens.twoAndHalfGrid),
-                    )
+                    // Without animation the icon is drawn straight away; AnimatedContent would keep the old one for a frame.
+                    val ruleIcon: @Composable (Boolean) -> Unit = { isMet ->
+                Icon(
+                    imageVector = if (isMet) Icons.Default.CheckCircle else Icons.Default.Close,
+                    contentDescription = if (isMet) formInputString(FormInputStrings::ruleMet, Res.string.cd_rule_met) else formInputString(FormInputStrings::ruleNotMet, Res.string.cd_rule_not_met),
+                    tint = if (isMet) colors.ruleMet else colors.ruleUnmet ?: MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(Dimens.twoAndHalfGrid),
+                )
+                    }
+                    if (animated) {
+                        AnimatedContent(
+                            targetState = met,
+                            transitionSpec = {
+                                (scaleIn(tween(MotionMillis)) + fadeIn(tween(MotionMillis))) togetherWith
+                                    (scaleOut(tween(MotionMillis)) + fadeOut(tween(MotionMillis)))
+                            },
+                            label = "rule",
+                        ) { isMet -> ruleIcon(isMet) }
+                    } else {
+                        ruleIcon(met)
+                    }
                     Spacer(Modifier.width(Dimens.oneGrid))
                     Text(text = rule.text, style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
     }
+}
+
+/** The length of the checklist and strength-meter motion. */
+private const val MotionMillis = 250
+
+private class LastNonEmpty {
+    var value: String = ""
+}
+
+/** [value] while it has text, and the last text it had once it is cleared; for content that is still leaving. */
+@Composable
+private fun rememberLastNonEmpty(value: String): String {
+    val holder = remember { LastNonEmpty() }
+    if (value.isNotEmpty()) holder.value = value
+    return holder.value
 }

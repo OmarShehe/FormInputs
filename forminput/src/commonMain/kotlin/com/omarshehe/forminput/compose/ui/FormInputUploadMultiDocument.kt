@@ -1,5 +1,10 @@
 package com.omarshehe.forminput.compose.ui
 
+import com.omarshehe.forminput.compose.resources.delete
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,7 +44,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.omarshehe.forminput.compose.ui.utils.FormInputTestTags
 import com.omarshehe.forminput.compose.resources.Res
 import com.omarshehe.forminput.compose.resources.label_uploaded_documents
 import com.omarshehe.forminput.compose.resources.browse_files
@@ -51,17 +59,29 @@ import com.omarshehe.forminput.compose.ui.utils.Dimens
 import com.omarshehe.forminput.compose.ui.utils.FilePicker
 import com.omarshehe.forminput.compose.ui.utils.FileUtils
 
+/** The height of the drop area unless the caller's `areaModifier` sets one. */
+private val DefaultUploadAreaHeight = 120.dp
+
+/**
+ * A picker for several documents, listed under a drop area. The area is 120dp high unless [areaModifier] sets another height
+ * (for example `Modifier.height(80.dp)`). A file larger than [FormInputMultiFileState.maxFileSizeBytes] is refused with a message,
+ * and a picker error is shown the same way.
+ */
 @Composable
-fun FormInputUploadMultiDocument(
+public fun FormInputUploadMultiDocument(
     state: FormInputMultiFileState,
     onValueChange: (FormInputMultiFileState) -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape? = null,
     style: FormInputFieldStyle? = null,
     colors: TextFieldColors? = null,
+    areaModifier: Modifier = Modifier,
 ) {
     val boxShape = shape ?: LocalFormInputDefaults.current.shape ?: RoundedCornerShape(Dimens.oneGrid)
     var showFilePicker by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val tooLargeMessage = fileTooLargeMessage(state.maxFileSizeBytes)
 
     FilePicker(
         show = showFilePicker,
@@ -70,6 +90,11 @@ fun FormInputUploadMultiDocument(
         },
         onFileSelected = { filePath, fileName, fileSize, error ->
             showFilePicker = false
+            if (FileUtils.isTooLarge(fileSize, state.maxFileSizeBytes)) {
+                tooLargeMessage?.let { scope.launch { snackbarHostState.showSnackbar(it) } }
+                return@FilePicker
+            }
+            error?.let { scope.launch { snackbarHostState.showSnackbar(it) } }
             if (filePath != null) {
                 val newValue = FormInputFileState.FileUploadValue(
                     filePath = filePath,
@@ -81,62 +106,67 @@ fun FormInputUploadMultiDocument(
         },
     )
 
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Dimens.twoGrid)) {
-        // 1. Upload Area
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .formInputContainer(
-                    shape = boxShape,
-                    style = style,
-                    colors = colors,
-                    hasError = state.hasError,
-                    defaultBorder = colorScheme.outlineVariant.copy(alpha = 0.5f),
-                    defaultBackground = colorScheme.surfaceVariant.copy(alpha = 0.1f),
-                )
-                .clickable { showFilePicker = true },
-            contentAlignment = Alignment.Center,
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(
-                    imageVector = Icons.Default.CloudUpload,
-                    contentDescription = null,
-                    tint = colorScheme.primary,
-                    modifier = Modifier.size(Dimens.fiveGrid),
-                )
-                Spacer(Modifier.height(Dimens.oneGrid))
-                Text(
-                    text = state.resolvedPlaceholder() ?: formInputString(FormInputStrings::browseFiles, Res.string.browse_files),
-                    style = typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = colorScheme.onSurface,
-                )
-            }
-        }
-
-        // 3. File List
-        if (state.values.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(Dimens.oneGrid)) {
-                Text(
-                    text = formInputString(FormInputStrings::uploadedDocuments, Res.string.label_uploaded_documents),
-                    style = typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = colorScheme.onSurfaceVariant,
-                )
-
-                state.values.forEachIndexed { index, file ->
-                    FileListItem(
-                        file = file,
+    // The snackbar host sits outside the spaced column: a zero-height child there would still add a gap below the area.
+    Box(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Dimens.twoGrid)) {
+            // 1. Upload Area
+            Box(
+                modifier = areaModifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = DefaultUploadAreaHeight)
+                    .testTag(FormInputTestTags.UploadArea)
+                    .formInputContainer(
                         shape = boxShape,
-                        onDelete = {
-                            val newList = state.values.toMutableList().apply { removeAt(index) }
-                            onValueChange(state.copy(values = newList))
-                        },
+                        style = style,
+                        colors = colors,
+                        hasError = state.hasError,
+                        defaultBorder = colorScheme.outlineVariant.copy(alpha = 0.5f),
+                        defaultBackground = colorScheme.surfaceVariant.copy(alpha = 0.1f),
+                    )
+                    .clickable { showFilePicker = true },
+                contentAlignment = Alignment.Center,
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        imageVector = Icons.Default.CloudUpload,
+                        contentDescription = null, // decorative: the visible text next to it names the action
+                        tint = colorScheme.primary,
+                        modifier = Modifier.size(Dimens.fiveGrid),
+                    )
+                    Spacer(Modifier.height(Dimens.oneGrid))
+                    Text(
+                        text = state.resolvedPlaceholder() ?: formInputString(FormInputStrings::browseFiles, Res.string.browse_files),
+                        style = typography.bodyMedium,
+                        fontWeight = FontWeight.Medium,
+                        color = colorScheme.onSurface,
                     )
                 }
             }
+
+            // 3. File List
+            if (state.values.isNotEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(Dimens.oneGrid)) {
+                    Text(
+                        text = formInputString(FormInputStrings::uploadedDocuments, Res.string.label_uploaded_documents),
+                        style = typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = colorScheme.onSurfaceVariant,
+                    )
+
+                    state.values.forEachIndexed { index, file ->
+                        FileListItem(
+                            file = file,
+                            shape = boxShape,
+                            onDelete = {
+                                val newList = state.values.toMutableList().apply { removeAt(index) }
+                                onValueChange(state.copy(values = newList))
+                            },
+                        )
+                    }
+                }
+            }
         }
+        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
@@ -158,7 +188,7 @@ private fun FileListItem(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.InsertDriveFile,
-                contentDescription = null,
+                contentDescription = null, // decorative: the visible text next to it names the action
                 tint = colorScheme.primary,
                 modifier = Modifier.size(Dimens.threeGrid),
             )
@@ -184,7 +214,7 @@ private fun FileListItem(
             IconButton(onClick = onDelete, modifier = Modifier.size(Dimens.threeGrid)) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = null,
+                    contentDescription = formInputString(FormInputStrings::delete, Res.string.delete),
                     tint = colorScheme.error,
                     modifier = Modifier.size(Dimens.twoGrid),
                 )

@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.StringResource
 
 @Stable
-data class FormInputDropDownState(
+public data class FormInputDropDownState(
     override val id: String,
     override val labelRes: StringResource? = null,
     override val placeholderRes: StringResource? = null,
@@ -27,11 +27,11 @@ data class FormInputDropDownState(
     override val placeholder: String? = null,
     override val error: String? = null,
 ) : FormInputState {
-    val valueText get() = value.text
-    val valueTextRes get() = value.textRes
+    val valueText: String get() = value.text
+    val valueTextRes: StringResource? get() = value.textRes
 }
 
-data class DropDownOptionModel(
+public data class DropDownOptionModel(
     val id: String = "",
     val text: String = "",
     val textRes: StringResource? = null,

@@ -1,5 +1,6 @@
 package com.omarshehe.forminput.compose.ui
 
+import com.omarshehe.forminput.compose.ui.utils.FileUtils
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import com.omarshehe.forminput.compose.resources.*
@@ -18,7 +19,7 @@ import org.jetbrains.compose.resources.stringResource
  * Labels, placeholders, errors, prefixes and suffixes are not here: they are set per input as plain strings.
  */
 @Immutable
-data class FormInputStrings(
+public data class FormInputStrings(
     val ok: String? = null,
     val cancel: String? = null,
     val next: String? = null,
@@ -53,6 +54,15 @@ data class FormInputStrings(
     val ruleNotMet: String? = null,
     val filePickerUnsupported: String? = null,
     val selectFile: String? = null,
+    /** Receives the limit as text (for example `5.0 MB`), so it can sit anywhere in the sentence. */
+    val fileTooLarge: ((limit: String) -> String)? = null,
+    val quantityIncrease: String? = null,
+    val quantityDecrease: String? = null,
+    val close: String? = null,
+    val zoomIn: String? = null,
+    val zoomOut: String? = null,
+    val addPhoto: String? = null,
+    val preview: String? = null,
 )
 
 /** The override from [LocalFormInputDefaults] for [field] when there is one, otherwise the library's own resource. */
@@ -103,4 +113,11 @@ internal fun libraryString(resource: StringResource): String {
         else -> null
     }
     return override ?: stringResource(resource)
+}
+
+/** The message for a file over [maxSizeBytes], or null when there is no limit. */
+@Composable
+internal fun fileTooLargeMessage(maxSizeBytes: Long?): String? {
+    val limit = maxSizeBytes?.let { FileUtils.formatFileSize(it) } ?: return null
+    return LocalFormInputDefaults.current.strings.fileTooLarge?.invoke(limit) ?: stringResource(Res.string.error_file_too_large, limit)
 }

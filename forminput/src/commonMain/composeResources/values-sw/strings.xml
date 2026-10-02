@@ -35,4 +35,12 @@
     <string name="cd_rule_met">Sharti limetimizwa</string>
     <string name="cd_rule_not_met">Sharti halijatimizwa</string>
     <string name="select_currency">Chagua sarafu</string>
+    <string name="error_file_too_large">Faili ni kubwa mno. Kikomo ni %1$s.</string>
+    <string name="quantity_increase">Ongeza</string>
+    <string name="quantity_decrease">Punguza</string>
+    <string name="close">Funga</string>
+    <string name="zoom_in">Kuza</string>
+    <string name="zoom_out">Punguza ukubwa</string>
+    <string name="add_photo">Ongeza picha</string>
+    <string name="preview">Hakiki</string>
 </resources>

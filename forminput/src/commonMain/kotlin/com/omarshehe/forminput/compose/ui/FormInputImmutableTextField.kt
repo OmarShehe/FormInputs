@@ -21,8 +21,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 
+/**
+ * A value the user reads but cannot edit, drawn in the same box as the other inputs: a [label], the [text], and an optional
+ * [imageVector] icon whose click calls [onIconClick]. [style] and [shape] fall back to the form-wide defaults.
+ */
 @Composable
-fun FormInputImmutableTextField(
+public fun FormInputImmutableTextField(
     modifier: Modifier = Modifier,
     label: String? = null,
     text: String? = null,

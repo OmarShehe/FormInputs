@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.StringResource
 
 @Stable
-data class FormInputTextFieldState(
+public data class FormInputTextFieldState(
     override val id: String,
     override val labelRes: StringResource? = null,
     override val placeholderRes: StringResource? = null,

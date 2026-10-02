@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
 
 @Composable
-expect fun rememberImageBitmap(
+public expect fun rememberImageBitmap(
     path: String,
     maxWidth: Int? = null,
     maxHeight: Int? = null,
