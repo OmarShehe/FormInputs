@@ -1,6 +1,6 @@
 ---
 name: use-forminput-compose
-description: Use when building or changing forms with forminput-compose (com.github.OmarShehe:forminput-compose) in a Compose Multiplatform or Android app - text, price, password, dropdown, date/time, colour, search and upload inputs, styling (outlined or filled), form-wide defaults with FormInputTheme, and replacing the library's texts or language with FormInputStrings.
+description: Use when building or changing forms with forminput-compose (io.github.omarshehe:forminput) in a Compose Multiplatform or Android app - text, price, password, dropdown, date/time, colour, search and upload inputs, styling (outlined or filled), form-wide defaults with FormInputTheme, and replacing the library's texts or language with FormInputStrings.
 ---
 
 # Using forminput-compose
@@ -13,7 +13,7 @@ The runnable sample is `app/src/main/java/com/omarshehe/forminputs/ComposeDemoAc
 ## Setup
 
 ```kotlin
-commonMain.dependencies { implementation("com.github.OmarShehe:forminput-compose:2.1.0") }
+commonMain.dependencies { implementation("io.github.omarshehe:forminput:2.1.0") }
 ```
 
 The artifact is not on a public repository yet. Publish it locally (`./gradlew :forminput-compose:publishToMavenLocal` in this repo) and

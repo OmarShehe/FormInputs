@@ -193,7 +193,7 @@ Compose Multiplatform 1.12 and Kotlin 2.4. Its own texts ship in English and Swa
 [Your own texts or language](#your-own-texts-or-language)).
 
 ```kotlin
-commonMain.dependencies { implementation("com.github.OmarShehe:forminput-compose:2.1.0") }
+commonMain.dependencies { implementation("io.github.omarshehe:forminput:2.1.0") }
 ```
 
 ## Inputs

@@ -60,8 +60,9 @@ mavenPublishing {
         description.set("Compose Multiplatform form inputs: validated text field, dropdown and button (Android, desktop, iOS).")
         url.set("https://github.com/OmarShehe/FormInputs")
         licenses { license { name.set("MIT"); url.set("https://opensource.org/licenses/MIT") } }
-        developers { developer { id.set("OmarShehe"); name.set("Omar Mtara") } }
+        developers { developer { id.set("OmarShehe") } }
         scm { url.set("https://github.com/OmarShehe/FormInputs"); connection.set("scm:git:https://github.com/OmarShehe/FormInputs.git") }
     }
+    publishToMavenCentral()
     if (providers.gradleProperty("signingInMemoryKey").isPresent) signAllPublications()
 }

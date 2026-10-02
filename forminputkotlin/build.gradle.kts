@@ -1,6 +1,8 @@
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.maven.publish)
+    alias(libs.plugins.vanniktech.publish)
 }
 
 android {
@@ -32,12 +34,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-        }
-    }
 }
 
 dependencies {
@@ -48,15 +44,17 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            register("release", MavenPublication::class) {
-                from(components["release"])
-                groupId = libs.versions.groupId.get()
-                artifactId = libs.versions.artifactIdKotlin.get()
-                version = libs.versions.versionName.get()
-            }
-        }
+mavenPublishing {
+    configure(AndroidSingleVariantLibrary(variant = "release", sourcesJar = true, publishJavadocJar = true))
+    coordinates(libs.versions.groupId.get(), libs.versions.artifactIdKotlin.get(), libs.versions.versionName.get())
+    pom {
+        name.set("FormInputs (Views)")
+        description.set("Android View form inputs: text, spinner, auto-complete and more, with validation.")
+        url.set("https://github.com/OmarShehe/FormInputs")
+        licenses { license { name.set("MIT"); url.set("https://opensource.org/licenses/MIT") } }
+        developers { developer { id.set("OmarShehe") } }
+        scm { url.set("https://github.com/OmarShehe/FormInputs"); connection.set("scm:git:https://github.com/OmarShehe/FormInputs.git") }
     }
+    publishToMavenCentral()
+    if (providers.gradleProperty("signingInMemoryKey").isPresent) signAllPublications()
 }
