@@ -1,5 +1,9 @@
 package com.omarshehe.forminput.compose.ui
 
+import com.omarshehe.forminput.compose.ui.utils.FormInputTestTags
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.BiasAlignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -54,6 +58,10 @@ import com.omarshehe.forminput.compose.resources.Res
 import com.omarshehe.forminput.compose.resources.calculating
 import com.omarshehe.forminput.compose.resources.click_to_upload
 import com.omarshehe.forminput.compose.resources.delete
+import com.omarshehe.forminput.compose.resources.ic_csv
+import com.omarshehe.forminput.compose.resources.ic_docx
+import com.omarshehe.forminput.compose.resources.ic_music
+import com.omarshehe.forminput.compose.resources.ic_ppt
 import com.omarshehe.forminput.compose.resources.ic_image
 import com.omarshehe.forminput.compose.resources.ic_other
 import com.omarshehe.forminput.compose.resources.ic_pdf
@@ -71,8 +79,16 @@ import com.omarshehe.forminput.compose.ui.utils.FilePicker
 import com.omarshehe.forminput.compose.ui.utils.FileUtils
 import com.omarshehe.forminput.compose.ui.utils.Symbols
 
+/** Font size of the file-type badge. */
+private val ExtensionBadgeFontSize = 8.sp
+
+/**
+ * A single-document picker. A file larger than [FormInputFileState.maxFileSizeBytes] is refused with a message, and the file
+ * types offered come from [FormInputFileState.allowedExtensions]. [style], [shape] and [colors] fall back to the form-wide
+ * defaults from [FormInputTheme].
+ */
 @Composable
-fun FormInputUploadDocument(
+public fun FormInputUploadDocument(
     state: FormInputFileState,
     onValueChange: (FormInputFileState) -> Unit,
     modifier: Modifier = Modifier,
@@ -86,12 +102,17 @@ fun FormInputUploadDocument(
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    val tooLargeMessage = fileTooLargeMessage(state.maxFileSizeBytes)
 
     FilePicker(
         show = showFilePicker,
         extensions = state.allowedExtensions.ifEmpty { FormInputFileType.PDF.extensions },
         onFileSelected = { filePath, fileName, fileSize, error ->
             showFilePicker = false
+            if (FileUtils.isTooLarge(fileSize, state.maxFileSizeBytes)) {
+                tooLargeMessage?.let { scope.launch { snackbarHostState.showSnackbar(it) } }
+                return@FilePicker
+            }
             filePath?.let {
                 onValueChange(
                     state.copy(
@@ -185,7 +206,7 @@ private fun IdleState(
         val painter = state.icon?.let { rememberVectorPainter(it) } ?: rememberVectorPainter(Icons.Default.AttachFile)
         Icon(
             painter = painter,
-            contentDescription = null,
+            contentDescription = null, // decorative: the visible file name or prompt beside it names it
             tint = if (state.hasError) colorScheme.error else colorScheme.primary,
             modifier = Modifier.size(Dimens.threeGrid),
         )
@@ -291,41 +312,40 @@ private fun FileIconWithBadge(
 ) {
     val extension = fileName?.substringAfterLast(Symbols.DOT, Symbols.EMPTY)?.lowercase() ?: Symbols.EMPTY
     val fileType = FormInputFileType.fromExtension(extension)
-    Box(modifier = modifier) {
+    Box(modifier = modifier.testTag(FormInputTestTags.FileIcon)) {
         val iconRes = when (fileType) {
             FormInputFileType.PDF -> Res.drawable.ic_pdf
             FormInputFileType.IMAGE -> Res.drawable.ic_image
+            FormInputFileType.CSV -> Res.drawable.ic_csv
+            FormInputFileType.WORD -> Res.drawable.ic_docx
+            FormInputFileType.POWERPOINT -> Res.drawable.ic_ppt
+            FormInputFileType.AUDIO -> Res.drawable.ic_music
             else -> Res.drawable.ic_other
         }
         Icon(
             painter = painterResource(iconRes),
-            contentDescription = null,
+            contentDescription = null, // decorative: the visible file name or prompt beside it names it
             modifier = Modifier.fillMaxSize(),
             tint = null,
         )
-        if (extension.isNotEmpty()) {
-            Surface(
-                color = colorScheme.primary,
-                shape = RoundedCornerShape(Dimens.quarterGrid),
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(bottom = Dimens.oneGrid),
-            ) {
-                Text(
-                    text = extension,
-                    color = colorScheme.onPrimary,
-                    fontSize = Dimens.labelFontSize,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = Dimens.quarterGrid, vertical = Dimens.stroke),
-                )
-            }
+        // PDF, image, CSV, Word, PowerPoint and audio files have an icon that already names the type; the generic icon gets the extension as plain text on it.
+        if (extension.isNotEmpty() && fileType == FormInputFileType.OTHER) {
+            Text(
+                text = extension,
+                // The generic icon is dark grey in every theme, so the text is white rather than a theme colour.
+                color = Color.White,
+                fontSize = ExtensionBadgeFontSize,
+                fontWeight = FontWeight.Bold,
+                // Centred on the icon's body, above its white glyph; the icon is narrower than its box, so a corner would hang off it.
+                modifier = Modifier.align(BiasAlignment(horizontalBias = 0f, verticalBias = -0.2f)),
+            )
         }
     }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun FormInputUploadDocumentPreview() {
+private fun FormInputUploadDocumentPreview() {
     MaterialTheme {
         Surface(modifier = Modifier.padding(Dimens.twoGrid)) {
             FormInputUploadDocument(

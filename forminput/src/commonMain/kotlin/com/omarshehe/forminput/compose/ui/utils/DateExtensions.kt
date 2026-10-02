@@ -7,12 +7,12 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-object DateUtils {
-    const val DATE_FORMAT = "yyyy-MM-dd"
-    const val TIME_FORMAT = "HH:mm"
-    const val DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm"
-    const val DATE_DISPLAY_FORMAT = "dd MMM yyyy"
-    const val DATE_TIME_DISPLAY_FORMAT = "dd MMM yyyy  HH:mm"
+public object DateUtils {
+    public const val DATE_FORMAT: String = "yyyy-MM-dd"
+    public const val TIME_FORMAT: String = "HH:mm"
+    public const val DATE_TIME_FORMAT: String = "yyyy-MM-dd HH:mm"
+    public const val DATE_DISPLAY_FORMAT: String = "dd MMM yyyy"
+    public const val DATE_TIME_DISPLAY_FORMAT: String = "dd MMM yyyy  HH:mm"
 }
 
 /**
@@ -27,7 +27,7 @@ private val timeRegex = Regex("^(\\d{2}):(\\d{2})$")
 private val dateTimeRegex = Regex("^(\\d{4}-\\d{2}-\\d{2}) (\\d{2}):(\\d{2})$")
 
 /** Parses `yyyy-MM-dd` into UTC-midnight millis, which is what Material date pickers select and expect. */
-fun String.dateToUtcMillis(): Long? =
+internal fun String.dateToUtcMillis(): Long? =
     try {
         LocalDate.parse(trim()).atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
     } catch (e: IllegalArgumentException) {
@@ -35,12 +35,12 @@ fun String.dateToUtcMillis(): Long? =
     }
 
 /** The `yyyy-MM-dd` date of [this] in UTC. */
-fun Long.utcMillisToDate(): String = Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.UTC).date.toString()
+internal fun Long.utcMillisToDate(): String = Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.UTC).date.toString()
 
-fun Long.utcYear(): Int = Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.UTC).year
+internal fun Long.utcYear(): Int = Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.UTC).year
 
 /** The device's current calendar day as UTC-midnight millis, the form Material date pickers expect. */
-fun todayUtcMidnightMillis(): Long = localDayAsUtcMillis(nowMillis(), TimeZone.currentSystemDefault())
+public fun todayUtcMidnightMillis(): Long = localDayAsUtcMillis(nowMillis(), TimeZone.currentSystemDefault())
 
 /** The calendar day of [instantMillis] in [zone], as UTC-midnight millis. */
 internal fun localDayAsUtcMillis(instantMillis: Long, zone: TimeZone): Long =
@@ -55,26 +55,26 @@ internal fun currentLocalHourMinute(): Pair<Int, Int> {
 }
 
 /** Parses `HH:mm` into (hour, minute), or null when it is not a valid 24-hour time. */
-fun String.toHourMinute(): Pair<Int, Int>? {
+internal fun String.toHourMinute(): Pair<Int, Int>? {
     val match = timeRegex.matchEntire(this) ?: return null
     val hour = match.groupValues[1].toInt()
     val minute = match.groupValues[2].toInt()
     return if (hour in 0..23 && minute in 0..59) hour to minute else null
 }
 
-fun formatHourMinute(hour: Int, minute: Int): String = "${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}"
+internal fun formatHourMinute(hour: Int, minute: Int): String = "${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}"
 
-data class DateTimeParts(val dateUtcMillis: Long, val hour: Int, val minute: Int)
+internal data class DateTimeParts(val dateUtcMillis: Long, val hour: Int, val minute: Int)
 
 /** Parses `yyyy-MM-dd HH:mm`. */
-fun String.toDateTimeParts(): DateTimeParts? {
+internal fun String.toDateTimeParts(): DateTimeParts? {
     val match = dateTimeRegex.matchEntire(this) ?: return null
     val date = match.groupValues[1].dateToUtcMillis() ?: return null
     val (hour, minute) = "${match.groupValues[2]}:${match.groupValues[3]}".toHourMinute() ?: return null
     return DateTimeParts(date, hour, minute)
 }
 
-fun formatDateTime(dateUtcMillis: Long, hour: Int, minute: Int): String =
+internal fun formatDateTime(dateUtcMillis: Long, hour: Int, minute: Int): String =
     "${dateUtcMillis.utcMillisToDate()} ${formatHourMinute(hour, minute)}"
 
 /** [dateUtcMillis] plus a time of day, as UTC millis (used for the display format). */

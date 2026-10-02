@@ -17,7 +17,7 @@ import com.omarshehe.forminput.compose.ui.utils.Dimens
 import com.omarshehe.forminput.compose.ui.utils.Symbols
 
 @Composable
-fun TextContent(
+internal fun TextContent(
     modifier: Modifier = Modifier,
     textValue: String,
     textAlignment: TextAlign = TextAlign.Start,
@@ -40,16 +40,16 @@ fun TextContent(
 
 /** The label as text: the runtime [FormInputState.label] if set, else [FormInputState.labelRes]. */
 @Composable
-fun FormInputState.resolvedLabel(): String? = label ?: labelRes?.let { libraryString(it) }
+internal fun FormInputState.resolvedLabel(): String? = label ?: labelRes?.let { libraryString(it) }
 
 @Composable
-fun FormInputState.resolvedPlaceholder(): String? = placeholder ?: placeholderRes?.let { libraryString(it) }
+internal fun FormInputState.resolvedPlaceholder(): String? = placeholder ?: placeholderRes?.let { libraryString(it) }
 
 @Composable
-fun FormInputState.resolvedError(): String? = error ?: errorRes?.let { libraryString(it) }
+internal fun FormInputState.resolvedError(): String? = error ?: errorRes?.let { libraryString(it) }
 
 @Composable
-fun FormInputLabel(
+internal fun FormInputLabel(
     state: FormInputState,
     modifier: Modifier = Modifier,
 ) {

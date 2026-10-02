@@ -7,6 +7,8 @@ plugins {
 }
 
 kotlin {
+    explicitApi()
+
     android {
         namespace = "com.omarshehe.forminput.compose"
         compileSdk = libs.versions.sdk.get().toInt()

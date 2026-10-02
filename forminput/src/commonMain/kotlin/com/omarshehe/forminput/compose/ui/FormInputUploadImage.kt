@@ -1,5 +1,8 @@
 package com.omarshehe.forminput.compose.ui
 
+import com.omarshehe.forminput.compose.resources.preview
+import com.omarshehe.forminput.compose.resources.add_photo
+import com.omarshehe.forminput.compose.ui.utils.FileUtils
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,6 +46,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.omarshehe.forminput.compose.ui.utils.FormInputTestTags
 import androidx.compose.material3.TextFieldColors
 import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
 import com.omarshehe.forminput.compose.ui.composables.formInputContainer
@@ -69,7 +76,7 @@ import com.omarshehe.forminput.compose.ui.utils.Symbols
 import com.omarshehe.forminput.compose.ui.utils.image.rememberImageBitmap
 
 /** Lets a caller substitute its own image source (e.g. a camera) for the widget's internal [FilePicker]; call with `null` path to cancel. */
-typealias ImageCaptureRequester = (
+public typealias ImageCaptureRequester = (
     onResult: (path: String?, name: String?, size: Long?, error: String?) -> Unit,
 ) -> Unit
 
@@ -80,9 +87,18 @@ private sealed interface PendingTarget {
     data class Existing(val index: Int) : PendingTarget
 }
 
+/** The side of an image slot where slots have a fixed size (`unboundedAdd`); pass a size through `slotModifier` to change it. */
+private val DefaultImageSlotSize = 140.dp
+
+/**
+ * Image slots the user fills from the gallery or [captureRequester]. With a known slot count (`unboundedAdd = false`) the slots
+ * share the row's width; with `unboundedAdd = true` they wrap and each is 140dp square. [slotModifier] is applied to every slot:
+ * pass `Modifier.size(96.dp)` for a different square, or `Modifier.widthIn(max = 96.dp)` to cap slots in a fixed-count row.
+ * [slotSpacing] is the gap between slots. A file larger than [FormInputImageState.maxFileSizeBytes] is refused with a message.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun FormInputUploadImage(
+public fun FormInputUploadImage(
     state: FormInputImageState,
     onValueChange: (FormInputState) -> Unit,
     modifier: Modifier = Modifier,
@@ -95,10 +111,13 @@ fun FormInputUploadImage(
     shape: Shape? = null,
     style: FormInputFieldStyle? = null,
     colors: TextFieldColors? = null,
+    slotModifier: Modifier = Modifier,
+    slotSpacing: Dp = Dimens.twoGrid,
 ) {
     val slotShape = shape ?: LocalFormInputDefaults.current.shape ?: RoundedCornerShape(Dimens.oneGrid)
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    val tooLargeMessage = fileTooLargeMessage(state.maxFileSizeBytes)
 
     var pendingTarget by remember { mutableStateOf<PendingTarget?>(null) }
 
@@ -109,6 +128,10 @@ fun FormInputUploadImage(
         fileSize: Long?,
         error: String?,
     ) {
+        if (FileUtils.isTooLarge(fileSize, state.maxFileSizeBytes)) {
+            tooLargeMessage?.let { scope.launch { snackbarHostState.showSnackbar(it) } }
+            return
+        }
         if (filePath != null) {
             val targetIndex = (target as? PendingTarget.Existing)?.index
             onValueChange(state.withPickedImage(targetIndex = targetIndex, filePath = filePath, fileName = fileName, fileSize = fileSize))
@@ -148,15 +171,15 @@ Text(
                 // Fixed-size slots that wrap to further rows — count is arbitrary/growing.
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.twoGrid),
-                    verticalArrangement = Arrangement.spacedBy(Dimens.twoGrid),
+                    horizontalArrangement = Arrangement.spacedBy(slotSpacing),
+                    verticalArrangement = Arrangement.spacedBy(slotSpacing),
                 ) {
                     state.values.forEachIndexed { index, value ->
                         if (value != null) {
                             FilledImageSlot(
                                 index = index,
                                 value = value,
-                                sizeModifier = Modifier.size(Dimens.imageSlotSize),
+                                sizeModifier = slotModifier.size(DefaultImageSlotSize),
                                 shape = slotShape,
                                 style = style,
                                 colors = colors,
@@ -169,7 +192,7 @@ Text(
                         }
                     }
                     if (maxItems == null || state.values.size < maxItems) {
-                        ImageSlotContainer(sizeModifier = Modifier.size(Dimens.imageSlotSize), shape = slotShape, style = style, colors = colors, hasError = state.hasError) {
+                        ImageSlotContainer(sizeModifier = slotModifier.size(DefaultImageSlotSize), shape = slotShape, style = style, colors = colors, hasError = state.hasError) {
                             EmptyImage { requestImage(PendingTarget.New) }
                         }
                     }
@@ -178,19 +201,20 @@ Text(
                 // Known slot count — sized as an even fraction of the row width, fills edge-to-edge.
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.twoGrid),
+                    horizontalArrangement = Arrangement.spacedBy(slotSpacing),
                 ) {
                     state.values.forEachIndexed { slotIndex, value ->
-                        val slotModifier = Modifier.weight(1f).aspectRatio(1f).widthIn(min = Dimens.tenGrid, max = Dimens.imageSlotSize)
+                        // A fixed-count row fills its width; a caller's modifier (e.g. widthIn(max = ...)) caps each slot.
+                        val cell = slotModifier.weight(1f, fill = false).aspectRatio(1f)
                         if (value == null) {
-                            ImageSlotContainer(sizeModifier = slotModifier, shape = slotShape, style = style, colors = colors, hasError = state.hasError) {
+                            ImageSlotContainer(sizeModifier = cell, shape = slotShape, style = style, colors = colors, hasError = state.hasError) {
                                 EmptyImage { requestImage(PendingTarget.Existing(slotIndex)) }
                             }
                         } else {
                             FilledImageSlot(
                                 index = slotIndex,
                                 value = value,
-                                sizeModifier = slotModifier,
+                                sizeModifier = cell,
                                 shape = slotShape,
                                 style = style,
                                 colors = colors,
@@ -264,6 +288,7 @@ private fun ImageSlotContainer(
 ) {
     Box(
         modifier = sizeModifier
+            .testTag(FormInputTestTags.ImageSlot)
             .formInputContainer(
                 shape = shape,
                 style = style,
@@ -288,7 +313,7 @@ private fun EmptyImage(onClick: () -> Unit) {
     ) {
         Icon(
             imageVector = Icons.Default.AddAPhoto,
-            contentDescription = null,
+            contentDescription = formInputString(FormInputStrings::addPhoto, Res.string.add_photo),
             tint = colorScheme.primary,
             modifier = Modifier.size(Dimens.fourGrid),
         )
@@ -319,7 +344,7 @@ private fun BoxScope.ImageSlot(
         Box(modifier = Modifier.fillMaxSize().then(clickModifier), contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = Icons.Default.Description,
-                contentDescription = null,
+                contentDescription = formInputString(FormInputStrings::preview, Res.string.preview),
                 tint = colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(Dimens.fourGrid),
             )
@@ -327,14 +352,14 @@ private fun BoxScope.ImageSlot(
     } else if (hasUrl) {
         AsyncImage(
             model = url,
-            contentDescription = null,
+            contentDescription = formInputString(FormInputStrings::preview, Res.string.preview),
             modifier = Modifier.fillMaxSize().then(clickModifier),
             contentScale = ContentScale.Crop,
         )
     } else if (bitmap != null) {
         Image(
             bitmap = bitmap,
-            contentDescription = null,
+            contentDescription = formInputString(FormInputStrings::preview, Res.string.preview),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
         )
@@ -392,7 +417,7 @@ private fun BoxScope.ImageSlot(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun FormInputUploadImagePreview() {
+private fun FormInputUploadImagePreview() {
     MaterialTheme {
         Surface(modifier = Modifier.padding(Dimens.twoGrid)) {
             FormInputUploadImage(

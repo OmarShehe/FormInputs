@@ -55,7 +55,8 @@ class UtilsTest {
         assertEquals(FormInputFileType.PDF, FormInputFileType.fromExtension("PDF"))
         assertEquals(FormInputFileType.IMAGE, FormInputFileType.fromExtension("Png"))
         assertEquals(FormInputFileType.IMAGE, FormInputFileType.fromExtension("jpeg"))
-        assertEquals(FormInputFileType.OTHER, FormInputFileType.fromExtension("docx"))
+        assertEquals(FormInputFileType.WORD, FormInputFileType.fromExtension("docx"))
+        assertEquals(FormInputFileType.OTHER, FormInputFileType.fromExtension("xlsx"))
     }
 
     @Test

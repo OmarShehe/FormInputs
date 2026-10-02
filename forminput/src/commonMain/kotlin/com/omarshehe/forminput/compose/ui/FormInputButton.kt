@@ -16,14 +16,23 @@ import com.omarshehe.forminput.compose.ui.libraryString
 import org.jetbrains.compose.resources.stringResource
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 
-enum class FormInputButtonStyle {
+public enum class FormInputButtonStyle {
     FILLED,
     OUTLINED,
     TEXT,
 }
 
+/** The least width of the filled and outlined button. A `Modifier.width(...)` from the caller replaces it. */
+private val DefaultMinWidth = 130.dp
+
+/**
+ * A button in the library's look. [style] picks filled, outlined or text; [shape] falls back to the form-wide shape set with
+ * [FormInputTheme], then to Material's small shape. A filled or outlined button is at least 130dp wide and [height] tall, and
+ * grows with a longer text or a larger font. A width the caller puts on [modifier] (for example `Modifier.width(100.dp)`)
+ * replaces the 130dp minimum. While [isLoading] is true the label is replaced by a progress indicator and the click is off.
+ */
 @Composable
-fun FormInputButton(
+public fun FormInputButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     text: String? = null,
@@ -33,12 +42,14 @@ fun FormInputButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
-    shape: Shape = MaterialTheme.shapes.small,
+    shape: Shape? = null,
     color: Color? = null,
     contentColor: Color? = null,
     /** The least height of the filled and outlined button; it grows with a larger font size or a longer text. */
     height: Dp = Dimens.fiveGrid,
 ) {
+    val resolvedShape = shape ?: LocalFormInputDefaults.current.shape ?: MaterialTheme.shapes.small
+
     val buttonText = text ?: textRes?.let { libraryString(it) } ?: ""
     val resolvedColor = color ?: MaterialTheme.colorScheme.primary
     val resolvedContentColor = contentColor ?: MaterialTheme.colorScheme.onPrimary
@@ -47,9 +58,9 @@ fun FormInputButton(
         FormInputButtonStyle.FILLED -> {
             Button(
                 onClick = onClick,
-                modifier = modifier.widthIn(min = 130.dp).heightIn(min = height),
+                modifier = modifier.widthIn(min = DefaultMinWidth).heightIn(min = height),
                 enabled = enabled && !isLoading,
-                shape = shape,
+                shape = resolvedShape,
                 contentPadding = contentPadding,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = resolvedColor,
@@ -64,9 +75,9 @@ fun FormInputButton(
         FormInputButtonStyle.OUTLINED -> {
             OutlinedButton(
                 onClick = onClick,
-                modifier = modifier.widthIn(min = 130.dp).heightIn(min = height),
+                modifier = modifier.widthIn(min = DefaultMinWidth).heightIn(min = height),
                 enabled = enabled && !isLoading,
-                shape = shape,
+                shape = resolvedShape,
                 contentPadding = contentPadding,
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = resolvedColor,
@@ -84,7 +95,7 @@ fun FormInputButton(
                 onClick = onClick,
                 modifier = modifier,
                 enabled = enabled && !isLoading,
-                shape = shape,
+                shape = resolvedShape,
                 contentPadding = contentPadding,
                 colors = ButtonDefaults.textButtonColors(contentColor = resolvedColor),
             ) {
@@ -110,7 +121,7 @@ private fun RowScope.ButtonContent(
         icon?.let {
             Icon(
                 imageVector = it,
-                contentDescription = null,
+                contentDescription = null, // decorative: sits beside the button text
                 modifier = Modifier.size(Dimens.twoAndHalfGrid),
             )
             if (text.isNotEmpty()) {

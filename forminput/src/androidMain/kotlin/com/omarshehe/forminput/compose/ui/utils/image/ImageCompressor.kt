@@ -4,14 +4,14 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import java.io.ByteArrayOutputStream
 
-const val MAX_IMAGE_DIMENSION_PX = 1920
-const val JPEG_UPLOAD_QUALITY = 80
+public const val MAX_IMAGE_DIMENSION_PX: Int = 1920
+public const val JPEG_UPLOAD_QUALITY: Int = 80
 
 /** Resizes [bitmap] so its longest edge is at most [maxDimension] (returns it unchanged if
  * already smaller — never upscales) and JPEG-encodes the result at [quality] in one pass. Callers
  * that already hold a decoded [Bitmap] (e.g. `CameraCaptureScreen`'s rotation pass) should call
  * this directly instead of round-tripping through [compressImageBytes]. */
-fun resizeAndEncodeJpeg(
+public fun resizeAndEncodeJpeg(
     bitmap: Bitmap,
     maxDimension: Int = MAX_IMAGE_DIMENSION_PX,
     quality: Int = JPEG_UPLOAD_QUALITY,
@@ -34,7 +34,7 @@ fun resizeAndEncodeJpeg(
  * for call sites (gallery-picked files) that only have raw bytes, not an already-decoded Bitmap.
  * Returns [bytes] unchanged if they can't be decoded as an image (defensive; callers only invoke
  * this for image uploads, never signatures/documents). */
-fun compressImageBytes(
+public fun compressImageBytes(
     bytes: ByteArray,
     maxDimension: Int = MAX_IMAGE_DIMENSION_PX,
     quality: Int = JPEG_UPLOAD_QUALITY,

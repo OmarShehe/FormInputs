@@ -9,7 +9,7 @@ import org.jetbrains.compose.resources.StringResource
  * [amount] is the plain typed number (digits and at most one dot, no grouping), so it can be parsed as it is.
  */
 @Stable
-data class FormInputPriceState(
+public data class FormInputPriceState(
     override val id: String,
     val amount: String = "",
     val currency: String,

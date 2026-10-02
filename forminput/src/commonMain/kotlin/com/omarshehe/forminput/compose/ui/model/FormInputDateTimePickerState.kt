@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.StringResource
 
 @Stable
-data class FormInputDateTimePickerState(
+public data class FormInputDateTimePickerState(
     override val id: String,
     override val labelRes: StringResource?,
     override val placeholderRes: StringResource?,

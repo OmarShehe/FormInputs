@@ -1,5 +1,7 @@
 package com.omarshehe.forminput.compose.ui
 
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -71,8 +73,13 @@ import com.omarshehe.forminput.compose.ui.utils.currentLocalHourMinute
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 import com.omarshehe.forminput.compose.ui.utils.Symbols
 
+/**
+ * A date and time field: the user picks the date, then the time, and the result is shown in [displayFormat]. Options work as on
+ * [FormInputDatePickerField]: [style], [shape] and [colors] fall back to the form-wide defaults, [textStyle] and [contentPadding]
+ * style the field, [fieldModifier] reaches it, and [dialogShape] and [dialogContainerColor] style the dialogs.
+ */
 @Composable
-fun FormInputDateTimePickerField(
+public fun FormInputDateTimePickerField(
     state: FormInputDateTimePickerState,
     onValueChange: (FormInputDateTimePickerState) -> Unit,
     modifier: Modifier = Modifier,
@@ -85,6 +92,8 @@ fun FormInputDateTimePickerField(
     fieldModifier: Modifier = Modifier,
     dialogShape: Shape? = null,
     dialogContainerColor: Color? = null,
+    textStyle: TextStyle? = null,
+    contentPadding: PaddingValues? = null,
 ) {
     DateTimePickerField(
         value = state.value,
@@ -100,6 +109,14 @@ fun FormInputDateTimePickerField(
         displayFormat = displayFormat,
         shape = shape,
         style = style,
+        colors = colors,
+        enabled = enabled,
+        supportingText = supportingText,
+        fieldModifier = fieldModifier,
+        dialogShape = dialogShape,
+        dialogContainerColor = dialogContainerColor,
+        textStyle = textStyle,
+        contentPadding = contentPadding,
         modifier = modifier,
     )
 }
@@ -127,6 +144,8 @@ private fun DateTimePickerField(
     fieldModifier: Modifier = Modifier,
     dialogShape: Shape? = null,
     dialogContainerColor: Color? = null,
+    textStyle: TextStyle? = null,
+    contentPadding: PaddingValues? = null,
 ) {
     val defaults = LocalFormInputDefaults.current
     val filled = (style ?: defaults.style) == FormInputFieldStyle.FILLED
@@ -195,6 +214,8 @@ private fun DateTimePickerField(
     Column(modifier = modifier) {
         Box {
             FormInputBoxField(
+                textStyle = textStyle,
+                contentPadding = contentPadding,
                 filled = filled,
                 focusable = isManualEditable,
                 value = textValueState,

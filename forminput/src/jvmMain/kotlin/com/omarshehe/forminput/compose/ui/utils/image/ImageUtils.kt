@@ -8,7 +8,7 @@ import org.jetbrains.skia.Image
 import java.io.File
 
 @Composable
-actual fun rememberImageBitmap(
+public actual fun rememberImageBitmap(
     path: String,
     maxWidth: Int?,
     maxHeight: Int?,

@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests and Android compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+      # The iOS targets cannot be built on Linux; the flag skips them here and the macOS job covers them.
+      - name: Desktop tests and Android compile
+        run: ./gradlew :forminput:jvmTest :forminput:compileAndroidMain -Pkotlin.native.ignoreDisabledTargets=true
+
+  ios:
+    name: iOS compile
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Compile the iOS targets
+        run: ./gradlew :forminput:compileKotlinIosArm64 :forminput:compileKotlinIosSimulatorArm64

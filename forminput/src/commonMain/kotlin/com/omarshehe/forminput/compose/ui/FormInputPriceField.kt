@@ -49,7 +49,7 @@ import com.omarshehe.forminput.compose.ui.utils.withCleanedText
 import org.jetbrains.compose.resources.stringResource
 
 /** Which side of the amount the currency selector sits on. */
-enum class CurrencyPlacement { START, END }
+public enum class CurrencyPlacement { START, END }
 
 /**
  * An amount with a currency picked from [FormInputPriceState.currencies]. It is a [FormInputTextField] underneath, so
@@ -61,7 +61,7 @@ enum class CurrencyPlacement { START, END }
  * the list.
  */
 @Composable
-fun FormInputPriceField(
+public fun FormInputPriceField(
     state: FormInputPriceState,
     onValueChange: (FormInputPriceState) -> Unit,
     modifier: Modifier = Modifier,

@@ -1,5 +1,8 @@
 package com.omarshehe.forminput.compose.ui
 
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -48,7 +51,7 @@ import com.omarshehe.forminput.compose.ui.utils.Dimens
 
 /** Search field driven by [FormInputTextFieldState.value]; use the [TextFieldValue] overload to control the cursor. */
 @Composable
-fun FormInputSearchField(
+public fun FormInputSearchField(
     state: FormInputTextFieldState,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -57,6 +60,8 @@ fun FormInputSearchField(
     colors: TextFieldColors? = null,
     enabled: Boolean = true,
     onSearch: ((String) -> Unit)? = null,
+    textStyle: TextStyle? = null,
+    contentPadding: PaddingValues? = null,
 ) {
     var textValueState by remember { mutableStateOf(TextFieldValue(text = state.value)) }
     LaunchedEffect(state.value) {
@@ -77,6 +82,8 @@ fun FormInputSearchField(
         colors = colors,
         enabled = enabled,
         onSearch = onSearch,
+        textStyle = textStyle,
+        contentPadding = contentPadding,
     )
 }
 
@@ -88,7 +95,7 @@ fun FormInputSearchField(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormInputSearchField(
+public fun FormInputSearchField(
     state: FormInputTextFieldState,
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
@@ -98,6 +105,8 @@ fun FormInputSearchField(
     colors: TextFieldColors? = null,
     enabled: Boolean = true,
     onSearch: ((String) -> Unit)? = null,
+    textStyle: TextStyle? = null,
+    contentPadding: PaddingValues? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -117,7 +126,7 @@ fun FormInputSearchField(
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = if (filled) TextFieldDefaults.MinHeight else OutlinedTextFieldDefaults.MinHeight),
             interactionSource = interactionSource,
-            textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface).merge(textStyle ?: MaterialTheme.typography.bodyLarge),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             singleLine = true,
             enabled = enabled,
@@ -126,7 +135,7 @@ fun FormInputSearchField(
             decorationBox = { innerTextField ->
                 val placeholderSlot: @Composable () -> Unit = { Text(placeholderText, maxLines = 1, overflow = TextOverflow.Ellipsis) }
                 val leadingSlot: @Composable () -> Unit = {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary) // decorative: the placeholder names the field
                 }
                 val trailingSlot: (@Composable () -> Unit)? = if (value.text.isNotEmpty() && enabled) {
                     {
@@ -155,7 +164,7 @@ fun FormInputSearchField(
                         trailingIcon = trailingSlot,
                         shape = fieldShape,
                         colors = fieldColors,
-                        contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(),
+                        contentPadding = contentPadding ?: TextFieldDefaults.contentPaddingWithoutLabel(),
                         container = {
                             TextFieldDefaults.Container(
                                 enabled = enabled,
@@ -179,6 +188,7 @@ fun FormInputSearchField(
                         leadingIcon = leadingSlot,
                         trailingIcon = trailingSlot,
                         colors = fieldColors,
+                        contentPadding = contentPadding ?: OutlinedTextFieldDefaults.contentPadding(),
                         container = {
                             OutlinedTextFieldDefaults.Container(
                                 enabled = enabled,
@@ -205,7 +215,7 @@ fun FormInputSearchField(
     Row(
         modifier = modifier
             .alpha(if (enabled) 1f else 0.5f)
-            .height(Dimens.sixGrid)
+            .heightIn(min = Dimens.sixGrid)
             .clip(pillShape)
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.15f))
             .border(
@@ -213,12 +223,12 @@ fun FormInputSearchField(
                 color = borderColor,
                 shape = pillShape,
             )
-            .padding(horizontal = Dimens.twoGrid),
+            .padding(contentPadding ?: PaddingValues(horizontal = Dimens.twoGrid)),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = Icons.Default.Search,
-            contentDescription = null,
+            contentDescription = null, // decorative: the placeholder names the field
             tint = if (isFocused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(Dimens.twoAndHalfGrid),
         )
@@ -230,7 +240,7 @@ fun FormInputSearchField(
             onValueChange = onValueChange,
             modifier = Modifier.weight(1f),
             interactionSource = interactionSource,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface).merge(textStyle ?: MaterialTheme.typography.bodyMedium),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             singleLine = true,
             enabled = enabled,

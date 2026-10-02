@@ -33,4 +33,12 @@
     <string name="cd_rule_met">Requirement met</string>
     <string name="cd_rule_not_met">Requirement not met</string>
     <string name="select_currency">Select currency</string>
+    <string name="error_file_too_large">File is too large. The limit is %1$s.</string>
+    <string name="quantity_increase">Increase</string>
+    <string name="quantity_decrease">Decrease</string>
+    <string name="close">Close</string>
+    <string name="zoom_in">Zoom in</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="add_photo">Add photo</string>
+    <string name="preview">Preview</string>
 </resources>

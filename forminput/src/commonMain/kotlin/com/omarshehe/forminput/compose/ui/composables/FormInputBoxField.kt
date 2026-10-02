@@ -1,5 +1,6 @@
 package com.omarshehe.forminput.compose.ui.composables
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.defaultMinSize
@@ -46,7 +47,8 @@ internal fun FormInputBoxField(
     placeholder: (@Composable () -> Unit)? = null,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
-    textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
+    textStyle: TextStyle? = null,
+    contentPadding: PaddingValues? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
@@ -66,7 +68,7 @@ internal fun FormInputBoxField(
             .defaultMinSize(minHeight = TextFieldDefaults.MinHeight),
         enabled = enabled,
         readOnly = readOnly,
-        textStyle = textStyle.copy(color = textColor),
+        textStyle = (textStyle ?: MaterialTheme.typography.bodyLarge).copy(color = textColor),
         cursorBrush = SolidColor(if (isError) colors.errorCursorColor else colors.cursorColor),
         singleLine = true,
         interactionSource = interactionSource,
@@ -86,7 +88,7 @@ internal fun FormInputBoxField(
                     trailingIcon = trailingIcon,
                     shape = shape,
                     colors = colors,
-                    contentPadding = if (label != null) {
+                    contentPadding = contentPadding ?: if (label != null) {
                         TextFieldDefaults.contentPaddingWithLabel()
                     } else {
                         TextFieldDefaults.contentPaddingWithoutLabel()
@@ -115,7 +117,7 @@ internal fun FormInputBoxField(
                     leadingIcon = leadingIcon,
                     trailingIcon = trailingIcon,
                     colors = colors,
-                    contentPadding = OutlinedTextFieldDefaults.contentPadding(),
+                    contentPadding = contentPadding ?: OutlinedTextFieldDefaults.contentPadding(),
                     container = {
                         OutlinedTextFieldDefaults.Container(
                             enabled = enabled,

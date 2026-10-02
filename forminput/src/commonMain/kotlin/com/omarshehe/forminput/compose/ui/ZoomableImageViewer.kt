@@ -1,5 +1,10 @@
 package com.omarshehe.forminput.compose.ui
 
+import com.omarshehe.forminput.compose.resources.Res
+import com.omarshehe.forminput.compose.resources.preview
+import com.omarshehe.forminput.compose.resources.zoom_out
+import com.omarshehe.forminput.compose.resources.zoom_in
+import com.omarshehe.forminput.compose.resources.close
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -53,7 +58,7 @@ private const val ZOOM_STEP = 1f
  * that second window could also close the owning `AppDialogWindow`. Rendering as a plain overlay
  * avoids a second window entirely, so there's no window to interact badly with the owner. */
 @Composable
-fun ZoomableImageViewer(imageUrl: String, onDismiss: () -> Unit) {
+public fun ZoomableImageViewer(imageUrl: String, onDismiss: () -> Unit) {
     var scale by remember { mutableStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
 
@@ -86,7 +91,7 @@ fun ZoomableImageViewer(imageUrl: String, onDismiss: () -> Unit) {
     ) {
         AsyncImage(
             model = imageUrl,
-            contentDescription = null,
+            contentDescription = formInputString(FormInputStrings::preview, Res.string.preview),
             contentScale = ContentScale.Fit,
             modifier = Modifier
                 .fillMaxSize()
@@ -110,7 +115,7 @@ fun ZoomableImageViewer(imageUrl: String, onDismiss: () -> Unit) {
             IconButton(onClick = onDismiss) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = null,
+                    contentDescription = formInputString(FormInputStrings::close, Res.string.close),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(Dimens.threeGrid),
                 )
@@ -128,14 +133,14 @@ fun ZoomableImageViewer(imageUrl: String, onDismiss: () -> Unit) {
                 IconButton(onClick = { zoomBy(-ZOOM_STEP) }, enabled = scale > MIN_ZOOM) {
                     Icon(
                         imageVector = Icons.Default.ZoomOut,
-                        contentDescription = null,
+                        contentDescription = formInputString(FormInputStrings::zoomOut, Res.string.zoom_out),
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
                 IconButton(onClick = { zoomBy(ZOOM_STEP) }, enabled = scale < MAX_ZOOM) {
                     Icon(
                         imageVector = Icons.Default.ZoomIn,
-                        contentDescription = null,
+                        contentDescription = formInputString(FormInputStrings::zoomIn, Res.string.zoom_in),
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }

@@ -14,7 +14,7 @@ import java.awt.KeyboardFocusManager
 import java.io.File
 
 @Composable
-actual fun FilePicker(
+public actual fun FilePicker(
     show: Boolean,
     extensions: List<String>,
     onFileSelected: (path: String?, name: String?, size: Long?, error: String?) -> Unit,

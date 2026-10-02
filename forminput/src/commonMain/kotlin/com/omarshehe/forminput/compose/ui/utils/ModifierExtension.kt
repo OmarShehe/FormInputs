@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Shape
 
 /** The classic form-input corners: the theme's medium shape with the bottom corners squared off. */
 @Composable
-fun formInputShape(): Shape = MaterialTheme.shapes.medium.copy(bottomEnd = ZeroCornerSize, bottomStart = ZeroCornerSize)
+public fun formInputShape(): Shape = MaterialTheme.shapes.medium.copy(bottomEnd = ZeroCornerSize, bottomStart = ZeroCornerSize)
 
 /**
  * Full width, padded, and clipped to [formInputShape]; pass the same shape to the field so its outline follows the corners.
@@ -20,7 +20,7 @@ fun formInputShape(): Shape = MaterialTheme.shapes.medium.copy(bottomEnd = ZeroC
  * the spacing is not applied twice.
  */
 @Composable
-fun Modifier.formInputModifier(
+public fun Modifier.formInputModifier(
     padding: PaddingValues = PaddingValues(start = Dimens.twoGrid, top = Dimens.twoGrid, end = Dimens.twoGrid),
 ): Modifier =
     this

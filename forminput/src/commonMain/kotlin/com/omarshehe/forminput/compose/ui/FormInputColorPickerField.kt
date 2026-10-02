@@ -1,5 +1,7 @@
 package com.omarshehe.forminput.compose.ui
 
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.foundation.layout.PaddingValues
 import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.material3.TextFieldDefaults
@@ -53,8 +55,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.omarshehe.forminput.compose.ui.utils.FormInputTestTags
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import com.omarshehe.forminput.compose.resources.Res
@@ -124,10 +129,21 @@ private fun parseHexColor(hex: String): Color {
     )
 }
 
+/** The popup width, the height of its saturation and brightness area and the selection marker, unless the caller sets them. */
+private val DefaultPickerWidth = 300.dp
+private val DefaultSpectrumHeight = 180.dp
+private val DefaultColorThumbSize = 16.dp
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * A read-only field that shows the chosen colour as a swatch and opens a popup to pick another. [value] and the result of
+ * [onColorSelected] are `#RRGGBB` strings. [popupModifier] sets the popup's width (300dp unless it says otherwise) and
+ * [spectrumModifier] the height of its saturation and brightness area (180dp); [thumbSize] and [thumbColor] style the selection
+ * marker. [textStyle] and [contentPadding] style the field, and [fieldModifier] reaches the field itself.
+ */
 @Composable
-fun FormInputColorPickerField(
+public fun FormInputColorPickerField(
     label: StringResource,
     value: String,
     onColorSelected: (String) -> Unit,
@@ -142,6 +158,12 @@ fun FormInputColorPickerField(
     fieldModifier: Modifier = Modifier,
     dialogShape: Shape? = null,
     dialogContainerColor: Color? = null,
+    popupModifier: Modifier = Modifier,
+    spectrumModifier: Modifier = Modifier,
+    thumbSize: Dp = DefaultColorThumbSize,
+    thumbColor: Color = Color.White,
+    textStyle: TextStyle? = null,
+    contentPadding: PaddingValues? = null,
 ) {
     FormInputColorPickerField(
         label = libraryString(label),
@@ -158,12 +180,18 @@ fun FormInputColorPickerField(
         fieldModifier = fieldModifier,
         dialogShape = dialogShape,
         dialogContainerColor = dialogContainerColor,
+        popupModifier = popupModifier,
+        spectrumModifier = spectrumModifier,
+        thumbSize = thumbSize,
+        thumbColor = thumbColor,
+        textStyle = textStyle,
+        contentPadding = contentPadding,
     )
 }
 
 /** Same field with a runtime [label]. While [hasError] is set, [error] replaces [supportingText] below the field. */
 @Composable
-fun FormInputColorPickerField(
+public fun FormInputColorPickerField(
     label: String,
     value: String,
     onColorSelected: (String) -> Unit,
@@ -178,6 +206,12 @@ fun FormInputColorPickerField(
     fieldModifier: Modifier = Modifier,
     dialogShape: Shape? = null,
     dialogContainerColor: Color? = null,
+    popupModifier: Modifier = Modifier,
+    spectrumModifier: Modifier = Modifier,
+    thumbSize: Dp = DefaultColorThumbSize,
+    thumbColor: Color = Color.White,
+    textStyle: TextStyle? = null,
+    contentPadding: PaddingValues? = null,
 ) {
     val defaults = LocalFormInputDefaults.current
     val filled = (style ?: defaults.style) == FormInputFieldStyle.FILLED
@@ -191,6 +225,8 @@ fun FormInputColorPickerField(
     Column(modifier = modifier.fillMaxWidth()) {
         Box {
             FormInputBoxField(
+                textStyle = textStyle,
+                contentPadding = contentPadding,
                 filled = filled,
                 focusable = false,
                 value = TextFieldValue(value),
@@ -247,6 +283,10 @@ fun FormInputColorPickerField(
             shape = dialogShape ?: RoundedCornerShape(Dimens.oneGrid),
             containerColor = dialogContainerColor ?: MaterialTheme.colorScheme.surface,
             initialHex = value.takeIf { isValidHex(it) } ?: "",
+            popupModifier = popupModifier,
+            spectrumModifier = spectrumModifier,
+            thumbSize = thumbSize,
+            thumbColor = thumbColor,
             onDismiss = { showPicker = false },
             onConfirm = { hex ->
                 showPicker = false
@@ -263,6 +303,10 @@ private fun ColorPickerPopup(
     shape: Shape,
     containerColor: Color,
     initialHex: String,
+    popupModifier: Modifier,
+    spectrumModifier: Modifier,
+    thumbSize: Dp,
+    thumbColor: Color,
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit,
 ) {
@@ -285,9 +329,10 @@ private fun ColorPickerPopup(
         properties = PopupProperties(focusable = true),
     ) {
         Surface(
-            modifier = Modifier
+            modifier = popupModifier
                 .shadow(elevation = Dimens.twoGrid, shape = shape)
-                .width(300.dp),
+                .width(DefaultPickerWidth)
+                .testTag(FormInputTestTags.ColorPickerPopup),
             shape = shape,
             color = containerColor,
             tonalElevation = Dimens.twoGrid,
@@ -302,7 +347,9 @@ private fun ColorPickerPopup(
                         brightness = v
                         hexInput = hsvToHex(hue, s, v)
                     },
-                    modifier = Modifier.fillMaxWidth().height(180.dp),
+                    thumbSize = thumbSize,
+                    thumbColor = thumbColor,
+                    modifier = spectrumModifier.fillMaxWidth().height(DefaultSpectrumHeight).testTag(FormInputTestTags.ColorSpectrum),
                 )
                 Spacer(Modifier.height(Dimens.twoGrid))
                 HueSlider(
@@ -404,6 +451,8 @@ private fun SaturationValueCanvas(
     saturation: Float,
     brightness: Float,
     onChanged: (saturation: Float, brightness: Float) -> Unit,
+    thumbSize: Dp,
+    thumbColor: Color,
     modifier: Modifier = Modifier,
 ) {
     var canvasSize by remember { mutableStateOf(IntSize.Zero) }
@@ -437,7 +486,7 @@ private fun SaturationValueCanvas(
     ) {
         val thumbPxX = saturation * canvasSize.width
         val thumbPxY = (1f - brightness) * canvasSize.height
-        val thumbSizePx = with(density) { 16.dp.toPx() }
+        val thumbSizePx = with(density) { thumbSize.toPx() }
         val offsetX = with(density) {
             (thumbPxX - thumbSizePx / 2).coerceIn(0f, (canvasSize.width - thumbSizePx).coerceAtLeast(0f)).toDp()
         }
@@ -448,9 +497,9 @@ private fun SaturationValueCanvas(
         Box(
             modifier = Modifier
                 .offset(x = offsetX, y = offsetY)
-                .size(16.dp)
+                .size(thumbSize)
                 .clip(CircleShape)
-                .border(2.dp, Color.White, CircleShape)
+                .border(Dimens.quarterGrid, thumbColor, CircleShape)
                 .background(parseHexColor(hsvToHex(hue, saturation, brightness)), CircleShape),
         )
     }

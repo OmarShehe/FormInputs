@@ -1,5 +1,8 @@
 package com.omarshehe.forminput.compose.ui
 
+import com.omarshehe.forminput.compose.resources.Res
+import com.omarshehe.forminput.compose.resources.quantity_decrease
+import com.omarshehe.forminput.compose.resources.quantity_increase
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -33,8 +36,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 
+/**
+ * A labelled number stepper: minus and plus buttons around [value], kept between [minValue] and [maxValue]. The two buttons have
+ * screen-reader names that [FormInputStrings] can replace. [style], [shape] and [colors] fall back to the form-wide defaults.
+ */
 @Composable
-fun QuantityStepperControl(
+public fun QuantityStepperControl(
     label: String,
     value: Int,
     onValueChange: (Int) -> Unit,
@@ -75,7 +82,11 @@ fun QuantityStepperControl(
                         disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
                     ),
                 ) {
-                    Icon(Icons.Default.Remove, contentDescription = null, modifier = Modifier.size(Dimens.twoAndHalfGrid))
+                    Icon(
+                        Icons.Default.Remove,
+                        contentDescription = formInputString(FormInputStrings::quantityDecrease, Res.string.quantity_decrease),
+                        modifier = Modifier.size(Dimens.twoAndHalfGrid),
+                    )
                 }
             }
 
@@ -101,7 +112,11 @@ fun QuantityStepperControl(
                         disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
                     ),
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(Dimens.twoAndHalfGrid))
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = formInputString(FormInputStrings::quantityIncrease, Res.string.quantity_increase),
+                        modifier = Modifier.size(Dimens.twoAndHalfGrid),
+                    )
                 }
             }
 
@@ -119,7 +134,7 @@ fun QuantityStepperControl(
                 ) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = null,
+                        contentDescription = null, // decorative: the visible label names the control
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(Dimens.threeGrid),
                     )

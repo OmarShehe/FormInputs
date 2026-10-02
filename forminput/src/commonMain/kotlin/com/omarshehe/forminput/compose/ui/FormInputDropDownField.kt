@@ -1,5 +1,6 @@
 package com.omarshehe.forminput.compose.ui
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,9 +60,14 @@ import com.omarshehe.forminput.compose.ui.model.FormInputDropDownState
 import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 
+/**
+ * A dropdown over [FormInputDropDownState.options]; the state can also make it searchable or accept free text. [textStyle] and
+ * [contentPadding] style the field, [fieldModifier] reaches it, [leadingIcon] adds an icon, and [menuShape],
+ * [menuContainerColor], [maxMenuHeight] and [itemContent] style the menu and its rows. [onSelected] receives the updated state.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormInputDropDownField(
+public fun FormInputDropDownField(
     modifier: Modifier = Modifier,
     state: FormInputDropDownState,
     colors: TextFieldColors? = null,
@@ -71,6 +77,7 @@ fun FormInputDropDownField(
     fieldModifier: Modifier = Modifier,
     style: FormInputFieldStyle? = null,
     textStyle: TextStyle? = null,
+    contentPadding: PaddingValues? = null,
     leadingIcon: (@Composable () -> Unit)? = null,
     menuShape: Shape? = null,
     menuContainerColor: Color? = null,
@@ -155,6 +162,7 @@ fun FormInputDropDownField(
                     shape = fieldShape,
                     leadingIcon = leadingIcon,
                     textStyle = textStyle ?: LocalTextStyle.current,
+                    contentPadding = contentPadding,
                 )
             
                 if (!editable && enabled) {

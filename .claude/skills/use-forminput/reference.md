@@ -37,14 +37,14 @@ parameter that is not listed here (`forminput/src/commonMain/kotlin/com/omarsheh
 - **`FormInputDropDownField(state, onSelected)`**: `colors`, `shape`, `style`, `enabled`, `supportingText`, `fieldModifier`, `textStyle`, `leadingIcon`,
   `menuShape`, `menuContainerColor`, `maxMenuHeight`, `itemContent`.
 - **Pickers `FormInputDatePickerField / TimePickerField / DateTimePickerField(state, onValueChange)`**: `shape`, `style`, `colors`, `enabled`,
-  `supportingText`, `fieldModifier`, `dialogShape`, `dialogContainerColor`.
+  `supportingText`, `fieldModifier`, `dialogShape`, `dialogContainerColor`, `textStyle`, `contentPadding`.
 - **`FormInputColorPickerField(label: StringResource | String, value, onColorSelected)`**: `shape`, `style`, `colors`, `enabled`, `hasError`, `error`,
-  `supportingText`, `fieldModifier`, `dialogShape`, `dialogContainerColor`.
-- **`FormInputSearchField(state, onValueChange: (String) -> Unit)`** and a `TextFieldValue` overload: `style` (null = pill), `shape`, `colors`, `enabled`, `onSearch`.
+  `supportingText`, `fieldModifier`, `dialogShape`, `dialogContainerColor`, `textStyle`, `contentPadding`, `popupModifier`, `spectrumModifier`, `thumbSize`, `thumbColor`.
+- **`FormInputSearchField(state, onValueChange: (String) -> Unit)`** and a `TextFieldValue` overload: `style` (null = pill), `shape`, `colors`, `enabled`, `onSearch`, `textStyle`, `contentPadding`.
 - **`FormInputImmutableTextField(label, text)`**: `imageVector`, `isError`, `outlined`, `shape`, `onIconClick`, `style`.
 - **Uploads `FormInputUploadDocument(state, onValueChange)`, `FormInputUploadMultiDocument(state, onValueChange)`,
   `FormInputUploadImage(state, onValueChange, ...)`**: `shape`, `style`, `colors`. `FormInputUploadImage` also has `onDeleteImage`, `unboundedAdd`, `maxItems`,
-  `showPrimaryBadge`, `captureRequester`, `onImageClick`.
+  `showPrimaryBadge`, `captureRequester`, `onImageClick`, `slotModifier`, `slotSpacing`; `FormInputUploadMultiDocument` has `areaModifier`. The three upload states take `maxFileSizeBytes`.
 - **`QuantityStepperControl(label, value, onValueChange)`**: `description`, `icon`, `minValue`, `maxValue`, `shape`, `style`, `colors`.
 - **`FormInputButton(onClick)`**: `text` or `textRes`, `style: FormInputButtonStyle` (FILLED default), `icon`, `enabled`, `isLoading`, `contentPadding`, `shape`, `color`, `contentColor`.
 

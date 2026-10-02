@@ -4,32 +4,29 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-object Dimens {
-    val default: Dp = 0.dp
-    val quarterGrid: Dp = 2.dp
-    val halfGrid: Dp = 4.dp
-    val oneGrid: Dp = 8.dp
-    val oneAndHalfGrid: Dp = 12.dp
-    val twoGrid: Dp = 16.dp
-    val twoAndHalfGrid: Dp = 20.dp
-    val threeGrid: Dp = 24.dp
-    val threeAndHalfGrid: Dp = 28.dp
-    val fourGrid: Dp = 32.dp
-    val fourAndHalfGrid: Dp = 36.dp
-    val fiveGrid: Dp = 40.dp
-    val fiveAndHalfGrid: Dp = 44.dp
-    val sixGrid: Dp = 48.dp
-    val sixAndHalfGrid: Dp = 52.dp
-    val sevenGrid: Dp = 56.dp
-    val sevenAndHalfGrid: Dp = 60.dp
-    val eightGrid: Dp = 64.dp
-    val nineGrid: Dp = 72.dp
-    val tenGrid: Dp = 80.dp
-    val thirteenAndHalfGrid: Dp = 108.dp
+public object Dimens {
+    public val default: Dp = 0.dp
+    public val quarterGrid: Dp = 2.dp
+    public val halfGrid: Dp = 4.dp
+    public val oneGrid: Dp = 8.dp
+    public val oneAndHalfGrid: Dp = 12.dp
+    public val twoGrid: Dp = 16.dp
+    public val twoAndHalfGrid: Dp = 20.dp
+    public val threeGrid: Dp = 24.dp
+    public val threeAndHalfGrid: Dp = 28.dp
+    public val fourGrid: Dp = 32.dp
+    public val fourAndHalfGrid: Dp = 36.dp
+    public val fiveGrid: Dp = 40.dp
+    public val fiveAndHalfGrid: Dp = 44.dp
+    public val sixGrid: Dp = 48.dp
+    public val sixAndHalfGrid: Dp = 52.dp
+    public val sevenGrid: Dp = 56.dp
+    public val sevenAndHalfGrid: Dp = 60.dp
+    public val eightGrid: Dp = 64.dp
+    public val nineGrid: Dp = 72.dp
+    public val tenGrid: Dp = 80.dp
+    public val thirteenAndHalfGrid: Dp = 108.dp
 
-    val stroke: Dp = 1.dp
+    public val stroke: Dp = 1.dp
 
-    val imageSlotSize: Dp = 140.dp
-
-    val labelFontSize = 8.sp
 }

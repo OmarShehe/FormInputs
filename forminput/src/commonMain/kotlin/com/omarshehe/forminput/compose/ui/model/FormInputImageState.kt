@@ -6,7 +6,7 @@ import org.jetbrains.compose.resources.StringResource
 import com.omarshehe.forminput.compose.ui.utils.FileUtils
 
 @Stable
-data class FormInputImageState(
+public data class FormInputImageState(
     override val id: String,
     override val labelRes: StringResource?,
     override val placeholderRes: StringResource?,
@@ -21,8 +21,13 @@ data class FormInputImageState(
     override val label: String? = null,
     override val placeholder: String? = null,
     override val error: String? = null,
+    /**
+     * The largest file, in bytes, the field accepts; null means no limit. A bigger pick is refused with a message. Sizes are
+     * shown in 1024-based units, so `5L * 1024 * 1024` reads as `5.0 MB` while `5_000_000` reads as `4.8 MB`.
+     */
+    val maxFileSizeBytes: Long? = null,
 ) : FormInputState {
-    data class ImageUploadValue(
+    public data class ImageUploadValue(
         val filePath: String?,
         val progress: Float? = null,
         val url: String? = null,
