@@ -72,7 +72,7 @@ internal fun TextFieldsSection(look: DemoLook) = DemoSection("Text fields") {
         edit(FormInputTextFieldState(id = id, type = type, value = ""))
 
     var name by remember { mutableStateOf(field("name", FormInputType.TEXT) { it.copy(isMandatory = true) }) }
-    var amount by remember { mutableStateOf(field("amount", FormInputType.NUMBER) { it.copy(prefix = "TZS", value = "15000") }) }
+    var amount by remember { mutableStateOf(field("amount", FormInputType.NUMBER) { it.copy(prefix = "TSh", value = "15000") }) }
     var weight by remember { mutableStateOf(field("weight", FormInputType.NUMBER) { it.copy(suffix = "kg", value = "72") }) }
     var phone by remember { mutableStateOf(field("phone", FormInputType.PHONE)) }
     var email by remember { mutableStateOf(field("email", FormInputType.EMAIL)) }

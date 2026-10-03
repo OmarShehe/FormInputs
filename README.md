@@ -1,6 +1,6 @@
 # Form Input
 
-![The demo app: typing in fields, the classic and French switches, the password checklist and strength meter animating, and a form drawn from a list of states](https://raw.githubusercontent.com/OmarShehe/FormInputs/master/forminputs.gif)
+![The demo app: typing with input filtering, the classic and French switches, the password checklist and strength meter animating, and a dropdown](https://raw.githubusercontent.com/OmarShehe/FormInputs/master/forminputs.gif)
 
 [![forminput](https://img.shields.io/maven-central/v/io.github.omarshehe/forminput?label=forminput)](https://central.sonatype.com/artifact/io.github.omarshehe/forminput)
 [![forminput-views](https://img.shields.io/maven-central/v/io.github.omarshehe/forminput-views?label=forminput-views)](https://central.sonatype.com/artifact/io.github.omarshehe/forminput-views)
