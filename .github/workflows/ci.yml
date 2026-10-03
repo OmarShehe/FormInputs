@@ -19,7 +19,12 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - uses: android-actions/setup-android@v3
+      # The runner image already has the Android SDK. setup-android@v3 fails on it ("Failed to find package 'tools'"),
+      # so only accept the licenses and let Gradle fetch any missing platform package.
+      - name: Accept Android SDK licenses
+        run: |
+          SDKMANAGER=$(ls -d "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | head -1)
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
       - uses: gradle/actions/setup-gradle@v4
       # The iOS targets cannot be built on Linux; the flag skips them here and the macOS job covers them.
       - name: Desktop tests and Android compile
