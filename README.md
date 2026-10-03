@@ -42,7 +42,10 @@ iOS is compile-checked only; picking a file there reports "not supported".
 ## Reference
 
 - [`reference.md`](.claude/skills/use-forminput/reference.md): every state, composable and option on one page. Every public composable also has KDoc.
-- [`SKILL.md`](.claude/skills/use-forminput/SKILL.md): the same guidance for AI coding assistants (copy the folder into a project's `.claude/skills/`).
+
+## For AI coding assistants
+
+This repo ships a [Claude Code](https://claude.com/claude-code) skill, [`.claude/skills/use-forminput/`](.claude/skills/use-forminput/SKILL.md). It teaches an assistant which input to pick, the state pattern, styling, form-wide defaults, custom texts and the common mistakes, and it points to [`reference.md`](.claude/skills/use-forminput/reference.md) for exact parameters. Copy the folder into your own project's `.claude/skills/` and the assistant picks it up when you build forms with forminput.
 
 ## Build and test
 
