@@ -7,7 +7,7 @@ description: Use when building or changing forms with forminput (io.github.omars
 
 A Kotlin Multiplatform form-input library (Android, desktop JVM, iOS arm64 and simulator arm64) on Compose Multiplatform 1.12 and Kotlin 2.4.
 All packages are under `com.omarshehe.forminput.compose.ui` (composables), `.ui.model` (state classes) and `.ui.utils` (helpers).
-For the full parameter lists read [reference.md](reference.md); for prose and screenshots read the "Compose Multiplatform" section of the repository `README.md`.
+For the full parameter lists read [reference.md](reference.md); for working code read the demo files listed in the repository `README.md` (`app/src/main/java/com/omarshehe/forminputs/`).
 The runnable sample is `app/src/main/java/com/omarshehe/forminputs/ComposeDemoActivity.kt` (every input, with switches for classic style and custom texts).
 
 ## Setup
