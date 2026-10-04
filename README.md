@@ -17,6 +17,19 @@ implementation("io.github.omarshehe:forminput:2.1.0")
 implementation("io.github.omarshehe:forminput-views:1.0.7")
 ```
 
+## Moved to Maven Central
+
+Releases up to 1.0.6 were published on JitPack as `com.github.OmarShehe:FormInputs`. From 1.0.7 the library is on Maven Central under a new group and artifact name. To update, remove the JitPack repository and change the dependency:
+
+```kotlin
+// before
+implementation("com.github.OmarShehe:FormInputs:1.0.6")
+// after
+implementation("io.github.omarshehe:forminput-views:1.0.7")
+```
+
+The Compose Multiplatform library is `io.github.omarshehe:forminput`. Kotlin packages are unchanged, so no code changes are needed.
+
 ## Try it
 
 `./gradlew :app:installDebug` opens a launcher with a Compose demo of every input and the old View sample. The code to copy is in the demo:
