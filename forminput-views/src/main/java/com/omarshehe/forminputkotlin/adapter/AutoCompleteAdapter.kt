@@ -19,7 +19,7 @@ class AutoCompleteAdapter(
     resource: Int,
     private val items: List<String>,
     private val mListener: ItemSelectedListener
-) : ArrayAdapter<String>(context, resource, items) {
+) : ArrayAdapter<String>(context, resource, items.toMutableList()) {
 
     private val itemsAll: MutableList<String> = items.toMutableList()
     private val suggestions: ArrayList<String> = ArrayList()
