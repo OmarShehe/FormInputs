@@ -14,18 +14,18 @@ Ready-made form inputs: text, price and password fields (with a live rules check
 implementation("io.github.omarshehe:forminput:2.1.0")
 
 // Android Views (XML)
-implementation("io.github.omarshehe:forminput-views:1.0.7")
+implementation("io.github.omarshehe:forminput-views:1.0.8")
 ```
 
 ## Moved to Maven Central
 
-Releases up to 1.0.6 were published on JitPack as `com.github.OmarShehe:FormInputs`. From 1.0.7 the library is on Maven Central under a new group and artifact name. To update, remove the JitPack repository and change the dependency:
+Releases up to 1.0.6 were published on JitPack as `com.github.OmarShehe:FormInputs`. From 1.0.8 the library is on Maven Central under a new group and artifact name. To update, remove the JitPack repository and change the dependency:
 
 ```kotlin
 // before
 implementation("com.github.OmarShehe:FormInputs:1.0.6")
 // after
-implementation("io.github.omarshehe:forminput-views:1.0.7")
+implementation("io.github.omarshehe:forminput-views:1.0.8")
 ```
 
 The Compose Multiplatform library is `io.github.omarshehe:forminput`. Kotlin packages are unchanged, so no code changes are needed.
