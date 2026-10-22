@@ -56,7 +56,7 @@ public enum class CurrencyPlacement { START, END }
  * [style], [shape], [colors], [enabled] and the text options behave the same way.
  *
  * The amount keeps digits and one dot, at most [FormInputPriceState.maxIntegerDigits] whole digits and
- * [FormInputPriceState.maxDecimals] decimals. [groupThousands] only changes how it is shown. With one currency the selector is
+ * [FormInputPriceState.maxDecimals] decimals. [groupThousands] only changes how it is shown, with [groupingSeparator] (not a digit or a dot) between the groups. With one currency the selector is
  * plain text. [currencyLabel] and [currencyContent] change how a currency is drawn, [menuShape] and [menuContainerColor] style
  * the list.
  */
@@ -76,6 +76,7 @@ public fun FormInputPriceField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     currencyPlacement: CurrencyPlacement = CurrencyPlacement.START,
     groupThousands: Boolean = false,
+    groupingSeparator: Char = ',',
     currencyLabel: (String) -> String = { it },
     currencyTextStyle: TextStyle? = null,
     menuShape: Shape? = null,
@@ -183,7 +184,7 @@ public fun FormInputPriceField(
             keyboardType = if (state.maxDecimals > 0) KeyboardType.Decimal else KeyboardType.Number,
         ),
         keyboardActions = keyboardActions,
-        visualTransformation = if (groupThousands) ThousandsSeparatorTransformation() else null,
+        visualTransformation = if (groupThousands) ThousandsSeparatorTransformation(groupingSeparator) else null,
         leadingIcon = if (currencyPlacement == CurrencyPlacement.START) selector else null,
         trailingIcon = if (currencyPlacement == CurrencyPlacement.END) selector else null,
     )

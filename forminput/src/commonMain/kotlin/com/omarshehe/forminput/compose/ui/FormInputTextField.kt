@@ -65,6 +65,7 @@ import com.omarshehe.forminput.compose.ui.model.FormInputTextFieldState
 import com.omarshehe.forminput.compose.ui.model.FormInputType
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 import com.omarshehe.forminput.compose.ui.utils.Symbols
+import com.omarshehe.forminput.compose.ui.utils.ThousandsSeparatorTransformation
 
 /**
  * Text field driven by [FormInputTextFieldState.value]. The cursor and selection are kept internally; use the
@@ -77,6 +78,8 @@ private val HeaderActionIconSize = 14.dp
  * The library's text input, driven by [FormInputTextFieldState]; [onValueChange] receives the updated state. [style], [shape]
  * and [colors] fall back to the form-wide defaults from [FormInputTheme]. [textStyle] and [contentPadding] style the text and
  * the box, [textModifier] reaches the text field itself, and [leadingIcon] and [trailingIcon] replace the built-in icons.
+ * For a NUMBER field, [groupThousands] shows the whole part in groups of three ("1234567" as "1,234,567") with [groupingSeparator]
+ * (not a digit or a dot) between them; the stored value stays plain. A [visualTransformation] you pass wins over it.
  */
 @Composable
 public fun FormInputTextField(
@@ -95,6 +98,8 @@ public fun FormInputTextField(
     visualTransformation: VisualTransformation? = null,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
+    groupThousands: Boolean = false,
+    groupingSeparator: Char = ',',
     onValueChange: (FormInputTextFieldState) -> Unit = {},
 ) {
     var textValueState by remember { mutableStateOf(TextFieldValue(text = state.value)) }
@@ -124,6 +129,8 @@ public fun FormInputTextField(
         visualTransformation = visualTransformation,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
+        groupThousands = groupThousands,
+        groupingSeparator = groupingSeparator,
     )
 }
 
@@ -152,6 +159,8 @@ public fun FormInputTextField(
     visualTransformation: VisualTransformation? = null,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
+    groupThousands: Boolean = false,
+    groupingSeparator: Char = ',',
 ) {
     val defaults = LocalFormInputDefaults.current
     val filled = (style ?: defaults.style) == FormInputFieldStyle.FILLED
@@ -163,7 +172,10 @@ public fun FormInputTextField(
     var passwordVisible by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
 
-    val effectiveTransformation = visualTransformation ?: if (state.type == FormInputType.PASSWORD && !passwordVisible) {
+    val groupingTransformation = remember(groupThousands, groupingSeparator, state.type) {
+        if (groupThousands && state.type == FormInputType.NUMBER) ThousandsSeparatorTransformation(groupingSeparator) else null
+    }
+    val effectiveTransformation = visualTransformation ?: groupingTransformation ?: if (state.type == FormInputType.PASSWORD && !passwordVisible) {
         PasswordVisualTransformation()
     } else {
         VisualTransformation.None

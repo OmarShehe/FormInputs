@@ -65,6 +65,69 @@ class TextAndDropDownTest {
         assertEquals("12.34", state().value)
     }
 
+    private fun runGrouped(initial: FormInputTextFieldState, block: androidx.compose.ui.test.ComposeUiTest.(state: () -> FormInputTextFieldState) -> Unit) =
+        runComposeUiTest {
+            var state by mutableStateOf(initial)
+            setContent { FormInputTextField(state = state, onValueChange = { state = it }, groupThousands = true) }
+            block { state }
+        }
+
+    @Test
+    fun groupedNumberShowsSeparatorsButStoresPlainDigits() = runGrouped(text(FormInputType.NUMBER, value = "1234567"), {
+        onNodeWithText("1,234,567").assertExists()
+    })
+
+    @Test
+    fun typingAGroupedNumberKeepsThePlainValue() = runGrouped(text(FormInputType.NUMBER), { state ->
+        onNodeWithText("Field").performTextInput("2000000")
+        assertEquals("2000000", state().value)
+        onNodeWithText("2,000,000").assertExists()
+    })
+
+    @Test
+    fun groupedDecimalsLeaveTheFractionAlone() = runGrouped(text(FormInputType.NUMBER, value = "1234567.891"), {
+        onNodeWithText("1,234,567.891").assertExists()
+    })
+
+    @Test
+    fun groupingIsIgnoredForOtherTypes() = runGrouped(text(FormInputType.PHONE, value = "1234567"), {
+        onNodeWithText("1234567").assertExists()
+    })
+
+    @Test
+    fun groupingIsOffByDefault() = runText(text(FormInputType.NUMBER, value = "1234567")) {
+        onNodeWithText("1234567").assertExists()
+    }
+
+    @Test
+    fun customSeparatorOnANumberField() = runComposeUiTest {
+        setContent {
+            FormInputTextField(state = text(FormInputType.NUMBER, value = "1234567"), groupThousands = true, groupingSeparator = ' ')
+        }
+        onNodeWithText("1 234 567").assertExists()
+    }
+
+    @Test
+    fun aCallerTransformationBeatsGrouping() = runComposeUiTest {
+        setContent {
+            FormInputTextField(
+                state = text(FormInputType.NUMBER, value = "1234567"), groupThousands = true,
+                visualTransformation = androidx.compose.ui.text.input.VisualTransformation.None,
+            )
+        }
+        onNodeWithText("1234567").assertExists()
+    }
+
+    @Test
+    fun theTextFieldValueOverloadGroupsToo() = runComposeUiTest {
+        setContent {
+            FormInputTextField(
+                state = text(FormInputType.NUMBER), value = TextFieldValue("1234567"), onValueChange = {}, groupThousands = true,
+            )
+        }
+        onNodeWithText("1,234,567").assertExists()
+    }
+
     @Test
     fun phoneFieldKeepsDigitsAndPlus() = runText(text(FormInputType.PHONE)) { state ->
         onNodeWithText("Field").performTextInput("+255 7(12)")
