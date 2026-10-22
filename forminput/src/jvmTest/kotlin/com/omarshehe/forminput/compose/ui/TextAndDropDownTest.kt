@@ -129,6 +129,28 @@ class TextAndDropDownTest {
     }
 
     @Test
+    fun typingIntoAGroupedFieldReportsAPlainValueWithTheCursorAfterTheLastDigit() = runComposeUiTest {
+        var value by mutableStateOf(TextFieldValue(""))
+        setContent {
+            FormInputTextField(state = text(FormInputType.NUMBER), value = value, onValueChange = { value = it }, groupThousands = true)
+        }
+        onNodeWithText("Field").performTextInput("2000000")
+        assertEquals("2000000", value.text)
+        assertEquals(TextRange(7), value.selection)
+    }
+
+    @Test
+    fun anInsertInTheMiddleOfAGroupedNumberMovesTheCursorWithTheInsertedDigit() = runComposeUiTest {
+        var value by mutableStateOf(TextFieldValue("2000000", TextRange(4)))
+        setContent {
+            FormInputTextField(state = text(FormInputType.NUMBER), value = value, onValueChange = { value = it }, groupThousands = true)
+        }
+        onNodeWithText("2,000,000").performTextInput("9")
+        assertEquals("20009000", value.text)
+        assertEquals(TextRange(5), value.selection)
+    }
+
+    @Test
     fun phoneFieldKeepsDigitsAndPlus() = runText(text(FormInputType.PHONE)) { state ->
         onNodeWithText("Field").performTextInput("+255 7(12)")
         assertEquals("+255712", state().value)

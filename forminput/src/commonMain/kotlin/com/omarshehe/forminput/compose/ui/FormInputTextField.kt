@@ -138,6 +138,8 @@ public fun FormInputTextField(
  * Text field with a hoisted [TextFieldValue], so the caller owns the text, cursor and selection. Input is filtered
  * by the state's type, [FormInputTextFieldState.maxChar] and [FormInputTextFieldState.autoCapitalize] before
  * [onValueChange] is called; [FormInputTextFieldState.value] is not used by this overload.
+ * For a NUMBER field, [groupThousands] shows the whole part in groups of three with [groupingSeparator] (not a digit or a dot) between
+ * them; the [TextFieldValue] you receive and pass back stays plain, cursor included. A [visualTransformation] you pass wins over it.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

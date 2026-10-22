@@ -145,6 +145,10 @@ public fun FormInputPriceField(
         }
     }
 
+    val groupingTransformation = remember(groupThousands, groupingSeparator) {
+        if (groupThousands) ThousandsSeparatorTransformation(groupingSeparator) else null
+    }
+
     val fieldState = FormInputTextFieldState(
         id = state.id,
         labelRes = state.labelRes,
@@ -184,7 +188,7 @@ public fun FormInputPriceField(
             keyboardType = if (state.maxDecimals > 0) KeyboardType.Decimal else KeyboardType.Number,
         ),
         keyboardActions = keyboardActions,
-        visualTransformation = if (groupThousands) ThousandsSeparatorTransformation(groupingSeparator) else null,
+        visualTransformation = groupingTransformation,
         leadingIcon = if (currencyPlacement == CurrencyPlacement.START) selector else null,
         trailingIcon = if (currencyPlacement == CurrencyPlacement.END) selector else null,
     )
