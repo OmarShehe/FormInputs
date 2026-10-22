@@ -67,6 +67,12 @@ class PriceAndPasswordFieldTest {
     }
 
     @Test
+    fun priceUsesTheCustomSeparator() = runComposeUiTest {
+        setContent { FormInputPriceField(state = price("1234567"), onValueChange = {}, groupThousands = true, groupingSeparator = ' ') }
+        onNodeWithText("1 234 567").assertExists()
+    }
+
+    @Test
     fun disabledPriceDoesNotOpenTheList() = runComposeUiTest {
         setContent { FormInputPriceField(state = price(), onValueChange = {}, enabled = false) }
         onNodeWithText("TSH").performClick()

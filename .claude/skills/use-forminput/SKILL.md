@@ -52,7 +52,7 @@ var name by remember { mutableStateOf(FormInputTextFieldState(id = "name", type 
 FormInputTextField(state = name, onValueChange = { name = it.copy(hasError = it.value.isBlank(), error = "Required") })
 
 var price by remember { mutableStateOf(FormInputPriceState(id = "price", currency = "TSH", currencies = listOf("TSH", "USD"), label = "Price")) }
-FormInputPriceField(state = price, onValueChange = { price = it }, groupThousands = true)   // price.amount is the plain number
+FormInputPriceField(state = price, onValueChange = { price = it }, groupThousands = true)   // price.amount is the plain number; a NUMBER FormInputTextField takes groupThousands too; groupingSeparator = ' ' changes the character
 
 var pw by remember { mutableStateOf(FormInputPasswordState(id = "pw", label = "Password")) }
 var confirm by remember { mutableStateOf(FormInputPasswordState(id = "pw2", label = "Confirm password")) }

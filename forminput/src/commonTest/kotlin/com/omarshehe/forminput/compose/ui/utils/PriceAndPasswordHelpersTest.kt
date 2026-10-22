@@ -3,6 +3,7 @@ package com.omarshehe.forminput.compose.ui.utils
 import androidx.compose.ui.text.AnnotatedString
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
 class PriceAndPasswordHelpersTest {
@@ -51,6 +52,34 @@ class PriceAndPasswordHelpersTest {
         }
         assertEquals(9, mapping.originalToTransformed(7))
         assertEquals(2, mapping.originalToTransformed(1))
+    }
+
+    @Test
+    fun customSeparatorIsUsed() {
+        assertEquals("1 234 567", ThousandsSeparatorTransformation(' ').filter(AnnotatedString("1234567")).text.text)
+    }
+
+    @Test
+    fun separatorMayNotBeADotOrADigit() {
+        assertFailsWith<IllegalArgumentException> { ThousandsSeparatorTransformation('.') }
+        assertFailsWith<IllegalArgumentException> { ThousandsSeparatorTransformation('5') }
+    }
+
+    @Test
+    fun emptyAndShortValuesGetNoSeparator() {
+        for (raw in listOf("", "1", "123", ".5", "0.5")) {
+            assertEquals(raw, ThousandsSeparatorTransformation().filter(AnnotatedString(raw)).text.text)
+        }
+    }
+
+    @Test
+    fun cursorMappingRoundTripsWithCustomSeparator() {
+        val transformed = ThousandsSeparatorTransformation(' ').filter(AnnotatedString("1234567"))
+        val mapping = transformed.offsetMapping
+        assertEquals("1 234 567", transformed.text.text)
+        for (offset in 0..7) {
+            assertEquals(offset, mapping.transformedToOriginal(mapping.originalToTransformed(offset)))
+        }
     }
 
     private val rules = listOf(

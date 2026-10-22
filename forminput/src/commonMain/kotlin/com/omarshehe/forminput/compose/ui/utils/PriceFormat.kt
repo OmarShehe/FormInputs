@@ -47,8 +47,15 @@ internal fun TextFieldValue.withCleanedText(cleaned: String): TextFieldValue {
     return copy(text = cleaned, selection = TextRange(moved(selection.start), moved(selection.end)), composition = null)
 }
 
-/** Shows the whole part of an amount in groups of three ("1234567.5" as "1,234,567.5") without changing the stored text. */
+/**
+ * Shows the whole part of an amount in groups of three ("1234567.5" as "1,234,567.5") without changing the stored text.
+ * The [separator] may not be a digit or the decimal dot, which would make the shown text ambiguous.
+ */
 internal class ThousandsSeparatorTransformation(private val separator: Char = ',') : VisualTransformation {
+    init {
+        require(!separator.isDigit() && separator != '.') { "The grouping separator may not be a digit or '.', but was '$separator'" }
+    }
+
     override fun filter(text: AnnotatedString): TransformedText {
         val raw = text.text
         val dot = raw.indexOf('.').let { if (it < 0) raw.length else it }

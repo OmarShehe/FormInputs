@@ -62,8 +62,14 @@ internal fun DemoSection(title: String, content: @Composable () -> Unit) {
 
 /** A text field of the demo: style and shape come from the surrounding `FormInputTheme`, the modifier from the look. */
 @Composable
-private fun DemoTextField(look: DemoLook, state: FormInputTextFieldState, enabled: Boolean = true, onChange: (FormInputTextFieldState) -> Unit = {}) {
-    FormInputTextField(state = state, onValueChange = onChange, modifier = look.fieldModifier, enabled = enabled)
+private fun DemoTextField(
+    look: DemoLook,
+    state: FormInputTextFieldState,
+    enabled: Boolean = true,
+    groupThousands: Boolean = false,
+    onChange: (FormInputTextFieldState) -> Unit = {},
+) {
+    FormInputTextField(state = state, onValueChange = onChange, modifier = look.fieldModifier, enabled = enabled, groupThousands = groupThousands)
 }
 
 @Composable
@@ -87,7 +93,7 @@ internal fun TextFieldsSection(look: DemoLook) = DemoSection("Text fields") {
     val required = tr("Required", "Obligatoire")
 
     DemoTextField(look, name.withLabel("Full name", "Nom complet")) { name = it.copy(hasError = it.value.isBlank(), error = required) }
-    DemoTextField(look, amount.withLabel("Amount (prefix)", "Montant (préfixe)")) { amount = it }
+    DemoTextField(look, amount.withLabel("Amount (prefix, grouped)", "Montant (préfixe, groupé)"), groupThousands = true) { amount = it }
     DemoTextField(look, weight.withLabel("Weight (suffix)", "Poids (suffixe)")) { weight = it }
     DemoTextField(look, phone.withLabel("Phone (digits and +)", "Téléphone (chiffres et +)")) { phone = it }
     DemoTextField(look, email.withLabel("Email", "E-mail")) { email = it }

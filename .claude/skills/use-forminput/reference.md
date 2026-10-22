@@ -26,8 +26,9 @@ parameter that is not listed here (`forminput/src/commonMain/kotlin/com/omarsheh
 
 - **`FormInputTextField(state, onValueChange: (State) -> Unit)`** and an overload `(state, value: TextFieldValue, onValueChange: (TextFieldValue) -> Unit)`.
   Options: `textModifier`, `colors`, `shape`, `contentPadding`, `style`, `enabled`, `readOnly`, `textStyle`, `keyboardOptions`, `keyboardActions`,
-  `visualTransformation`, `leadingIcon`, `trailingIcon`.
-- **`FormInputPriceField(state, onValueChange)`**: text-field options plus `currencyPlacement` (START/END), `groupThousands`, `currencyLabel: (String) -> String`,
+  `visualTransformation`, `leadingIcon`, `trailingIcon`, `groupThousands` (NUMBER only; shows 1234567 as 1,234,567, stored value stays plain),
+  `groupingSeparator` (default `,`; not a digit or a dot).
+- **`FormInputPriceField(state, onValueChange)`**: text-field options plus `currencyPlacement` (START/END), `groupThousands`, `groupingSeparator`, `currencyLabel: (String) -> String`,
   `currencyContent`, `currencyTextStyle`, `menuShape`, `menuContainerColor`.
 - **`FormInputPasswordField(state, onValueChange)`**: text-field options plus `rules` (null = default four; `emptyList()` = none), `rulesVisibility`
   (ALWAYS, WHEN_FOCUSED, WHEN_NOT_EMPTY, NEVER), `rulesTitle`, `ruleContent`, `showStrength`, `strengthLabels`, `passwordColors`, `strengthOf`,
