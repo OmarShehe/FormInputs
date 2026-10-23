@@ -11,7 +11,7 @@ Ready-made form inputs: text, price and password fields (with a live rules check
 
 ```kotlin
 // Compose Multiplatform: Android, desktop JVM, iOS
-implementation("io.github.omarshehe:forminput:2.1.0")
+implementation("io.github.omarshehe:forminput:2.2.0")
 
 // Android Views (XML)
 implementation("io.github.omarshehe:forminput-views:1.0.8")
