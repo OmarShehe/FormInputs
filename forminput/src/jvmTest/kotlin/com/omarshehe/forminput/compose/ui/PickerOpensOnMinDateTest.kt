@@ -9,13 +9,16 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.omarshehe.forminput.compose.ui.model.FormInputDateTimePickerState
 import com.omarshehe.forminput.compose.ui.model.FormInputType
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.Test
 
 /** An empty end-date picker opens on its minimum date's month, even when the minimum arrives after first composition. */
 @OptIn(ExperimentalTestApi::class)
 class PickerOpensOnMinDateTest {
-    // 2030-03-10 UTC midnight: far enough ahead that "today" can never be the same month.
-    private val march2030 = 1_899_158_400_000L
+    // Far enough ahead that "today" is never in the same month, so the picker can only get there from the minimum.
+    private val farFutureMarch = LocalDate(2090, 3, 10).atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
     private fun state(type: FormInputType, minDateMillis: Long?) = FormInputDateTimePickerState(
         id = "end", labelRes = null, placeholderRes = null, type = type, label = "End", minDateMillis = minDateMillis,
@@ -27,10 +30,10 @@ class PickerOpensOnMinDateTest {
         setContent {
             FormInputDatePickerField(state = state(FormInputType.DATE_PICKER, min), onValueChange = {})
         }
-        min = march2030
+        min = farFutureMarch
         waitForIdle()
         onNodeWithText("End").performClick()
-        onNodeWithText("March 2030", substring = true).assertExists()
+        onNodeWithText("March 2090", substring = true).assertExists()
     }
 
     @Test
@@ -39,9 +42,9 @@ class PickerOpensOnMinDateTest {
         setContent {
             FormInputDateTimePickerField(state = state(FormInputType.DATE_TIME_PICKER, min), onValueChange = {})
         }
-        min = march2030
+        min = farFutureMarch
         waitForIdle()
         onNodeWithText("End").performClick()
-        onNodeWithText("March 2030", substring = true).assertExists()
+        onNodeWithText("March 2090", substring = true).assertExists()
     }
 }
