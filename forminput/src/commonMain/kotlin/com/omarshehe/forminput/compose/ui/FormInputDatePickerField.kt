@@ -155,9 +155,10 @@ private fun DatePickerField(
             DatePickerDefaults.AllDates
         }
     }
-    // Keyed on the value: the picker state only reads its initial date once, so a value that arrives after the
-    // first composition (an edit screen loading a saved date) would otherwise open on the old date.
-    val datePickerState = key(value) {
+    // Keyed on the value and the fallback: the picker state only reads its initial date once, so a value that arrives
+    // after the first composition (an edit screen loading a saved date), or a minimum that moves while the value is
+    // empty (an end date following its start date), would otherwise open on the old date.
+    val datePickerState = key(value, fallbackMillis) {
         rememberDatePickerState(
             initialSelectedDateMillis = initialSelectedDateMillis ?: fallbackMillis,
             selectableDates = selectableDates,

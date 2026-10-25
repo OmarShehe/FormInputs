@@ -195,8 +195,9 @@ private fun DateTimePickerField(
             DatePickerDefaults.AllDates
         }
     }
-    // Keyed on the value so a value that arrives late is shown when the dialogs open.
-    val datePickerState = key(value) {
+    // Keyed on the value so a value that arrives late is shown when the dialogs open, and on the fallback so a
+    // minimum that moves while the value is empty opens on the new minimum.
+    val datePickerState = key(value, fallbackMillis) {
         rememberDatePickerState(
             initialSelectedDateMillis = initialParts?.dateUtcMillis ?: fallbackMillis,
             selectableDates = selectableDates,
