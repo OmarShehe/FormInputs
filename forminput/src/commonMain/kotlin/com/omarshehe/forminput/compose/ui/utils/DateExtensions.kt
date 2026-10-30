@@ -22,6 +22,22 @@ public object DateUtils {
  */
 internal expect fun formatUtcMillisPattern(utcMillis: Long, pattern: String): String
 
+/** The reverse of [formatUtcMillisPattern]: UTC millis of [text] read with [pattern], or null when it does not match. May be lenient. */
+internal expect fun parseUtcMillisPattern(text: String, pattern: String): Long?
+
+/** Shows the stored `yyyy-MM-dd` [raw] in [pattern]; a value that is not a date is returned as it is. */
+internal fun formatDisplayDate(raw: String, pattern: String): String =
+    raw.dateToUtcMillis()?.let { formatUtcMillisPattern(it, pattern) } ?: raw
+
+/**
+ * Reads typed [text] in [pattern] and returns the stored `yyyy-MM-dd` date, or null. The platform parsers can be lenient
+ * (month 13 rolls into next year), so the text is accepted only when formatting the result gives back exactly [text].
+ */
+internal fun parseDisplayDate(text: String, pattern: String): String? {
+    val millis = parseUtcMillisPattern(text, pattern) ?: return null
+    return if (formatUtcMillisPattern(millis, pattern) == text) millis.utcMillisToDate() else null
+}
+
 private const val MILLIS_PER_MINUTE = 60_000L
 private val timeRegex = Regex("^(\\d{2}):(\\d{2})$")
 private val dateTimeRegex = Regex("^(\\d{4}-\\d{2}-\\d{2}) (\\d{2}):(\\d{2})$")

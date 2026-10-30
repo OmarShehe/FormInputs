@@ -191,6 +191,7 @@ internal fun PickersSection(look: DemoLook) = DemoSection("Date, time and colour
     FormInputDatePickerField(
         modifier = look.fieldModifier,
         state = date,
+        displayFormat = "dd/MM/yyyy", // shown as 01/12/2026; date.value stays "2026-12-01"
         supportingText = tr("Supporting text sits below the field", "Le texte d'aide est sous le champ"),
         onValueChange = { date = it },
     )
@@ -200,7 +201,12 @@ internal fun PickersSection(look: DemoLook) = DemoSection("Date, time and colour
         state = time.copy(hasError = time.value.isEmpty(), error = tr("Choose a time", "Choisissez une heure")),
         onValueChange = { time = it },
     )
-    FormInputDateTimePickerField(modifier = look.fieldModifier, state = dateTime, onValueChange = { dateTime = it })
+    FormInputDateTimePickerField(
+        modifier = look.fieldModifier,
+        state = dateTime,
+        displayFormat = "dd/MM/yyyy, HH:mm",
+        onValueChange = { dateTime = it },
+    )
     FormInputColorPickerField(
         label = tr("Colour", "Couleur"),
         value = colour,

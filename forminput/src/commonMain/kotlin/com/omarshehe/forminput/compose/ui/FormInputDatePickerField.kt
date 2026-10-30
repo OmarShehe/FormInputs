@@ -38,6 +38,8 @@ import com.omarshehe.forminput.compose.ui.utils.utcYear
 import com.omarshehe.forminput.compose.ui.utils.utcMillisToDate
 import com.omarshehe.forminput.compose.ui.utils.todayUtcMidnightMillis
 import com.omarshehe.forminput.compose.ui.utils.dateToUtcMillis
+import com.omarshehe.forminput.compose.ui.utils.formatDisplayDate
+import com.omarshehe.forminput.compose.ui.utils.parseDisplayDate
 import com.omarshehe.forminput.compose.ui.utils.Dimens
 import com.omarshehe.forminput.compose.ui.utils.Symbols
 
@@ -45,12 +47,17 @@ import com.omarshehe.forminput.compose.ui.utils.Symbols
  * A date field that opens a date dialog; with [FormInputDateTimePickerState.isManualEditable] the user can also type the date.
  * [style], [shape] and [colors] fall back to the form-wide defaults from [FormInputTheme]. [textStyle] and [contentPadding] style
  * the field, [fieldModifier] reaches the field itself, and [dialogShape] and [dialogContainerColor] style the dialog.
+ *
+ * The date is shown in [displayFormat], a `SimpleDateFormat`-style pattern (month names follow the device language); the value in
+ * the state stays `yyyy-MM-dd`. A manually typed date is read with [displayFormat] and stored once it is a valid date in that
+ * pattern; clearing the text clears the value.
  */
 @Composable
 public fun FormInputDatePickerField(
     state: FormInputDateTimePickerState,
     onValueChange: (FormInputDateTimePickerState) -> Unit,
     modifier: Modifier = Modifier,
+    displayFormat: String = DateUtils.DATE_FORMAT,
     shape: Shape? = null,
     style: FormInputFieldStyle? = null,
     colors: TextFieldColors? = null,
@@ -73,6 +80,7 @@ public fun FormInputDatePickerField(
         isManualEditable = state.isManualEditable,
         minDateMillis = state.minDateMillis,
         maxDateMillis = state.maxDateMillis,
+        displayFormat = displayFormat,
         modifier = modifier,
         shape = shape,
         style = style,
@@ -101,6 +109,7 @@ private fun DatePickerField(
     isManualEditable: Boolean = false,
     minDateMillis: Long? = null,
     maxDateMillis: Long? = null,
+    displayFormat: String = DateUtils.DATE_FORMAT,
     shape: Shape? = null,
     style: FormInputFieldStyle? = null,
     colors: TextFieldColors? = null,
@@ -116,11 +125,14 @@ private fun DatePickerField(
     val filled = (style ?: defaults.style) == FormInputFieldStyle.FILLED
     val fieldShape = shape ?: defaults.shape ?: if (filled) TextFieldDefaults.shape else OutlinedTextFieldDefaults.shape
     var showDatePicker by remember { mutableStateOf(false) }
-    var textValueState by remember { mutableStateOf(TextFieldValue(text = value)) }
+    var textValueState by remember { mutableStateOf(TextFieldValue(text = formatDisplayDate(value, displayFormat))) }
 
-    LaunchedEffect(value) {
-        if (textValueState.text != value) {
-            textValueState = textValueState.copy(text = value, selection = TextRange(value.length))
+    // Keyed on the format too, so switching the format while the value stays the same redraws the text. Half-typed text is
+    // left alone: the value does not change until it parses, so this does not run for it.
+    LaunchedEffect(value, displayFormat) {
+        val displayed = formatDisplayDate(value, displayFormat)
+        if (textValueState.text != displayed) {
+            textValueState = textValueState.copy(text = displayed, selection = TextRange(displayed.length))
         }
     }
 
@@ -176,8 +188,10 @@ private fun DatePickerField(
                 value = textValueState,
                 onValueChange = { newValueState ->
                     textValueState = newValueState
-                    if (isManualEditable && newValueState.text != value) {
-                        onValueChange(newValueState.text)
+                    if (isManualEditable) {
+                        val typed = newValueState.text
+                        val stored = if (typed.isEmpty()) "" else parseDisplayDate(typed, displayFormat)
+                        if (stored != null && stored != value) onValueChange(stored)
                     }
                 },
                 readOnly = !isManualEditable,

@@ -3,12 +3,16 @@ package com.omarshehe.forminput.compose.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.omarshehe.forminput.compose.ui.model.*
+import com.omarshehe.forminput.compose.ui.utils.DateUtils
 
 /**
  * Picks the input that matches [state] (text, password, price, dropdown, date and time, file or image upload) and draws it with
  * its default options, so a form can be drawn from a list of states: call this for each one and replace the state that comes back
  * (by its `id`) in your list. A state type with no input of its own draws nothing. Use the dedicated composable when you need to
  * pass a shape, style, size or other option; a `FormInputTheme` around the form sets style and shape for all of them.
+ *
+ * [dateDisplayFormat] and [dateTimeDisplayFormat] are `SimpleDateFormat`-style patterns for the date and the date-and-time
+ * pickers; null keeps each picker's own default. The stored value keeps its fixed format either way.
  */
 @Composable
 public fun FormInputField(
@@ -16,6 +20,8 @@ public fun FormInputField(
     onValueChange: (input: FormInputState) -> Unit,
     modifier: Modifier = Modifier,
     onDeleteImage: (String) -> Unit = {},
+    dateDisplayFormat: String? = null,
+    dateTimeDisplayFormat: String? = null,
 ) {
     when (state) {
         is FormInputTextFieldState -> {
@@ -81,6 +87,7 @@ public fun FormInputField(
                     FormInputDatePickerField(
                         state = state,
                         modifier = modifier,
+                        displayFormat = dateDisplayFormat ?: DateUtils.DATE_FORMAT,
                         onValueChange = { newState -> onValueChange(newState) },
                     )
                 }
@@ -97,6 +104,7 @@ public fun FormInputField(
                     FormInputDateTimePickerField(
                         state = state,
                         modifier = modifier,
+                        displayFormat = dateTimeDisplayFormat ?: DateUtils.DATE_TIME_DISPLAY_FORMAT,
                         onValueChange = { newState -> onValueChange(newState) },
                     )
                 }
