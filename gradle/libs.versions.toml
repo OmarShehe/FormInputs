@@ -22,7 +22,7 @@ mavenPublish = "0.37.0"
 groupId = "io.github.omarshehe"
 artifactIdKotlin = "forminput-views"
 artifactIdCompose = "forminput"
-composeVersion = "2.2.1"
+composeVersion = "2.3.0"
 coil = "3.6.3"
 kotlinxDatetime = "0.8.0"
 
