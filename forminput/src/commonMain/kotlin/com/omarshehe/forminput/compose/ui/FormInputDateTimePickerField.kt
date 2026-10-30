@@ -158,7 +158,8 @@ private fun DateTimePickerField(
 
     var textValueState by remember { mutableStateOf(TextFieldValue(text = formatForDisplay(value))) }
 
-    LaunchedEffect(value) {
+    // Keyed on the format too, so switching it while the value stays the same redraws the text.
+    LaunchedEffect(value, displayFormat) {
         val displayed = formatForDisplay(value)
         if (textValueState.text != displayed) {
             textValueState = textValueState.copy(text = displayed, selection = TextRange(displayed.length))

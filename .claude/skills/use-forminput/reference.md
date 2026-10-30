@@ -38,7 +38,9 @@ parameter that is not listed here (`forminput/src/commonMain/kotlin/com/omarsheh
 - **`FormInputDropDownField(state, onSelected)`**: `colors`, `shape`, `style`, `enabled`, `supportingText`, `fieldModifier`, `textStyle`, `leadingIcon`,
   `menuShape`, `menuContainerColor`, `maxMenuHeight`, `itemContent`.
 - **Pickers `FormInputDatePickerField / TimePickerField / DateTimePickerField(state, onValueChange)`**: `shape`, `style`, `colors`, `enabled`,
-  `supportingText`, `fieldModifier`, `dialogShape`, `dialogContainerColor`, `textStyle`, `contentPadding`.
+  `supportingText`, `fieldModifier`, `dialogShape`, `dialogContainerColor`, `textStyle`, `contentPadding`. The date and date-time pickers also take
+  `displayFormat` (a `SimpleDateFormat` pattern; the value stays `yyyy-MM-dd` / `yyyy-MM-dd HH:mm`). `FormInputField` forwards
+  `dateDisplayFormat` and `dateTimeDisplayFormat` (null keeps each default).
 - **`FormInputColorPickerField(label: StringResource | String, value, onColorSelected)`**: `shape`, `style`, `colors`, `enabled`, `hasError`, `error`,
   `supportingText`, `fieldModifier`, `dialogShape`, `dialogContainerColor`, `textStyle`, `contentPadding`, `popupModifier`, `spectrumModifier`, `thumbSize`, `thumbColor`.
 - **`FormInputSearchField(state, onValueChange: (String) -> Unit)`** and a `TextFieldValue` overload: `style` (null = pill), `shape`, `colors`, `enabled`, `onSearch`, `textStyle`, `contentPadding`.

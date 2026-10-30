@@ -63,7 +63,7 @@ var region by remember { mutableStateOf(FormInputDropDownState(id = "r", label =
 FormInputDropDownField(state = region, onSelected = { region = it })
 
 var date by remember { mutableStateOf(FormInputDateTimePickerState(id = "d", labelRes = null, placeholderRes = null, type = FormInputType.DATE_PICKER, label = "Date")) }
-FormInputDatePickerField(state = date, onValueChange = { date = it })   // date.value is "yyyy-MM-dd"
+FormInputDatePickerField(state = date, onValueChange = { date = it })   // date.value is "yyyy-MM-dd"; add displayFormat = "dd/MM/yyyy" to show 01/12/2026
 ```
 
 ## Style, shape and colours
