@@ -177,30 +177,32 @@ public fun FormInputDropDownField(
             }
 
             if (filteringOptions.isNotEmpty()) {
-                DropdownMenu(
-                    // Capped so a broad "contains" match (e.g. a single common typed character
-                    // matching most options) scrolls internally instead of the popup swelling to
-                    // cover most of the screen.
-                    modifier = Modifier.exposedDropdownSize(true).heightIn(max = maxMenuHeight),
-                    shape = menuShape ?: MenuDefaults.shape,
-                    containerColor = menuContainerColor ?: MenuDefaults.containerColor,
-                    expanded = expanded && enabled,
-                    onDismissRequest = { expanded = false },
-                    properties = PopupProperties(focusable = false),
-                ) {
-                    filteringOptions.forEach { selectionOption ->
-                        val textValue = selectionOption.textRes?.let { stringResource(it) } ?: selectionOption.text
-                        DropdownMenuItem(
-                            text = { itemContent?.invoke(selectionOption) ?: Text(textValue) },
-                            onClick = {
-                                textValueState = textValueState.copy(textValue, TextRange(textValue.length))
-                                onSelected(state.copy(value = selectionOption, hasError = false))
-                                expanded = false
-                                focusManager.clearFocus()
-                                keyboardController?.hide()
-                            },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                        )
+                NotSelectableLayer {
+                    DropdownMenu(
+                        // Capped so a broad "contains" match (e.g. a single common typed character
+                        // matching most options) scrolls internally instead of the popup swelling to
+                        // cover most of the screen.
+                        modifier = Modifier.exposedDropdownSize(true).heightIn(max = maxMenuHeight),
+                        shape = menuShape ?: MenuDefaults.shape,
+                        containerColor = menuContainerColor ?: MenuDefaults.containerColor,
+                        expanded = expanded && enabled,
+                        onDismissRequest = { expanded = false },
+                        properties = PopupProperties(focusable = false),
+                    ) {
+                        filteringOptions.forEach { selectionOption ->
+                            val textValue = selectionOption.textRes?.let { stringResource(it) } ?: selectionOption.text
+                            DropdownMenuItem(
+                                text = { itemContent?.invoke(selectionOption) ?: Text(textValue) },
+                                onClick = {
+                                    textValueState = textValueState.copy(textValue, TextRange(textValue.length))
+                                    onSelected(state.copy(value = selectionOption, hasError = false))
+                                    expanded = false
+                                    focusManager.clearFocus()
+                                    keyboardController?.hide()
+                                },
+                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                            )
+                        }
                     }
                 }
             }

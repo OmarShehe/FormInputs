@@ -324,119 +324,121 @@ private fun ColorPickerPopup(
         )
     }
 
-    Popup(
-        onDismissRequest = onDismiss,
-        properties = PopupProperties(focusable = true),
-    ) {
-        Surface(
-            modifier = popupModifier
-                .shadow(elevation = Dimens.twoGrid, shape = shape)
-                .width(DefaultPickerWidth)
-                .testTag(FormInputTestTags.ColorPickerPopup),
-            shape = shape,
-            color = containerColor,
-            tonalElevation = Dimens.twoGrid,
+    NotSelectableLayer {
+        Popup(
+            onDismissRequest = onDismiss,
+            properties = PopupProperties(focusable = true),
         ) {
-            Column(modifier = Modifier.padding(Dimens.twoGrid)) {
-                SaturationValueCanvas(
-                    hue = hue,
-                    saturation = saturation,
-                    brightness = brightness,
-                    onChanged = { s, v ->
-                        saturation = s
-                        brightness = v
-                        hexInput = hsvToHex(hue, s, v)
-                    },
-                    thumbSize = thumbSize,
-                    thumbColor = thumbColor,
-                    modifier = spectrumModifier.fillMaxWidth().height(DefaultSpectrumHeight).testTag(FormInputTestTags.ColorSpectrum),
-                )
-                Spacer(Modifier.height(Dimens.twoGrid))
-                HueSlider(
-                    hue = hue,
-                    onHueChanged = { h ->
-                        hue = h
-                        hexInput = hsvToHex(h, saturation, brightness)
-                    },
-                    modifier = Modifier.fillMaxWidth().height(Dimens.threeGrid),
-                )
-                Spacer(Modifier.height(Dimens.twoGrid))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.oneGrid),
-                ) {
-                    Text(
-                        text = formInputString(FormInputStrings::colorHexLabel, Res.string.color_picker_hex_label),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    BasicTextField(
-                        value = hexInput,
-                        onValueChange = { raw ->
-                            val typed = raw.uppercase().take(7)
-                            hexInput = typed
-                            val hsv = hexToHsv(typed)
-                            if (hsv != null) {
-                                hue = hsv[0]
-                                saturation = hsv[1]
-                                brightness = hsv[2]
-                            }
+            Surface(
+                modifier = popupModifier
+                    .shadow(elevation = Dimens.twoGrid, shape = shape)
+                    .width(DefaultPickerWidth)
+                    .testTag(FormInputTestTags.ColorPickerPopup),
+                shape = shape,
+                color = containerColor,
+                tonalElevation = Dimens.twoGrid,
+            ) {
+                Column(modifier = Modifier.padding(Dimens.twoGrid)) {
+                    SaturationValueCanvas(
+                        hue = hue,
+                        saturation = saturation,
+                        brightness = brightness,
+                        onChanged = { s, v ->
+                            saturation = s
+                            brightness = v
+                            hexInput = hsvToHex(hue, s, v)
                         },
-                        textStyle = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onSurface,
-                        ),
-                        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-                        modifier = Modifier
-                            .weight(1f)
-                            .border(
-                                Dimens.stroke,
-                                MaterialTheme.colorScheme.outlineVariant,
-                                RoundedCornerShape(Dimens.halfGrid),
-                            )
-                            .padding(horizontal = Dimens.oneGrid, vertical = Dimens.halfGrid),
+                        thumbSize = thumbSize,
+                        thumbColor = thumbColor,
+                        modifier = spectrumModifier.fillMaxWidth().height(DefaultSpectrumHeight).testTag(FormInputTestTags.ColorSpectrum),
                     )
-                    val previewColor = if (isValidHex(hexInput)) {
-                        parseHexColor(hexInput)
-                    } else {
-                        parseHexColor(hsvToHex(hue, saturation, brightness))
+                    Spacer(Modifier.height(Dimens.twoGrid))
+                    HueSlider(
+                        hue = hue,
+                        onHueChanged = { h ->
+                            hue = h
+                            hexInput = hsvToHex(h, saturation, brightness)
+                        },
+                        modifier = Modifier.fillMaxWidth().height(Dimens.threeGrid),
+                    )
+                    Spacer(Modifier.height(Dimens.twoGrid))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.oneGrid),
+                    ) {
+                        Text(
+                            text = formInputString(FormInputStrings::colorHexLabel, Res.string.color_picker_hex_label),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        BasicTextField(
+                            value = hexInput,
+                            onValueChange = { raw ->
+                                val typed = raw.uppercase().take(7)
+                                hexInput = typed
+                                val hsv = hexToHsv(typed)
+                                if (hsv != null) {
+                                    hue = hsv[0]
+                                    saturation = hsv[1]
+                                    brightness = hsv[2]
+                                }
+                            },
+                            textStyle = MaterialTheme.typography.bodySmall.copy(
+                                color = MaterialTheme.colorScheme.onSurface,
+                            ),
+                            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                            modifier = Modifier
+                                .weight(1f)
+                                .border(
+                                    Dimens.stroke,
+                                    MaterialTheme.colorScheme.outlineVariant,
+                                    RoundedCornerShape(Dimens.halfGrid),
+                                )
+                                .padding(horizontal = Dimens.oneGrid, vertical = Dimens.halfGrid),
+                        )
+                        val previewColor = if (isValidHex(hexInput)) {
+                            parseHexColor(hexInput)
+                        } else {
+                            parseHexColor(hsvToHex(hue, saturation, brightness))
+                        }
+                        Box(
+                            modifier = Modifier
+                                .size(Dimens.fourGrid)
+                                .clip(RoundedCornerShape(Dimens.halfGrid))
+                                .border(
+                                    Dimens.stroke,
+                                    MaterialTheme.colorScheme.outlineVariant,
+                                    RoundedCornerShape(Dimens.halfGrid),
+                                )
+                                .background(previewColor),
+                        )
                     }
-                    Box(
-                        modifier = Modifier
-                            .size(Dimens.fourGrid)
-                            .clip(RoundedCornerShape(Dimens.halfGrid))
-                            .border(
-                                Dimens.stroke,
-                                MaterialTheme.colorScheme.outlineVariant,
-                                RoundedCornerShape(Dimens.halfGrid),
-                            )
-                            .background(previewColor),
-                    )
-                }
 
-                Spacer(Modifier.height(Dimens.twoGrid))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    FormInputButton(
-                        text = formInputString(FormInputStrings::cancel, Res.string.cancel),
-                        onClick = onDismiss,
-                        style = FormInputButtonStyle.OUTLINED,
-                    )
-                    Spacer(Modifier.width(Dimens.oneGrid))
-                    FormInputButton(
-                        text = formInputString(FormInputStrings::ok, Res.string.ok),
-                        onClick = {
-                            val finalHex = if (isValidHex(hexInput)) {
-                                hexInput.uppercase()
-                            } else {
-                                hsvToHex(hue, saturation, brightness)
-                            }
-                            onConfirm(finalHex)
-                        },
-                    )
+                    Spacer(Modifier.height(Dimens.twoGrid))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        FormInputButton(
+                            text = formInputString(FormInputStrings::cancel, Res.string.cancel),
+                            onClick = onDismiss,
+                            style = FormInputButtonStyle.OUTLINED,
+                        )
+                        Spacer(Modifier.width(Dimens.oneGrid))
+                        FormInputButton(
+                            text = formInputString(FormInputStrings::ok, Res.string.ok),
+                            onClick = {
+                                val finalHex = if (isValidHex(hexInput)) {
+                                    hexInput.uppercase()
+                                } else {
+                                    hsvToHex(hue, saturation, brightness)
+                                }
+                                onConfirm(finalHex)
+                            },
+                        )
+                    }
                 }
             }
         }

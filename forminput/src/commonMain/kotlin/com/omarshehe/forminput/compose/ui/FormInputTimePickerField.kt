@@ -184,32 +184,34 @@ private fun TimePickerField(
             }
 
             if (showTimePicker) {
-                DatePickerDialog( // Using DatePickerDialog container for consistency in style
-                    onDismissRequest = { showTimePicker = false },
-                    shape = dialogShape ?: MaterialTheme.shapes.large,
-                    colors = dialogContainerColor?.let { DatePickerDefaults.colors(containerColor = it) } ?: DatePickerDefaults.colors(),
-                    confirmButton = {
-                        TextButton(onClick = {
-                            onValueChange(formatHourMinute(timePickerState.hour, timePickerState.minute))
-                            showTimePicker = false
-                        }) {
-                            Text(formInputString(FormInputStrings::ok, Res.string.ok))
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showTimePicker = false }) {
-                            Text(formInputString(FormInputStrings::cancel, Res.string.cancel))
-                        }
-                    },
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center,
+                NotSelectableLayer {
+                    DatePickerDialog( // Using DatePickerDialog container for consistency in style
+                        onDismissRequest = { showTimePicker = false },
+                        shape = dialogShape ?: MaterialTheme.shapes.large,
+                        colors = dialogContainerColor?.let { DatePickerDefaults.colors(containerColor = it) } ?: DatePickerDefaults.colors(),
+                        confirmButton = {
+                            TextButton(onClick = {
+                                onValueChange(formatHourMinute(timePickerState.hour, timePickerState.minute))
+                                showTimePicker = false
+                            }) {
+                                Text(formInputString(FormInputStrings::ok, Res.string.ok))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showTimePicker = false }) {
+                                Text(formInputString(FormInputStrings::cancel, Res.string.cancel))
+                            }
+                        },
                     ) {
-                        TimePicker(
-                            state = timePickerState,
-                            modifier = Modifier.padding(top = Dimens.twoGrid),
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            TimePicker(
+                                state = timePickerState,
+                                modifier = Modifier.padding(top = Dimens.twoGrid),
+                            )
+                        }
                     }
                 }
             }

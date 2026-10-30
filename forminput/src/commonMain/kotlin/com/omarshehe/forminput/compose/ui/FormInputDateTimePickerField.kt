@@ -264,59 +264,63 @@ private fun DateTimePickerField(
             }
 
             if (showDatePicker) {
-                DatePickerDialog(
-                    onDismissRequest = { showDatePicker = false },
-                    shape = dialogShape ?: MaterialTheme.shapes.large,
-                    colors = dialogContainerColor?.let { DatePickerDefaults.colors(containerColor = it) } ?: DatePickerDefaults.colors(),
-                    confirmButton = {
-                        TextButton(onClick = {
-                            showDatePicker = false
-                            showTimePicker = true
-                        }) {
-                            Text(formInputString(FormInputStrings::next, Res.string.next))
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showDatePicker = false }) {
-                            Text(formInputString(FormInputStrings::cancel, Res.string.cancel))
-                        }
-                    },
-                ) {
-                    DatePicker(state = datePickerState)
+                NotSelectableLayer {
+                    DatePickerDialog(
+                        onDismissRequest = { showDatePicker = false },
+                        shape = dialogShape ?: MaterialTheme.shapes.large,
+                        colors = dialogContainerColor?.let { DatePickerDefaults.colors(containerColor = it) } ?: DatePickerDefaults.colors(),
+                        confirmButton = {
+                            TextButton(onClick = {
+                                showDatePicker = false
+                                showTimePicker = true
+                            }) {
+                                Text(formInputString(FormInputStrings::next, Res.string.next))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDatePicker = false }) {
+                                Text(formInputString(FormInputStrings::cancel, Res.string.cancel))
+                            }
+                        },
+                    ) {
+                        DatePicker(state = datePickerState)
+                    }
                 }
             }
 
             if (showTimePicker) {
-                DatePickerDialog(
-                    onDismissRequest = { showTimePicker = false },
-                    shape = dialogShape ?: MaterialTheme.shapes.large,
-                    colors = dialogContainerColor?.let { DatePickerDefaults.colors(containerColor = it) } ?: DatePickerDefaults.colors(),
-                    confirmButton = {
-                        TextButton(onClick = {
-                            val date = datePickerState.selectedDateMillis ?: todayUtcMidnightMillis()
-                            onValueChange(formatDateTime(date, timePickerState.hour, timePickerState.minute))
-                            showTimePicker = false
-                        }) {
-                            Text(formInputString(FormInputStrings::ok, Res.string.ok))
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = {
-                            showTimePicker = false
-                            showDatePicker = true
-                        }) {
-                            Text(formInputString(FormInputStrings::back, Res.string.back))
-                        }
-                    },
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center,
+                NotSelectableLayer {
+                    DatePickerDialog(
+                        onDismissRequest = { showTimePicker = false },
+                        shape = dialogShape ?: MaterialTheme.shapes.large,
+                        colors = dialogContainerColor?.let { DatePickerDefaults.colors(containerColor = it) } ?: DatePickerDefaults.colors(),
+                        confirmButton = {
+                            TextButton(onClick = {
+                                val date = datePickerState.selectedDateMillis ?: todayUtcMidnightMillis()
+                                onValueChange(formatDateTime(date, timePickerState.hour, timePickerState.minute))
+                                showTimePicker = false
+                            }) {
+                                Text(formInputString(FormInputStrings::ok, Res.string.ok))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = {
+                                showTimePicker = false
+                                showDatePicker = true
+                            }) {
+                                Text(formInputString(FormInputStrings::back, Res.string.back))
+                            }
+                        },
                     ) {
-                        TimePicker(
-                            state = timePickerState,
-                            modifier = Modifier.padding(top = Dimens.twoGrid),
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            TimePicker(
+                                state = timePickerState,
+                                modifier = Modifier.padding(top = Dimens.twoGrid),
+                            )
+                        }
                     }
                 }
             }
