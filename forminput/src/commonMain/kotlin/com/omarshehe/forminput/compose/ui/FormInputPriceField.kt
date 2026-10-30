@@ -126,20 +126,22 @@ public fun FormInputPriceField(
                     )
                 }
             }
-            DropdownMenu(
-                expanded = menuOpen && canPick,
-                onDismissRequest = { menuOpen = false },
-                shape = menuShape ?: MenuDefaults.shape,
-                containerColor = menuContainerColor ?: MenuDefaults.containerColor,
-            ) {
-                state.currencies.forEach { currency ->
-                    DropdownMenuItem(
-                        text = { Text(currencyLabel(currency)) },
-                        onClick = {
-                            menuOpen = false
-                            if (currency != state.currency) onValueChange(state.copy(currency = currency))
-                        },
-                    )
+            NotSelectableLayer {
+                DropdownMenu(
+                    expanded = menuOpen && canPick,
+                    onDismissRequest = { menuOpen = false },
+                    shape = menuShape ?: MenuDefaults.shape,
+                    containerColor = menuContainerColor ?: MenuDefaults.containerColor,
+                ) {
+                    state.currencies.forEach { currency ->
+                        DropdownMenuItem(
+                            text = { Text(currencyLabel(currency)) },
+                            onClick = {
+                                menuOpen = false
+                                if (currency != state.currency) onValueChange(state.copy(currency = currency))
+                            },
+                        )
+                    }
                 }
             }
         }

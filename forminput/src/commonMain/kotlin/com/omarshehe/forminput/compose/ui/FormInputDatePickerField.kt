@@ -231,27 +231,29 @@ private fun DatePickerField(
             }
 
             if (showDatePicker) {
-                DatePickerDialog(
-                    onDismissRequest = { showDatePicker = false },
-                    shape = dialogShape ?: MaterialTheme.shapes.large,
-                    colors = dialogContainerColor?.let { DatePickerDefaults.colors(containerColor = it) } ?: DatePickerDefaults.colors(),
-                    confirmButton = {
-                        TextButton(onClick = {
-                            datePickerState.selectedDateMillis?.let {
-                                onValueChange(it.utcMillisToDate())
+                NotSelectableLayer {
+                    DatePickerDialog(
+                        onDismissRequest = { showDatePicker = false },
+                        shape = dialogShape ?: MaterialTheme.shapes.large,
+                        colors = dialogContainerColor?.let { DatePickerDefaults.colors(containerColor = it) } ?: DatePickerDefaults.colors(),
+                        confirmButton = {
+                            TextButton(onClick = {
+                                datePickerState.selectedDateMillis?.let {
+                                    onValueChange(it.utcMillisToDate())
+                                }
+                                showDatePicker = false
+                            }) {
+                                Text(formInputString(FormInputStrings::ok, Res.string.ok))
                             }
-                            showDatePicker = false
-                        }) {
-                            Text(formInputString(FormInputStrings::ok, Res.string.ok))
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showDatePicker = false }) {
-                            Text(formInputString(FormInputStrings::cancel, Res.string.cancel))
-                        }
-                    },
-                ) {
-                    DatePicker(state = datePickerState)
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDatePicker = false }) {
+                                Text(formInputString(FormInputStrings::cancel, Res.string.cancel))
+                            }
+                        },
+                    ) {
+                        DatePicker(state = datePickerState)
+                    }
                 }
             }
     
