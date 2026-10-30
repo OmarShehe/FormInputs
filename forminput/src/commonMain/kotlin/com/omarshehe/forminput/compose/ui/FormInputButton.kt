@@ -2,6 +2,7 @@ package com.omarshehe.forminput.compose.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -111,29 +112,32 @@ private fun RowScope.ButtonContent(
     icon: ImageVector?,
     isLoading: Boolean,
 ) {
-    if (isLoading) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(Dimens.threeGrid),
-            strokeWidth = Dimens.quarterGrid,
-            color = LocalContentColor.current,
-        )
-    } else {
-        icon?.let {
-            Icon(
-                imageVector = it,
-                contentDescription = null, // decorative: sits beside the button text
-                modifier = Modifier.size(Dimens.twoAndHalfGrid),
+    // A button label is not content to copy: a drag-selection across a `SelectionContainer` must skip it.
+    DisableSelection {
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(Dimens.threeGrid),
+                strokeWidth = Dimens.quarterGrid,
+                color = LocalContentColor.current,
             )
-            if (text.isNotEmpty()) {
-                Spacer(Modifier.width(Dimens.oneGrid))
+        } else {
+            icon?.let {
+                Icon(
+                    imageVector = it,
+                    contentDescription = null, // decorative: sits beside the button text
+                    modifier = Modifier.size(Dimens.twoAndHalfGrid),
+                )
+                if (text.isNotEmpty()) {
+                    Spacer(Modifier.width(Dimens.oneGrid))
+                }
             }
-        }
-        if (text.isNotEmpty()) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.SemiBold,
-            )
+            if (text.isNotEmpty()) {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
         }
     }
 }
