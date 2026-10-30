@@ -35,6 +35,11 @@ class DisplayDateHelpersTest {
     }
 
     @Test
+    fun aFiveDigitYearIsRejectedBecauseItCannotBeStoredAsIso() {
+        assertNull(parseDisplayDate("01/12/92026", pattern))
+    }
+
+    @Test
     fun trailingTextIsRejected() {
         assertNull(parseDisplayDate("01/12/2026x", pattern))
         assertNull(parseDisplayDate(" 01/12/2026", pattern))
