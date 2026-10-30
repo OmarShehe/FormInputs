@@ -5,44 +5,57 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.platform.Clipboard
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.asAwtTransferable
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performMouseInput
 import androidx.compose.ui.test.v2.runComposeUiTest
 import androidx.compose.ui.unit.dp
-import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
-import java.awt.datatransfer.StringSelection
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /** A drag-selection across a button copies the text around it but not the button's label. */
-@OptIn(ExperimentalTestApi::class)
+@OptIn(ExperimentalTestApi::class, ExperimentalComposeUiApi::class)
 class ButtonNotSelectableTest {
     private val isMac = System.getProperty("os.name").orEmpty().startsWith("Mac", ignoreCase = true)
 
-    private fun clipboard(): String =
-        runCatching { Toolkit.getDefaultToolkit().systemClipboard.getData(DataFlavor.stringFlavor) as String }.getOrDefault("")
+    /** Records what is copied, so the test needs no system clipboard (there is none on a display-less CI runner). */
+    private class RecordingClipboard : Clipboard {
+        var copied = ""
+
+        override suspend fun getClipEntry(): ClipEntry? = null
+
+        override suspend fun setClipEntry(clipEntry: ClipEntry?) {
+            copied = clipEntry?.asAwtTransferable?.getTransferData(DataFlavor.stringFlavor) as? String ?: ""
+        }
+    }
 
     private fun dragSelectAndCopy(style: FormInputButtonStyle): String {
-        var copied = ""
+        val clipboard = RecordingClipboard()
         runComposeUiTest {
             setContent {
-                SelectionContainer {
-                    Column {
-                        Text("TopText")
-                        Spacer(Modifier.height(8.dp))
-                        FormInputButton(text = "BtnLabel", onClick = {}, style = style)
-                        Spacer(Modifier.height(8.dp))
-                        Text("BottomText")
+                CompositionLocalProvider(LocalClipboard provides clipboard) {
+                    SelectionContainer {
+                        Column {
+                            Text("TopText")
+                            Spacer(Modifier.height(8.dp))
+                            FormInputButton(text = "BtnLabel", onClick = {}, style = style)
+                            Spacer(Modifier.height(8.dp))
+                            Text("BottomText")
+                        }
                     }
                 }
             }
-            Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(""), null)
             val top = onNodeWithText("TopText").fetchSemanticsNode().boundsInRoot
             val bottom = onNodeWithText("BottomText").fetchSemanticsNode().boundsInRoot
             onNodeWithText("TopText").performMouseInput {
@@ -65,9 +78,9 @@ class ButtonNotSelectableTest {
                 keyUp(Key.C)
                 keyUp(modifier)
             }
-            copied = clipboard()
+            waitForIdle()
         }
-        return copied
+        return clipboard.copied
     }
 
     @Test
