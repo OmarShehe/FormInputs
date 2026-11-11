@@ -15,7 +15,7 @@ parameter that is not listed here (`forminput/src/commonMain/kotlin/com/omarsheh
 |---|---|
 | `FormInputTextFieldState(id, type, value, ...)` | `showMaxChar`, `isSingleLine`, `minLines`, `maxLines`, `maxChar`, `autoCapitalize`, `subtitleRes`, `prefix`, `suffix` (plain) and `prefixRes`, `suffixRes`, `onHeaderActionClick`, `headerActionLabelRes`, `headerActionIcon` |
 | `FormInputDropDownState(id, ...)` | `value: DropDownOptionModel`, `options: List<DropDownOptionModel>`, `isSearchEnable`, `allowFreeText`; `DropDownOptionModel(id, text, textRes)` |
-| `FormInputDateTimePickerState(id, labelRes, placeholderRes, type, ...)` | `value` (string), `isManualEditable`, `minDateMillis`, `maxDateMillis` (UTC millis) |
+| `FormInputDateTimePickerState(id, labelRes, placeholderRes, type, ...)` | `value` (string), `isManualEditable`, `minDateMillis`, `maxDateMillis` (UTC millis), `onHeaderActionClick`, `headerActionLabelRes`, `headerActionIcon` (a small action button above the field, such as "Clear"; the date, date-time and time pickers all draw it) |
 | `FormInputPriceState(id, currency, ...)` | `amount` (plain number string), `currencies`, `maxDecimals` (2), `maxIntegerDigits` (12) |
 | `FormInputPasswordState(id, ...)` | `value` |
 | `FormInputFileState(id, labelRes, placeholderRes, ...)` | `value: FileUploadValue?`, `allowedExtensions`, `progress`, `statusRes` |

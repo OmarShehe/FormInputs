@@ -60,6 +60,7 @@ import org.jetbrains.compose.resources.stringResource
 import com.omarshehe.forminput.compose.ui.model.FormInputDateTimePickerState
 import com.omarshehe.forminput.compose.ui.composables.resolvedPlaceholder
 import com.omarshehe.forminput.compose.ui.composables.resolvedLabel
+import com.omarshehe.forminput.compose.ui.composables.FormInputHeaderAction
 import com.omarshehe.forminput.compose.ui.composables.resolvedError
 import com.omarshehe.forminput.compose.ui.model.FormInputFieldStyle
 import com.omarshehe.forminput.compose.ui.utils.DateUtils
@@ -96,6 +97,7 @@ public fun FormInputDateTimePickerField(
     contentPadding: PaddingValues? = null,
 ) {
     DateTimePickerField(
+        headerContent = if (state.onHeaderActionClick != null) ({ FormInputHeaderAction(state) }) else null,
         value = state.value,
         onValueChange = { newValue -> onValueChange(state.copy(value = newValue)) },
         label = state.resolvedLabel(),
@@ -124,6 +126,7 @@ public fun FormInputDateTimePickerField(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DateTimePickerField(
+    headerContent: (@Composable () -> Unit)?,
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -214,6 +217,7 @@ private fun DateTimePickerField(
 
 
     Column(modifier = modifier) {
+        headerContent?.invoke()
         Box {
             FormInputBoxField(
                 textStyle = textStyle,

@@ -22,4 +22,7 @@ public data class FormInputDateTimePickerState(
     override val label: String? = null,
     override val placeholder: String? = null,
     override val error: String? = null,
+    override val onHeaderActionClick: (() -> Unit)? = null,
+    override val headerActionLabelRes: StringResource? = null,
+    override val headerActionIcon: ImageVector? = null,
 ) : FormInputState

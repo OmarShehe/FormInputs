@@ -57,6 +57,7 @@ import com.omarshehe.forminput.compose.resources.Res
 import com.omarshehe.forminput.compose.resources.hide_password
 import com.omarshehe.forminput.compose.resources.show_password
 import org.jetbrains.compose.resources.stringResource
+import com.omarshehe.forminput.compose.ui.composables.FormInputHeaderAction
 import com.omarshehe.forminput.compose.ui.composables.resolvedError
 import com.omarshehe.forminput.compose.ui.composables.resolvedLabel
 import com.omarshehe.forminput.compose.ui.composables.resolvedPlaceholder
@@ -71,9 +72,6 @@ import com.omarshehe.forminput.compose.ui.utils.ThousandsSeparatorTransformation
  * Text field driven by [FormInputTextFieldState.value]. The cursor and selection are kept internally; use the
  * overload that takes a [TextFieldValue] to control them.
  */
-/** The glyph beside a header action label; it is label-sized, so it is not meant to change. */
-private val HeaderActionIconSize = 14.dp
-
 /**
  * The library's text input, driven by [FormInputTextFieldState]; [onValueChange] receives the updated state. [style], [shape]
  * and [colors] fall back to the form-wide defaults from [FormInputTheme]. [textStyle] and [contentPadding] style the text and
@@ -184,27 +182,7 @@ public fun FormInputTextField(
     }
 
     Column(modifier = modifier.fillMaxWidth()) {
-        if (state.onHeaderActionClick != null) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TextButton(
-                    onClick = state.onHeaderActionClick,
-                    contentPadding = PaddingValues(Dimens.default),
-                    modifier = Modifier.height(Dimens.threeGrid),
-                ) {
-                    if (state.headerActionIcon != null) {
-                        Icon(state.headerActionIcon, null, modifier = Modifier.size(HeaderActionIconSize)) // decorative: the action label beside it names it
-                        Spacer(Modifier.width(Dimens.halfGrid))
-                    }
-                    state.headerActionLabelRes?.let {
-                        Text(stringResource(it), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-        }
+        FormInputHeaderAction(state)
 
         BasicTextField(
             value = value,
