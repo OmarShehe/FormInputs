@@ -48,7 +48,7 @@ private const val ZOOM_STEP = 1f
  * Desktop-native interaction: manual zoom-in/zoom-out buttons (trackpad pinch isn't reliably
  * delivered as a Compose Desktop pointer gesture, so buttons are the primary control), scroll-wheel
  * zoom as a secondary input, click-drag pan when zoomed, double-click to toggle zoom, and a close
- * control.
+ * control (left out with `showCloseButton = false` when the window around the viewer already has one).
  *
  * Rendered as plain composable content — **not** wrapped in its own `Dialog`/`Popup` window. It must
  * be composed from the caller's own `overlayContent`-equivalent slot (e.g. `AppDialogWindow`'s
@@ -58,7 +58,7 @@ private const val ZOOM_STEP = 1f
  * that second window could also close the owning `AppDialogWindow`. Rendering as a plain overlay
  * avoids a second window entirely, so there's no window to interact badly with the owner. */
 @Composable
-public fun ZoomableImageViewer(imageUrl: String, onDismiss: () -> Unit) {
+public fun ZoomableImageViewer(imageUrl: String, onDismiss: () -> Unit, showCloseButton: Boolean = true) {
     var scale by remember { mutableStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
 
@@ -104,21 +104,23 @@ public fun ZoomableImageViewer(imageUrl: String, onDismiss: () -> Unit) {
                 .onPointerEventScroll { deltaY -> zoomBy(-deltaY * 0.1f) },
         )
 
-        Surface(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(Dimens.twoGrid)
-                .padding(top = Dimens.threeGrid),
-            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
-            shape = CircleShape,
-        ) {
-            IconButton(onClick = onDismiss) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = formInputString(FormInputStrings::close, Res.string.close),
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.size(Dimens.threeGrid),
-                )
+        if (showCloseButton) {
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(Dimens.twoGrid)
+                    .padding(top = Dimens.threeGrid),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+                shape = CircleShape,
+            ) {
+                IconButton(onClick = onDismiss) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = formInputString(FormInputStrings::close, Res.string.close),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(Dimens.threeGrid),
+                    )
+                }
             }
         }
 
